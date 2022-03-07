@@ -1,3 +1,0 @@
-# BoolBnB
-
-Database: 
