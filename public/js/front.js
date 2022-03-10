@@ -1996,7 +1996,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2004,6 +2003,15 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Login: _modals_Login_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Register: _modals_Register_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  methods: {
+    logout: function logout() {
+      axios.post("/logout").then(function (response) {
+        console.log("vittoria");
+      })["catch"](function (error) {
+        console.log("sconfitta");
+      });
+    }
   }
 });
 
@@ -2032,22 +2040,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'Login',
+  name: "Login",
   data: function data() {
     return {
       user: {
-        email: '',
-        password: ''
+        email: "",
+        password: ""
       }
     };
   },
   methods: {
     login: function login() {
-      axios.post('/login', this.user).then(function (response) {
-        console.log('forza Roma > Lazio');
+      axios.post("/login", this.user).then(function (response) {
+        console.log("forza Roma > Lazio");
       })["catch"](function (error) {
-        console.log('git fetch --prugne');
+        console.log("git fetch --prugne");
       });
     }
   }
@@ -2711,6 +2726,18 @@ var render = function () {
       _vm._v(" "),
       _c("Register"),
       _vm._v(" "),
+      _c(
+        "button",
+        {
+          on: {
+            click: function ($event) {
+              return _vm.logout()
+            },
+          },
+        },
+        [_vm._v("Logout")]
+      ),
+      _vm._v(" "),
       _c("router-view", { key: _vm.$route.path }),
     ],
     1
@@ -2793,6 +2820,8 @@ var render = function () {
             },
           },
         }),
+        _vm._v(" "),
+        _c("button", { attrs: { type: "submit" } }, [_vm._v("Login")]),
       ]
     ),
   ])
@@ -18883,8 +18912,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/js/front/front.js */"./resources/js/front/front.js");
-module.exports = __webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/andrea/Documents/boolean/BoolBnB/resources/js/front/front.js */"./resources/js/front/front.js");
+module.exports = __webpack_require__(/*! /Users/andrea/Documents/boolean/BoolBnB/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
