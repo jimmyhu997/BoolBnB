@@ -2033,7 +2033,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'Login'
+  name: 'Login',
+  data: function data() {
+    return {
+      user: {
+        email: '',
+        password: ''
+      }
+    };
+  },
+  methods: {
+    login: function login() {
+      axios.post('/login', this.user).then(function (response) {
+        console.log('forza Roma > Lazio');
+      })["catch"](function (error) {
+        console.log('git fetch --prugne');
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -2047,6 +2064,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -2764,7 +2782,7 @@ var render = function () {
               expression: "user.password",
             },
           ],
-          attrs: { type: "email", placeholder: "Scrivi qui il nome.." },
+          attrs: { type: "password", placeholder: "Scrivi qui la password.." },
           domProps: { value: _vm.user.password },
           on: {
             input: function ($event) {
@@ -18865,8 +18883,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\MAMP\htdocs\BoolBnB\resources\js\front\front.js */"./resources/js/front/front.js");
-module.exports = __webpack_require__(/*! C:\MAMP\htdocs\BoolBnB\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/js/front/front.js */"./resources/js/front/front.js");
+module.exports = __webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

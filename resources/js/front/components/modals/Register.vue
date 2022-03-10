@@ -15,6 +15,7 @@
           <button type="submit">Registrati</button>
 
         </form>
+
   </div>
 </template>
 
@@ -36,7 +37,7 @@ export default {
         axios.post('/register', this.user)
         .then((response) => {
           console.log('forza Roma > Lazio')
-        }).catch(function(error){
+        }).catch((error) => {
           console.log('prugne')
         })
       }

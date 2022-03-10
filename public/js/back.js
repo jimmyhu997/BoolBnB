@@ -14462,7 +14462,7 @@ var app = new Vue({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\MAMP\htdocs\BoolBnB\resources\js\back\back.js */"./resources/js/back/back.js");
+module.exports = __webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/js/back/back.js */"./resources/js/back/back.js");
 
 
 /***/ })
