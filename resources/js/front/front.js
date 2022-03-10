@@ -1,6 +1,10 @@
 window.axios = require('axios');
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Vue = require('vue');
+window.axios.defaults.headers.common = {
+    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    'X-Requested-With': 'XMLHttpRequest'
+};
 
 
 /**
@@ -10,8 +14,11 @@ window.Vue = require('vue');
  */
 
 import App from './App.vue';
-// import router
+import router from './router';
+
 
 const app = new Vue({
     el: '#app',
+    render: h => h(App),
+    router
 });
