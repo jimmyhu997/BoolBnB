@@ -9,6 +9,9 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import App from './App.vue';
+// import router
+
 const app = new Vue({
     el: '#app',
 });
