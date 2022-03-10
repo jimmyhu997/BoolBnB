@@ -17,8 +17,6 @@ class CreatePerksTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('icon')->nullable();
-
-            $table->timestamps();
         });
     }
 
