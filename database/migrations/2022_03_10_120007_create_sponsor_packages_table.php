@@ -18,7 +18,6 @@ class CreateSponsorPackagesTable extends Migration
             $table->string('name');
             $table->decimal('price', 3, 2);
             $table->unsignedTinyInteger('duration');
-            $table->timestamps();
         });
     }
 
