@@ -20,9 +20,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
-
-    </div>
-    <script src="{{ asset('js/front.js') }}"></script>
+    <h1>fauoseihfausehflfhlakj</h1>
 </body>
 </html>
