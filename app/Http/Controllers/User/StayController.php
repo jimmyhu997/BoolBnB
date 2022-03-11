@@ -3,31 +3,27 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Stay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StayController extends Controller
 {
+   
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        return response()->json([
-            'risposta' => 'Forza Cagliari'
-        ]);
+    
+     public function index()
+    {   
+
+        $stays = Stay::all()->where('user_id', Auth::user()->id);
+
+        return response()->json($stays);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -37,31 +33,59 @@ class StayController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $newStay = new Stay();
+
+        $newStay->title = $data['title'];
+
+        // Slug da gestire correttamente 
+        $newStay->slug = $data['title'];
+
+        $newStay->description = $data['description'];
+        $newStay->square_meters = $data['square_meters'];
+        $newStay->guests = $data['guests'];
+
+
+        // da sistemare con TomTom
+        $newStay->longitude = 10.10;
+        $newStay->latitude = 10.10;
+
+        // $newStay->rooms = $data['rooms'];
+        // $newStay->beds = $data['beds'];
+        // $newStay->bathrooms = $data['bathrooms'];
+        // $newStay->street_address = $data['street_address'];
+        // $newStay->zip_code = $data['zip_code'];
+        // $newStay->city = $data['city'];
+        // $newStay->province_state = $data['province_state'];
+        // $newStay->country = $data['country'];
+        // $newStay->image_path = '//';
+        // $newStay->price = $data['price'];
+
+        // dati di prova perchè sono pigro 
+        $newStay->rooms = 1;
+        $newStay->beds = 3;
+        $newStay->bathrooms = 2;
+        $newStay->street_address = 'ciaoneee';
+        $newStay->zip_code = '00071';
+        $newStay->city = 'Pomezia';
+        $newStay->province_state = 'Roma';
+        $newStay->country = 'Italia';
+        $newStay->image_path = '//';
+        $newStay->price = 50;
+
+        $newStay->user_id = Auth::user()->id;
+        $newStay->save();
+        return response()->json([
+           "stayId" => $newStay->id
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+  
+    public function edit(Stay $stay) {
+        
+        return response()->json($stay);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -69,9 +93,12 @@ class StayController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Stay $stay)
     {
-        //
+
+        return response()->json([
+            "stayId" => $stay->id
+         ]);
     }
 
     /**
