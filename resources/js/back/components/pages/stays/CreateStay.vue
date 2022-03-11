@@ -1,14 +1,13 @@
 <template>
   <div>
-      <h1>Crea Annuncio</h1>
+      <h2>Crea Annuncio</h2>
   </div>
 </template>
 
 <script>
 
-
 export default {
-    name: 'CreateStay'
+    name: 'CreateStay',
 }
 </script>
 

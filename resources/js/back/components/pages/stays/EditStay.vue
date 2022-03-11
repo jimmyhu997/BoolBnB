@@ -1,13 +1,14 @@
 <template>
   <div>
-      <h1>Modifica annuncio</h1>
+      <h2>Modifica annuncio</h2>
+
   </div>
 </template>
 
 <script>
 
-
 export default {
+  name:'EditStay',
 
 }
 </script>

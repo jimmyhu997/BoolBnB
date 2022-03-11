@@ -1,14 +1,16 @@
 <template>
   <div>
-      <h1>Elenco annunci</h1>
+    <router-link :to="{name:'create-stay'}">Crea Annuncio</router-link>
+
+
+    <h2>Elenco annunci</h2>
+
   </div>
 </template>
 
 <script>
-
-
 export default {
-    name: 'Stays'
+    name: 'Stays',
 }
 </script>
 

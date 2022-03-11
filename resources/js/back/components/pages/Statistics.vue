@@ -1,14 +1,10 @@
 <template>
-  <div>
-      <h1>Annuncio singolo</h1>
-  </div>
+    <h2>Elenco Statistiche</h2>
 </template>
 
 <script>
-
-
 export default {
-    
+    name:'Statistics',
 }
 </script>
 

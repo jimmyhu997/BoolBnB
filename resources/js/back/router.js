@@ -5,7 +5,12 @@ Vue.use(VueRouter);
 
 // import Register from './components/pages/Register.vue';
 
-import Home from './components/pages/Home.vue';
+import Dashboard from './components/pages/Dashboard.vue';
+import Stays from './components/pages/stays/Stays.vue';
+import CreateStay from './components/pages/stays/CreateStay.vue';
+import EditStay from './components/pages/stays/EditStay.vue';
+import SponsorPackages from './components/pages/SponsorPackages.vue';
+import Statistics from './components/pages/Statistics.vue';
 
 const router = new VueRouter({
     mode: "history",
@@ -13,14 +18,40 @@ const router = new VueRouter({
 
         {
              path:'/user/',
-             name:'home',
-             component: Home
-        }
-        // {
-        //     path:'/register',
-        //     name:'register',
-        //     component: Register
-        // }
+             name:'dashboard',
+             component: Dashboard
+        },
+
+        {
+            path:'/user/my-apartments',
+            name:'stays',
+            component: Stays
+        },
+
+        {
+            path:'/user/new-apartment',
+            name:'create-stay',
+            component: CreateStay
+        },
+
+        {
+            path:'/user/edit-apartment/:stay',
+            name:'edit-stay',
+            component: EditStay
+        },
+
+        {
+            path:'/user/sponsor/:stay',
+            name:'sponsor',
+            component: SponsorPackages
+        },
+
+        {
+            path:'/user/statistics/:stay',
+            name:'statistics',
+            component: Statistics
+        },     
+
     ]
 });
 
