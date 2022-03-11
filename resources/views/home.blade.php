@@ -20,9 +20,20 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="public-area">
 
     </div>
+
+    @guest
+        <script>
+            window.loggedIn = false
+        </script>
+    @else
+        <script>
+            window.loggedIn = true
+        </script>
+    @endguest
+
     <script src="{{ asset('js/front.js') }}"></script>
 </body>
 </html>

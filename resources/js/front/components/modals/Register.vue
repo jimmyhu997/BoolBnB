@@ -36,7 +36,7 @@ export default {
       register(){
         axios.post('/register', this.user)
         .then((response) => {
-          location.href = '/admin'
+          location.href = '/user'
         }).catch((error) => {
           console.log('prugne')
         })

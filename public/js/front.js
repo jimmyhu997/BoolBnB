@@ -1996,6 +1996,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2003,6 +2005,11 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Login: _modals_Login_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Register: _modals_Register_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      window: window
+    };
   },
   methods: {
     logout: function logout() {
@@ -2060,7 +2067,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     login: function login() {
       axios.post("/login", this.user).then(function (response) {
-        location.href = '/admin';
+        location.href = '/user';
       })["catch"](function (error) {
         console.log("git fetch --prugne");
       });
@@ -2115,7 +2122,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     register: function register() {
       axios.post('/register', this.user).then(function (response) {
-        location.href = '/admin';
+        location.href = '/user';
       })["catch"](function (error) {
         console.log('prugne');
       });
@@ -2722,21 +2729,19 @@ var render = function () {
   return _c(
     "main",
     [
-      _c("Login"),
-      _vm._v(" "),
-      _c("Register"),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          on: {
-            click: function ($event) {
-              return _vm.logout()
+      !_vm.window.loggedIn
+        ? _c("div", [_c("Login"), _vm._v(" "), _c("Register")], 1)
+        : _c(
+            "button",
+            {
+              on: {
+                click: function ($event) {
+                  return _vm.logout()
+                },
+              },
             },
-          },
-        },
-        [_vm._v("Logout")]
-      ),
+            [_vm._v("Logout")]
+          ),
       _vm._v(" "),
       _c("router-view", { key: _vm.$route.path }),
     ],
@@ -18849,8 +18854,8 @@ window.axios.defaults.headers.common = {
 
 
 
-var app = new Vue({
-  el: '#app',
+var publicArea = new Vue({
+  el: '#public-area',
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
   },
