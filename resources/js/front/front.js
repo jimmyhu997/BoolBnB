@@ -17,8 +17,8 @@ import App from './App.vue';
 import router from './router';
 
 
-const app = new Vue({
-    el: '#app',
+const publicArea = new Vue({
+    el: '#public-area',
     render: h => h(App),
     router
 });

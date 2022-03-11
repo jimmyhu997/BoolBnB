@@ -35,7 +35,7 @@ export default {
       axios
         .post("/login", this.user)
         .then((response) => {
-          location.href = '/admin'
+          location.href = '/user'
         })
         .catch((error) => {
           console.log("git fetch --prugne");

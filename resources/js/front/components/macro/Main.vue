@@ -1,8 +1,10 @@
 <template>
   <main>
-    <Login />
-    <Register />
-    <button @click="logout()">Logout</button>
+    <div v-if="!window.loggedIn">
+      <Login/>
+      <Register/>
+    </div>
+    <button @click="logout()" v-else>Logout</button>
 
     <router-view :key="$route.path"></router-view>
   </main>
@@ -17,6 +19,11 @@ export default {
   components: {
     Login,
     Register,
+  },
+  data() {
+    return {
+      window
+    }
   },
   methods: {
     logout() {
