@@ -18,9 +18,20 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 
-Route::prefix('admin')->middleware('auth')->get('/{any?}', function () {
-    return view('registered_user.dashboard');
-})->where('any', '.*');
+// Route::prefix('admin')->middleware('auth')->get('/{any?}', function () {
+//     return view('registered_user.dashboard');
+// })->where('any', '.*');
+
+
+Route::prefix('user')->middleware('auth')->namespace('User')->group( function () {
+    Route::resource('stays' , 'StayController');
+
+    Route::get('/{any?}', function () {
+        return view('registered_user.dashboard');
+    })->where('any', '.*');
+    
+});
+
 
 
 Route::get('{any?}', function () {

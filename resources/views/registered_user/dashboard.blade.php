@@ -20,6 +20,12 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <h1>fauoseihfausehflfhlakj</h1>
+   
+    <div id="reserved-area">
+
+    </div>
+
+    <script src="{{asset('js/back.js')}}"></script>
+
 </body>
 </html>
