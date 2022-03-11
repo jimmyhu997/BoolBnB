@@ -25,4 +25,4 @@ Route::prefix('admin')->middleware('auth')->get('/{any?}', function () {
 
 Route::get('{any?}', function () {
     return view('home');
-})->where('any', '.*');
+})->where('any', '.*')->name('home');

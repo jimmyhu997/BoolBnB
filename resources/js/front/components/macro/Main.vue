@@ -23,7 +23,7 @@ export default {
       axios
         .post("/logout")
         .then((response) => {
-          console.log("vittoria");
+          location.href = '/'
         })
         .catch((error) => {
           console.log("sconfitta");

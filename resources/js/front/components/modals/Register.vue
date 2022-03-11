@@ -36,7 +36,7 @@ export default {
       register(){
         axios.post('/register', this.user)
         .then((response) => {
-          console.log('forza Roma > Lazio')
+          location.href = '/admin'
         }).catch((error) => {
           console.log('prugne')
         })

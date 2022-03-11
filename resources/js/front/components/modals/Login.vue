@@ -35,7 +35,7 @@ export default {
       axios
         .post("/login", this.user)
         .then((response) => {
-          console.log("forza Roma > Lazio");
+          location.href = '/admin'
         })
         .catch((error) => {
           console.log("git fetch --prugne");

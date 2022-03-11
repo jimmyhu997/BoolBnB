@@ -2007,7 +2007,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     logout: function logout() {
       axios.post("/logout").then(function (response) {
-        console.log("vittoria");
+        location.href = '/';
       })["catch"](function (error) {
         console.log("sconfitta");
       });
@@ -2060,7 +2060,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     login: function login() {
       axios.post("/login", this.user).then(function (response) {
-        console.log("forza Roma > Lazio");
+        location.href = '/admin';
       })["catch"](function (error) {
         console.log("git fetch --prugne");
       });
@@ -2115,7 +2115,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     register: function register() {
       axios.post('/register', this.user).then(function (response) {
-        console.log('forza Roma > Lazio');
+        location.href = '/admin';
       })["catch"](function (error) {
         console.log('prugne');
       });
@@ -18912,8 +18912,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/andrea/Documents/boolean/BoolBnB/resources/js/front/front.js */"./resources/js/front/front.js");
-module.exports = __webpack_require__(/*! /Users/andrea/Documents/boolean/BoolBnB/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/js/front/front.js */"./resources/js/front/front.js");
+module.exports = __webpack_require__(/*! /Users/giovanni/Documents/Coding/Boolean/Playground/BoolBnB/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
