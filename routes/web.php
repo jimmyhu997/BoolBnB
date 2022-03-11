@@ -23,7 +23,6 @@ Route::prefix('admin')->middleware('auth')->get('/{any?}', function () {
 })->where('any', '.*');
 
 
-
 Route::get('{any?}', function () {
     return view('home');
 })->where('any', '.*');
