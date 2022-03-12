@@ -20,8 +20,8 @@ class StayController extends Controller
     {   
 
         $stays = Stay::all()->where('user_id', Auth::user()->id);
-
         return response()->json($stays);
+        
     }
 
 
@@ -50,7 +50,7 @@ class StayController extends Controller
         // da sistemare con TomTom
         $newStay->longitude = 10.10;
         $newStay->latitude = 10.10;
-
+        
         // $newStay->rooms = $data['rooms'];
         // $newStay->beds = $data['beds'];
         // $newStay->bathrooms = $data['bathrooms'];
@@ -93,12 +93,39 @@ class StayController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Stay $stay)
+    public function update(Request $request, Stay $stay)
     {
+        $data = $request->all();
+
+        $stay->title = $data['title'];
+
+        // Slug da gestire correttamente 
+        $stay->slug = $data['title'];
+
+        $stay->description = $data['description'];
+        $stay->square_meters = $data['square_meters'];
+        $stay->guests = $data['guests'];
+
+
+        // da sistemare con TomTom
+        $stay->longitude = 10.10;
+        $stay->latitude = 10.10;
+
+        // $stay->rooms = $data['rooms'];
+        // $stay->beds = $data['beds'];
+        // $stay->bathrooms = $data['bathrooms'];
+        // $stay->street_address = $data['street_address'];
+        // $stay->zip_code = $data['zip_code'];
+        // $stay->city = $data['city'];
+        // $stay->province_state = $data['province_state'];
+        // $stay->country = $data['country'];
+        // $stay->image_path = '//';
+        // $stay->price = $data['price'];
+        $stay->save();
 
         return response()->json([
             "stayId" => $stay->id
-         ]);
+        ]);
     }
 
     /**
@@ -107,8 +134,13 @@ class StayController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Stay $stay)
     {
-        //
+
+        $stay->delete();
+
+        return response()->json([
+            "stayId" => $stay->id
+        ]);
     }
 }
