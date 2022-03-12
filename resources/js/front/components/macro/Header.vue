@@ -123,6 +123,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
   }
   &__left, &__right, &__center {
     flex-shrink: 0;
@@ -137,21 +138,22 @@ export default {
     text-decoration: none;
     svg {fill: white}
     .site-name {
-      visibility: hidden;
+      display: none;
       @media screen and (min-width: $x-large) {
         color: white;
-        visibility: visible;
+        display: inline;
         margin-left: .3rem;
         font-size: 1.3rem;
       }
     }
   }
   &__center {
-
+    flex: 1;
+    padding: 0 1rem;
   }
   &__right {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     .menu {
       position: relative;
       &__button {

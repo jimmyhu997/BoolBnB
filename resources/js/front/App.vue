@@ -28,6 +28,7 @@ export default {
       closeAll() {
         data.menuOpened = false
         data.authOpened = false
+        data.hintsOpened = false
       }
     }
 }
