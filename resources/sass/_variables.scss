@@ -10,10 +10,22 @@ $line-height-base: 1.6;
 $blue: #3490dc;
 $indigo: #6574cd;
 $purple: #9561e2;
-$pink: #f66d9b;
+// $pink: #f66d9b;
 $red: #e3342f;
 $orange: #f6993f;
 $yellow: #ffed4a;
 $green: #38c172;
 $teal: #4dc0b5;
 $cyan: #6cb2eb;
+
+
+// Colors
+$pink: rgb(252, 28, 74);
+$darkPink: rgb(219, 0, 68);
+$lightGrey: rgba(0, 0, 0, .05);
+
+// Dimensions
+// Media queries
+$medium: 744px;
+$large: 952px;
+$x-large: 1130px;
