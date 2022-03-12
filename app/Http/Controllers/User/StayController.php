@@ -6,10 +6,30 @@ use App\Http\Controllers\Controller;
 use App\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class StayController extends Controller
 {
-   
+    protected $validationRule = [
+        "title" => "required|string|max:100",
+        "description" => "required|string",
+        "square_meters" => "required|numeric|max:999",
+        "guests" => "required|numeric|max:99",
+        "rooms" => "required|numeric|max:99",
+        "beds" => "required|numeric|max:99",
+        "bathrooms" => "required|numeric|max:99",
+        "street_address" => "required|string",
+        "zip_code" => "required|string|max:12",
+        "city" => "required|string|max:50",
+        "province_state" => "required|string|max:50",
+        "country" => "required|string|max:50",
+
+        // da modificare il nullable 
+        // "image_path" => "nullable|mimes:jpeg,jpg,bmp,png|max:2048",
+
+        "price" => "required",
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -18,10 +38,8 @@ class StayController extends Controller
     
      public function index()
     {   
-
         $stays = Stay::all()->where('user_id', Auth::user()->id);
         return response()->json($stays);
-        
     }
 
 
@@ -32,7 +50,9 @@ class StayController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        $request->validate($this->validationRule);
+
         $data = $request->all();
 
         $newStay = new Stay();
@@ -41,6 +61,16 @@ class StayController extends Controller
 
         // Slug da gestire correttamente 
         $newStay->slug = $data['title'];
+
+        $slug = Str::of($newStay->title)->slug("-");
+        
+        $count = 1;
+
+        while( Stay::where("slug", $slug)->first()) {
+            $slug = Str::of($newStay->title)->slug("-")."-{$count}";
+            $count++;
+        }
+        $newStay->slug = $slug;
 
         $newStay->description = $data['description'];
         $newStay->square_meters = $data['square_meters'];
@@ -51,29 +81,24 @@ class StayController extends Controller
         $newStay->longitude = 10.10;
         $newStay->latitude = 10.10;
         
-        // $newStay->rooms = $data['rooms'];
-        // $newStay->beds = $data['beds'];
-        // $newStay->bathrooms = $data['bathrooms'];
-        // $newStay->street_address = $data['street_address'];
-        // $newStay->zip_code = $data['zip_code'];
-        // $newStay->city = $data['city'];
-        // $newStay->province_state = $data['province_state'];
-        // $newStay->country = $data['country'];
-        // $newStay->image_path = '//';
-        // $newStay->price = $data['price'];
+        $newStay->rooms = $data['rooms'];
+        $newStay->beds = $data['beds'];
+        $newStay->bathrooms = $data['bathrooms'];
+        $newStay->street_address = $data['street_address'];
+        $newStay->zip_code = $data['zip_code'];
+        $newStay->city = $data['city'];
+        $newStay->province_state = $data['province_state'];
+        $newStay->country = $data['country'];
 
-        // dati di prova perchè sono pigro 
-        $newStay->rooms = 1;
-        $newStay->beds = 3;
-        $newStay->bathrooms = 2;
-        $newStay->street_address = 'ciaoneee';
-        $newStay->zip_code = '00071';
-        $newStay->city = 'Pomezia';
-        $newStay->province_state = 'Roma';
-        $newStay->country = 'Italia';
+        // if(isset($data["imagePath"])) {
+        //     // dd($data['imagePath']);
+        //     $stayImage = Storage::put("uploads", $data["imagePath"]);
+        //     $newStay->image_path = $stayImage;
+        // }
         $newStay->image_path = '//';
-        $newStay->price = 50;
+        $newStay->price = $data['price'];
 
+       
         $newStay->user_id = Auth::user()->id;
         $newStay->save();
         return response()->json([
@@ -95,13 +120,28 @@ class StayController extends Controller
      */
     public function update(Request $request, Stay $stay)
     {
+        $request->validate($this->validationRule);
+
         $data = $request->all();
 
         $stay->title = $data['title'];
 
-        // Slug da gestire correttamente 
-        $stay->slug = $data['title'];
+        if ( $stay->title != $data['title']) {
+            $stay->title = $data['title']; 
 
+            $slug = Str::of($stay->title)->slug("-");
+            
+            if($slug != $stay->slug) {
+                $count = 1;
+
+                while( Stay::where("slug", $slug)->first()) {
+                    $slug = Str::of($stay->title)->slug("-")."-{$count}";
+                    $count++;
+                }
+                $stay->slug = $slug;
+            }
+        }
+       
         $stay->description = $data['description'];
         $stay->square_meters = $data['square_meters'];
         $stay->guests = $data['guests'];
@@ -111,16 +151,16 @@ class StayController extends Controller
         $stay->longitude = 10.10;
         $stay->latitude = 10.10;
 
-        // $stay->rooms = $data['rooms'];
-        // $stay->beds = $data['beds'];
-        // $stay->bathrooms = $data['bathrooms'];
-        // $stay->street_address = $data['street_address'];
-        // $stay->zip_code = $data['zip_code'];
-        // $stay->city = $data['city'];
-        // $stay->province_state = $data['province_state'];
-        // $stay->country = $data['country'];
-        // $stay->image_path = '//';
-        // $stay->price = $data['price'];
+        $stay->rooms = $data['rooms'];
+        $stay->beds = $data['beds'];
+        $stay->bathrooms = $data['bathrooms'];
+        $stay->street_address = $data['street_address'];
+        $stay->zip_code = $data['zip_code'];
+        $stay->city = $data['city'];
+        $stay->province_state = $data['province_state'];
+        $stay->country = $data['country'];
+        $stay->image_path = '//';
+        $stay->price = $data['price'];
         $stay->save();
 
         return response()->json([
@@ -136,7 +176,6 @@ class StayController extends Controller
      */
     public function destroy(Stay $stay)
     {
-
         $stay->delete();
 
         return response()->json([
