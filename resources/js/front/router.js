@@ -5,7 +5,7 @@ Vue.use(VueRouter);
 
 // import Register from './components/pages/Register.vue';
 
-import Home from './components/pages/Home.vue';
+import Home from './components/pages/home/Home.vue';
 
 const router = new VueRouter({
     mode: "history",
