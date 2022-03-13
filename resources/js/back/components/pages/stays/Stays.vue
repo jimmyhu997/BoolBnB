@@ -27,7 +27,6 @@ export default {
         return {
             data,
             stays: [],
-            
         }
     },
 
@@ -35,7 +34,6 @@ export default {
       axios.get("/user/stays").then( (response) => {
           console.log(response.data);
           this.stays = response.data[0];
-          data.perks = response.data[1];
       });
     },
 
@@ -44,7 +42,7 @@ export default {
         axios.delete(`/user/stays/${stay}`).then( (response) => {
           console.log(response);
           axios.get("/user/stays").then( (response) => {
-            this.stays = response.data;
+            this.stays = response.data[0];
           });
         });
       }
