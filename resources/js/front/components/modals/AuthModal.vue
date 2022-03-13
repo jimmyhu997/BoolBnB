@@ -29,10 +29,19 @@
           <h2 class="body-title">Sign up to Boolbnb</h2>
           <form @submit.prevent="register()">
             <div class="input-group">
-              <input class="input" type="text" v-model="registerData.name" required placeholder="Name">
-              <input class="input" type="email" v-model="registerData.email" required placeholder="Email">
-              <input class="input" type="password" v-model="registerData.password" required placeholder="Password">
-              <input class="input" type="password" v-model="registerData.password_confirmation" required  placeholder="Confirm password">
+              <input class="input" type="text" v-model="registerData.name" required placeholder="Name*">
+              <input class="input" type="text" v-model="registerData.surname" placeholder="Surname">
+              <div class="input date">
+                <!-- Flowbite date picker using Tailwind framework -->
+                <div class="relative flex">
+                  <div class="z-auto flex absolute inset-y-0 left-0 items-center pointer-events-none"></div>
+                  <input v-model="registerData.birthday" datepicker datepicker-format="dd/mm/yyyy" datepicker-title="Birthday" datepicker-autohide type="text" class="p-0 text-gray-900 rounded-lg block w-full light:bg-gray-700 light:placeholder-gray-400 light:text-white" placeholder="Birthday">
+                  <svg class="w-5 h-5 text-gray-500 light:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                </div>
+              </div>
+              <input class="input" type="email" v-model="registerData.email" required placeholder="Email*">
+              <input class="input" type="password" v-model="registerData.password" required placeholder="Password*">
+              <input class="input" type="password" v-model="registerData.password_confirmation" required  placeholder="Confirm password*">
             </div>
             <button class="action-btn" type="submit">Sign up</button>
           </form>
@@ -104,7 +113,7 @@ export default {
 @import '../../../../sass/_variables.scss';
 .auth-modal {
   position: fixed;
-  z-index: 9999;
+  z-index: 3;
   top: 0;
   left: 0;
   width: calc(100vw - (100% - 100vw));
@@ -175,13 +184,24 @@ export default {
       border-radius: .8rem;
       border: 1px solid #888;
       overflow: hidden;
-      .input {
+      .input, .date {
         border: none;
         padding: 1rem;
         font-size: 1.2rem;
         font-weight: 300;
       }
-      .input:not(:last-of-type) {
+      .date {
+        svg {
+          fill: $darkPink;
+        }
+        input {
+          outline: none;
+          font-size: 1.2rem;
+          font-weight: 300;
+          cursor: pointer;
+        }
+      }
+      .input:not(:last-of-type), .date {
         border-bottom: 1px solid #888;
       }
     }
