@@ -25,6 +25,7 @@ Auth::routes();
 
 Route::prefix('user')->middleware('auth')->namespace('User')->group( function () {
     Route::resource('stays' , 'StayController');
+    Route::resource('manage' , 'UserController');
 
     Route::get('/{any?}', function () {
         return view('registered_user.dashboard');
