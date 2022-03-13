@@ -33,10 +33,10 @@ export default {
             title: 'My Apartments',
             route: 'stays'
           },
-          {
-            title: 'Sponsor',
-            route: 'sponsor'
-          }
+          // {
+          //   title: 'Sponsor',
+          //   route: 'sponsor'
+          // }
         ]
       }
     },

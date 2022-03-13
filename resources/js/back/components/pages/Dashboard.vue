@@ -3,7 +3,7 @@
       <h2>Home Back Office</h2>
       <h3>Benvenuto {{userInfo.name}}</h3>
       <button @click="deleteUser()">Cancella Account</button>
-      <router-link :to="{name:'stays'}">Lista annunci</router-link>
+      <router-link :to="{name:'create-stay'}">Nuovo annuncio</router-link>
   </div>
 </template>
 

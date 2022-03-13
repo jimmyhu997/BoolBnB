@@ -132,11 +132,11 @@
           </div>
         </div> 
 
-        <div>
+        <!-- <div>
           <input type="file" id="image" ref="image">
           <img src="" ref="prova" alt="">
 
-        </div>
+        </div> -->
 
         <div>
           <h5>Regole</h5>
@@ -165,20 +165,20 @@ export default {
         data,
         perks: [],
         apartment: {
-          title: 'wef',
-          description: 'sfse',
-          square_meters: 5,
-          guests: 4,
-          rooms: 4,
-          beds: 8,
-          bathrooms: 3,
-          street_address: 'kgy',
-          zip_code: 'tyhtf',
-          city: 'fth',
-          province_state: 'fth',
-          country: 'fth',
-          imagePath:{},
-          price: 2,
+          title: '',
+          description: '',
+          square_meters: null,
+          guests: null,
+          rooms: null,
+          beds: null,
+          bathrooms: null,
+          street_address: '',
+          zip_code: '',
+          city: '',
+          province_state: '',
+          country: '',
+          // imagePath:{},
+          price: null,
           perks:[]
         },
         errors:{},
