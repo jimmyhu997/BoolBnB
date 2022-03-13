@@ -1,5 +1,5 @@
 /node_modules
-/public/js/back.js
+/public/js
 /public/css
 /storage/*.key
 /vendor

@@ -1,24 +1,19 @@
 <template>
   <main>
-    <div v-if="!window.loggedIn">
-      <Login/>
-      <Register/>
-    </div>
-    <button @click="logout()" v-else>Logout</button>
 
     <router-view :key="$route.path"></router-view>
+    
+    <AuthModal/>
   </main>
 </template>
 
 <script>
-import Login from "../modals/Login.vue";
-import Register from "../modals/Register.vue";
+import AuthModal from "../modals/AuthModal.vue";
 
 export default {
   name: "Main",
   components: {
-    Login,
-    Register,
+    AuthModal
   },
   data() {
     return {
@@ -26,16 +21,11 @@ export default {
     }
   },
   methods: {
-    logout() {
-      axios
-        .post("/logout")
-        .then((response) => {
-          location.href = '/'
-        })
-        .catch((error) => {
-          console.log("sconfitta");
-        });
-    },
+
   },
 };
 </script>
+
+<style lang="scss" scoped>
+
+</style>
