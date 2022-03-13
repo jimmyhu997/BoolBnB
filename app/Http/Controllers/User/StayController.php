@@ -103,6 +103,10 @@ class StayController extends Controller
        
         $newStay->user_id = Auth::user()->id;
         $newStay->save();
+
+        if (isset($data["perks"]) ) {
+            $newStay->perks()->sync($data["perks"]);
+        }
         return response()->json([
            "stayId" => $newStay->id
         ]);
