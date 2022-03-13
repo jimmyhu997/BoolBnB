@@ -11,6 +11,10 @@
 
     {{-- <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script> --}}
+    {{-- Tailwind cdn --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Flowbite cdn --}}
+    <script src="https://unpkg.com/flowbite@1.3.4/dist/datepicker.js"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
