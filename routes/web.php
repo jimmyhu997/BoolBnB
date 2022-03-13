@@ -26,6 +26,8 @@ Auth::routes();
 Route::prefix('user')->middleware('auth')->namespace('User')->group( function () {
     Route::resource('stays' , 'StayController');
     Route::resource('manage' , 'UserController');
+    Route::get('add-sponsor' , 'SponsorPackageStayController@store')->name('add-sponsor');
+    Route::get('sponsor-packages' , 'SponsorPackageStayController@index')->name('sponsor-packages');
 
     Route::get('/{any?}', function () {
         return view('registered_user.dashboard');

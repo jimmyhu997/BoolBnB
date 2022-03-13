@@ -142,8 +142,12 @@
           <h5>Regole</h5>
           <div v-for="(perk,i) in data.perks" :key="i">
             <label :for="perk.name">{{perk.name}}</label>
-            <input type="checkbox" v-model="apartment.perks[i]" :id="perk.name" >
+            <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
+           
           </div>
+           <!-- <p>
+              {{apartment.perks}}
+            </p> -->
         </div>
 
         <button type="submit">Salva Dati</button>
@@ -188,7 +192,7 @@ export default {
         // this.$refs.image
         axios.post("stays", this.apartment).then((response) => {
             // console.log(response.data)
-            this.$router.push( {name: 'edit-stay', params: {stay: response.data.stayId}} )
+            this.$router.push( {name: 'stays'})
             
           })
           .catch(error => {
@@ -196,6 +200,7 @@ export default {
             this.errors = error.response.data.errors;
           });
       },
+     
     },
 
     mounted() {
@@ -213,10 +218,6 @@ export default {
       })
     },
 
-    // created() {
-    //   this.perks = data.perks;
-    //   console.log(this.perks);
-    // }
 }
 </script>
 

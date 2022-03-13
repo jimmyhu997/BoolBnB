@@ -15,7 +15,14 @@ window.axios.defaults.headers.common = {
 
 import App from './App.vue';
 import router from './router';
+import data from './global';
+console.log(data);
 
+axios.get("/user/stays").then( (response) => {
+    console.log(response.data);
+    // this.stays = response.data[0];
+    data.perks = response.data[1];
+});
 
 const reservedArea = new Vue({
     el: '#reserved-area',
