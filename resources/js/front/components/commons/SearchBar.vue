@@ -119,9 +119,6 @@ export default {
         list-style: none;
         padding: 1rem 0;
       }
-      &__item {
-
-      }
       &__link {
         display: flex;
         align-items: center;
