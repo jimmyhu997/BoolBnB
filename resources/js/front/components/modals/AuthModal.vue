@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-modal" ref="modal">
+  <div class="auth-modal visible" ref="modal">
     <div class="auth-modal__wrapper" @click.stop>
 
       <div class="auth-modal__header">
@@ -15,9 +15,15 @@
         <div class="log-in">
           <h2 class="body-title">Log in to Boolbnb</h2>
           <form @submit.prevent="login()">
-            <div class="input-group">
-              <input class="input" type="email" v-model="loginData.email" required placeholder="Email"/>
-              <input class="input" type="password" v-model="loginData.password" required placeholder="Password"/>
+            <div class="input-list">
+              <div class="input-group">
+                <input class="input" type="email" v-model="loginData.email" placeholder="Email*"/>
+                <span class="error" ref="loginEmail">Insert a valid email</span>
+              </div>
+              <div class="input-group">
+                <input class="input" type="password" v-model="loginData.password" placeholder="Password*"/>
+
+              </div>
             </div>
             <button class="action-btn" type="submit">Continue</button>
           </form>
@@ -28,7 +34,7 @@
         <div class="sign-up">
           <h2 class="body-title">Sign up to Boolbnb</h2>
           <form @submit.prevent="register()">
-            <div class="input-group">
+            <div class="input-list">
               <input class="input" ref="registerName" type="text" v-model="registerData.name" placeholder="Name*">
               <input class="input" type="text" v-model="registerData.surname" placeholder="Surname">
               <!-- <div class="input date"> -->
@@ -77,13 +83,15 @@ export default {
   },
   methods: {
     login() {
-      axios.post("/login", this.loginData)
-        .then(response => {
-          location.href = '/user'
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      console.log(this.loginData.email);
+      console.log(this.loginData.password);
+      // axios.post("/login", this.loginData)
+      //   .then(response => {
+      //     location.href = '/user'
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
     },
     register(){
       if (this.registerData.name == '') {
@@ -199,20 +207,29 @@ export default {
       font-weight: 500;
       margin-bottom: 1.3rem;
     }
-    .input-group {
+    .input-list {
       width: 100%;
       display: flex;
       flex-direction: column;
       border-radius: .8rem;
       border: 1px solid #888;
       overflow: hidden;
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
       .input, .date {
+        width: 100%;
         border: none;
         padding: 1rem;
         font-size: 1.2rem;
         font-weight: 300;
       }
-      .error::placeholder, .error {
+      .error {
+        // display: inline-block;
+        padding: .3rem 1rem;
+        border-top: .5px solid black;
         color: red;
       }
       .date {
@@ -226,7 +243,7 @@ export default {
           cursor: pointer;
         }
       }
-      .input:not(:last-of-type), .date {
+      .input-group:not(:last-of-type), .date {
         border-bottom: 1px solid #888;
       }
     }
