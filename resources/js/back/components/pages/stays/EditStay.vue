@@ -130,6 +130,20 @@
             </p>
           </div>
         </div> 
+        
+         <div>
+          <h5>Opzioni</h5>
+          <div v-for="(perk,i) in data.perks" :key="i">
+            <label :for="perk.name">{{perk.name}}</label>
+            <input @click="check(perk.id)" type="checkbox"  :id="perk.name" :value="perk.id" :checked="checked(perk.id)">
+           
+            
+           
+          </div>
+           <!-- <p>
+              {{apartment.perks}}
+            </p> -->
+        </div>
 
         <button type="submit">Salva Dati</button>
       </form>
@@ -137,11 +151,14 @@
 </template>
 
 <script>
+import data from '../../../global.js'
 
 export default {
   name:'EditStay',
   data() {
     return {
+      data,
+      activePerks:[],
       apartment:{},
       errors:{},
     }
@@ -149,7 +166,12 @@ export default {
   created() {
     axios.get(`/user/stays/${this.$route.params.stay}/edit`).then( (response) => {
       this.apartment = response.data;
-      console.log(this.apartment);
+      // console.log(this.apartment.perks.lenght);
+      this.activePerks = this.apartment.perks.map(perk => {
+        return perk.id
+      });
+      console.log(this.activePerks);
+      // console.log(this.apartment);
     
     }).catch((error) => {
             console.log(error.response.status);
@@ -165,6 +187,7 @@ export default {
 
   methods: {
     update() {
+      this.apartment.perks = this.activePerks;
        axios.put(`/user/stays/${this.$route.params.stay}`, this.apartment).then((response) => {
             console.log(response.data)
             this.$router.push( {name: 'stays'})
@@ -175,7 +198,26 @@ export default {
             this.errors = error.response.data.errors;
 
           });
+    },
+
+    checked(id) {
+      // return this.data.perks[index].id === this.apartment.perks[index].id
+      for(var i = 0; i < this.activePerks.length; i++){
+        if(id == this.activePerks[i]){
+          console.log('forza roma');
+          return true
+        }
+      }  
+    },
+    check(id) {
+      if(this.activePerks.includes(id)){
+        this.activePerks.splice(this.activePerks.indexOf(id),1)
+      } else {
+        this.activePerks.push(id)
+      }
+      console.log(this.activePerks);
     }
+
   }
  
 }
