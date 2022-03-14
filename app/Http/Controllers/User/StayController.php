@@ -113,9 +113,17 @@ class StayController extends Controller
     }
 
   
-    public function edit(Stay $stay) {
-        
-        return response()->json($stay);
+    public function edit($stayId) {
+        $stay = Stay::where('id','=',$stayId)->with(['perks'])->get()->first();
+
+        if($stay->user_id == Auth::user()->id) {
+            return response()->json($stay);
+        }
+        else {
+            return response()->json([
+                'success' => false
+            ],404);
+        }
     }
     /**
      * Update the specified resource in storage.
@@ -168,6 +176,10 @@ class StayController extends Controller
         $stay->image_path = '//';
         $stay->price = $data['price'];
         $stay->save();
+
+        if (isset($data["perks"]) ) {
+            $stay->perks()->sync($data["perks"]);
+        }
 
         return response()->json([
             "stayId" => $stay->id

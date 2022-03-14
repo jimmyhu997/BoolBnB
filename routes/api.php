@@ -17,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// API Routes 
+Route::get('/stays', "Api\StayController@index");
+Route::get("/stays/{slug}", "Api\StayController@show");
+

@@ -135,11 +135,11 @@
         <!-- <div>
           <input type="file" id="image" ref="image">
           <img src="" ref="prova" alt="">
-
+          
         </div> -->
 
         <div>
-          <h5>Regole</h5>
+          <h5>Opzioni</h5>
           <div v-for="(perk,i) in data.perks" :key="i">
             <label :for="perk.name">{{perk.name}}</label>
             <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
@@ -179,7 +179,9 @@ export default {
           country: '',
           // imagePath:{},
           price: null,
-          perks:[]
+          perks:[],
+          latitude: null,
+          longitude: null,
         },
         errors:{},
       }
@@ -190,6 +192,22 @@ export default {
         // formData.append('title', this.apartment.title)
         // console.log(formData);
         // this.$refs.image
+        console.log(axios);
+        console.log(externalAxios);
+        externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
+          params: {
+            key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+            limit: 3,
+            // countrySet: 'IT/ITA',
+          }
+        }).then((response) => {
+            console.log(response.data.results)
+            // this.$router.push( {name: 'stays'})
+          }).catch(error => {
+            // console.log(error);
+            // this.errors = error.response.data.errors;
+          });
+
         axios.post("stays", this.apartment).then((response) => {
             // console.log(response.data)
             this.$router.push( {name: 'stays'})
@@ -202,24 +220,22 @@ export default {
       },
      
     },
-
-    mounted() {
-      // console.log(this.$refs.image);
-      this.$refs.image.addEventListener('change', () => {
-        const [file] = this.$refs.image.files;
-        if (file) {
-          // let formData = new FormData();
-          this.apartment.imagePath =  file;
-          // formData.append('file', file) 
-
-          // console.log(formData);
-          // this.$refs.prova.src = URL.createObjectURL(file);
-        } 
-      })
-    },
-
+    // mounted() {
+    //   // console.log(this.$refs.image);
+    //   this.$refs.image.addEventListener('change', () => {
+    //     const [file] = this.$refs.image.files;
+    //     if (file) {
+    //       // let formData = new FormData();
+    //       this.apartment.imagePath =  file;
+    //       // formData.append('file', file) 
+    //       // console.log(formData);
+    //       // this.$refs.prova.src = URL.createObjectURL(file);
+    //     } 
+    //   })
+    // },
 }
 </script>
+
 
 <style>
 
