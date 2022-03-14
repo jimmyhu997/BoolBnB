@@ -5,7 +5,9 @@ window.axios.defaults.headers.common = {
     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
     'X-Requested-With': 'XMLHttpRequest'
 };
-
+window.externalAxios = axios.create()
+delete externalAxios.defaults.headers.common['X-CSRF-TOKEN']
+delete externalAxios.defaults.headers.common['X-Requested-With']
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -16,7 +18,6 @@ window.axios.defaults.headers.common = {
 import App from './App.vue';
 import router from './router';
 import data from './global';
-console.log(data);
 
 axios.get("/user/stays").then( (response) => {
     console.log(response.data);
