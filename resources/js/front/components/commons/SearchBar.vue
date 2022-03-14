@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import data from '../../global'
+import data from '../../../vue-commons/vueGlobal'
 
 export default {
     name: 'SearchBar',
