@@ -150,17 +150,28 @@ export default {
     axios.get(`/user/stays/${this.$route.params.stay}/edit`).then( (response) => {
       this.apartment = response.data;
       console.log(this.apartment);
-    })
+    
+    }).catch((error) => {
+            console.log(error.response.status);
+            if(error.response.status == 404) {
+               this.$router.push( {name: '404'})
+            }
+            else {
+              this.errors = error.response.data.errors;
+            }
+
+          });
   }, 
 
   methods: {
     update() {
        axios.put(`/user/stays/${this.$route.params.stay}`, this.apartment).then((response) => {
             console.log(response.data)
-            // this.$router.push( {name: 'edit-stay', params: {stay: response.data.stayId}} )
+            this.$router.push( {name: 'stays'})
+            console.log('ciao');
           })
           .catch((error) => {
-            // console.log(error);
+            console.log(error);
             this.errors = error.response.data.errors;
 
           });

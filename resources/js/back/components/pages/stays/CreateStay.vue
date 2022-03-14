@@ -139,7 +139,7 @@
         </div> -->
 
         <div>
-          <h5>Regole</h5>
+          <h5>Opzioni</h5>
           <div v-for="(perk,i) in data.perks" :key="i">
             <label :for="perk.name">{{perk.name}}</label>
             <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
