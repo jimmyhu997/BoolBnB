@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-modal visible" ref="modal">
+  <div class="auth-modal" ref="modal">
     <div class="auth-modal__wrapper" @click.stop>
 
       <div class="auth-modal__header">
@@ -85,13 +85,13 @@ export default {
     login() {
       console.log(this.loginData.email);
       console.log(this.loginData.password);
-      // axios.post("/login", this.loginData)
-      //   .then(response => {
-      //     location.href = '/user'
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+      axios.post("/login", this.loginData)
+        .then(response => {
+          location.href = '/user'
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     register(){
       if (this.registerData.name == '') {
