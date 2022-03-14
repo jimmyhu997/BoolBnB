@@ -257,7 +257,7 @@ export default {
         .footer-down{
           display: flex;
           flex-direction: row-reverse;
-          justify-content: start;
+          justify-content: flex-start;
           justify-content: space-between;  
           }
 
@@ -290,7 +290,7 @@ export default {
           #copyright li{  
             display: flex;
             flex-wrap: nowrap;
-            justify-content: start;
+            justify-content: flex-start;
             
             a{
               flex-wrap: nowrap;
