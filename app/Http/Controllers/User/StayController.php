@@ -114,8 +114,14 @@ class StayController extends Controller
 
   
     public function edit(Stay $stay) {
-        
-        return response()->json($stay);
+        if($stay->user_id == Auth::user()->id) {
+            return response()->json($stay);
+        }
+        else {
+            return response()->json([
+                'success' => false
+            ],404);
+        }
     }
     /**
      * Update the specified resource in storage.
