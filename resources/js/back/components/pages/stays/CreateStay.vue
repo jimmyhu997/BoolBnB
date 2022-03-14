@@ -132,18 +132,22 @@
           </div>
         </div> 
 
-        <div>
+        <!-- <div>
           <input type="file" id="image" ref="image">
           <img src="" ref="prova" alt="">
 
-        </div>
+        </div> -->
 
         <div>
           <h5>Regole</h5>
           <div v-for="(perk,i) in data.perks" :key="i">
             <label :for="perk.name">{{perk.name}}</label>
-            <input type="checkbox" v-model="apartment.perks[i]" :id="perk.name" >
+            <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
+           
           </div>
+           <!-- <p>
+              {{apartment.perks}}
+            </p> -->
         </div>
 
         <button type="submit">Salva Dati</button>
@@ -161,20 +165,20 @@ export default {
         data,
         perks: [],
         apartment: {
-          title: 'wef',
-          description: 'sfse',
-          square_meters: 5,
-          guests: 4,
-          rooms: 4,
-          beds: 8,
-          bathrooms: 3,
-          street_address: 'kgy',
-          zip_code: 'tyhtf',
-          city: 'fth',
-          province_state: 'fth',
-          country: 'fth',
-          imagePath:{},
-          price: 2,
+          title: '',
+          description: '',
+          square_meters: null,
+          guests: null,
+          rooms: null,
+          beds: null,
+          bathrooms: null,
+          street_address: '',
+          zip_code: '',
+          city: '',
+          province_state: '',
+          country: '',
+          // imagePath:{},
+          price: null,
           perks:[]
         },
         errors:{},
@@ -188,7 +192,7 @@ export default {
         // this.$refs.image
         axios.post("stays", this.apartment).then((response) => {
             // console.log(response.data)
-            this.$router.push( {name: 'edit-stay', params: {stay: response.data.stayId}} )
+            this.$router.push( {name: 'stays'})
             
           })
           .catch(error => {
@@ -196,6 +200,7 @@ export default {
             this.errors = error.response.data.errors;
           });
       },
+     
     },
 
     mounted() {
@@ -213,10 +218,6 @@ export default {
       })
     },
 
-    // created() {
-    //   this.perks = data.perks;
-    //   console.log(this.perks);
-    // }
 }
 </script>
 

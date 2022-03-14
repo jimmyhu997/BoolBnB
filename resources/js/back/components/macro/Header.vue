@@ -5,8 +5,10 @@
     </div>
     <div class="middle_menu">
       <ul>
-        <li><router-link :to="{name:'dashboard'}">Dashboard</router-link></li>
-        <li v-for="option,index in this.menu" :key="index" ><router-link :to="{name:'stays'}">My Apartment</router-link></li>
+        <li v-for="option,index in this.menu" :key="index" >
+          <router-link :to="{name: option.route}">{{option.title}}</router-link>
+        </li>
+        
       </ul>
       
     </div>
@@ -22,7 +24,20 @@ export default {
     name: 'Header',
     data(){
       return {
-        menu: ['My Apartment']
+        menu: [
+          {
+            title: 'Dashboard',
+            route: 'dashboard'
+          },
+          {
+            title: 'My Apartments',
+            route: 'stays'
+          },
+          // {
+          //   title: 'Sponsor',
+          //   route: 'sponsor'
+          // }
+        ]
       }
     },
     methods: {
