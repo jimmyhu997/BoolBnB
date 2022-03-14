@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-modal" ref="modal">
+  <div class="auth-modal visible" ref="modal">
     <div class="auth-modal__wrapper" @click.stop>
 
       <div class="auth-modal__header">
@@ -15,9 +15,15 @@
         <div class="log-in">
           <h2 class="body-title">Log in to Boolbnb</h2>
           <form @submit.prevent="login()">
-            <div class="input-group">
-              <input class="input" type="email" v-model="loginData.email" required placeholder="Email"/>
-              <input class="input" type="password" v-model="loginData.password" required placeholder="Password"/>
+            <div class="input-list">
+              <div class="input-group">
+                <input class="input" type="email" v-model="loginData.email" placeholder="Email*"/>
+                <span class="error" ref="loginEmail">Insert a valid email</span>
+              </div>
+              <div class="input-group">
+                <input class="input" type="password" v-model="loginData.password" placeholder="Password*"/>
+
+              </div>
             </div>
             <button class="action-btn" type="submit">Continue</button>
           </form>
@@ -28,7 +34,7 @@
         <div class="sign-up">
           <h2 class="body-title">Sign up to Boolbnb</h2>
           <form @submit.prevent="register()">
-            <div class="input-group">
+            <div class="input-list">
               <input class="input" ref="registerName" type="text" v-model="registerData.name" placeholder="Name*">
               <input class="input" type="text" v-model="registerData.surname" placeholder="Surname">
               <!-- <div class="input date"> -->
@@ -54,7 +60,7 @@
 </template>
 
 <script>
-import data from '../../global'
+import data from '../../../vue-commons/vueGlobal'
 
 export default {
   name: "Login",
@@ -77,13 +83,15 @@ export default {
   },
   methods: {
     login() {
-      axios.post("/login", this.loginData)
-        .then(response => {
-          location.href = '/user'
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      console.log(this.loginData.email);
+      console.log(this.loginData.password);
+      // axios.post("/login", this.loginData)
+      //   .then(response => {
+      //     location.href = '/user'
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
     },
     register(){
       if (this.registerData.name == '') {
@@ -122,17 +130,23 @@ export default {
   z-index: 3;
   top: 0;
   left: 0;
-  width: calc(100vw - (100% - 100vw));
+  width: calc(100% - (100% - 100vw));
   height: 100vh;
   background-color: transparent;
   visibility: hidden;
   transition: background-color .3s;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow-y: auto;
+  @media screen and (min-width: 568px) {
+    display: grid;
+    place-items: center;
+  }
   &.visible {
     visibility: visible;
     background-color: rgba(0, 0, 0, 0.3);
+    // background-color: red;
     .auth-modal__wrapper {
       transform: translateY(0);
     }
@@ -144,13 +158,17 @@ export default {
     background-color: #fff;
     transform: translateY(100%);
     transition: transform .3s;
-    @media screen and (min-width: 568px) {
+    display: flex;
+    flex-direction: column;
+    @media screen and (min-width: 568px) and (min-height: 500px) {
+      width: 568px;
       height: max-content;
       border-radius: 1rem;
       margin: 2rem 0;
     }
   }
   &__header {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -180,23 +198,38 @@ export default {
   }
   &__body {
     padding: 1.5rem;
+    width: 100%;
+    // height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     .body-title {
       font-weight: 500;
       margin-bottom: 1.3rem;
     }
-    .input-group {
+    .input-list {
+      width: 100%;
       display: flex;
       flex-direction: column;
       border-radius: .8rem;
       border: 1px solid #888;
       overflow: hidden;
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
       .input, .date {
+        width: 100%;
         border: none;
         padding: 1rem;
         font-size: 1.2rem;
         font-weight: 300;
       }
-      .error::placeholder, .error {
+      .error {
+        // display: inline-block;
+        padding: .3rem 1rem;
+        border-top: .5px solid black;
         color: red;
       }
       .date {
@@ -210,7 +243,7 @@ export default {
           cursor: pointer;
         }
       }
-      .input:not(:last-of-type), .date {
+      .input-group:not(:last-of-type), .date {
         border-bottom: 1px solid #888;
       }
     }

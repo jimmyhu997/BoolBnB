@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="closeAll()">
     <Header/>
     <Main/>
     <Footer/>
@@ -7,9 +7,10 @@
 </template>
 
 <script>
-import Header from './components/macro/Header.vue';
+import Header from '../vue-commons/macro/Header.vue';
 import Main from './components/macro/Main.vue';
-import Footer from './components/macro/Footer.vue';
+import Footer from '../vue-commons/macro/Footer.vue';
+import data from '../vue-commons/vueGlobal'
 
 
 export default {
@@ -19,5 +20,17 @@ export default {
         Main,
         Footer
     },
+    data() {
+      return {
+        data
+      }
+    },
+    methods: {
+      closeAll() {
+        data.menuOpened = false
+        data.authOpened = false
+        data.hintsOpened = false
+      }
+    }
 }
 </script>

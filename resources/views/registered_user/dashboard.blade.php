@@ -25,6 +25,16 @@
 
     </div>
 
+    @guest
+        <script>
+            window.loggedIn = false
+        </script>
+    @else
+        <script>
+            window.loggedIn = true
+        </script>
+    @endguest
+
     <script src="{{asset('js/back.js')}}"></script>
 
 </body>
