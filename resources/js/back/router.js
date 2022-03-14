@@ -41,7 +41,7 @@ const router = new VueRouter({
         },
 
         {
-            path:'/user/sponsor/:stay',
+            path:'/user/sponsor',
             name:'sponsor',
             component: SponsorPackages
         },

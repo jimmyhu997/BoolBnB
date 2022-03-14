@@ -15,7 +15,14 @@
         </div>
 
         <div class="header__center">
-          <SearchBar/>
+          <SearchBar v-if="this.$route.name == 'home'"/>
+          <nav v-else class="nav__links">
+            <ul class="nav__list">
+              <li class="nav__item" v-for="(option, index) in this.links" :key="index">
+                <router-link :to="{name: option.route}" class="nav__link">{{option.title}}</router-link>
+              </li>
+            </ul>
+          </nav>
         </div>
 
           <!-- Menu -->
@@ -31,10 +38,18 @@
             </button>
             <div class="menu__hidden" ref="menu" v-show="data.menuOpened" @click.stop>
               <nav class="menu__list">
+                <div class="mobile" v-if="this.$route.path.includes('user')">
+                  <div class="menu__item" v-for="(option, index) in this.links" :key="index">
+                    <router-link :to="{name: option.route}" class="menu__link">{{option.title}}</router-link>
+                  </div>
+                </div>
                 <div class="menu__item" v-if="window.loggedIn">
                   <a class="menu__link" @click.prevent="logout()" title="Log out">Log out</a>
                 </div>
-                <div class="menu__item" v-if="window.loggedIn">
+                <div class="menu__item" v-if="window.loggedIn && this.$route.path.includes('user')">
+                  <a class="menu__link delete" @click.prevent="deleteUser()" title="Delete account">Delete account</a>
+                </div>
+                <div class="menu__item" v-if="window.loggedIn && !this.$route.path.includes('user')">
                   <a class="menu__link" href="/user" title="Dashboard">Dashboard</a>
                 </div>
                 <div class="menu__item" v-if="!window.loggedIn">
@@ -54,22 +69,45 @@
 </template>
 
 <script>
-import SearchBar from '../commons/SearchBar.vue'
-import data from '../../global'
+import SearchBar from '../../front/components/commons/SearchBar.vue'
+import data from '../vueGlobal'
 export default {
     name: 'Header',
     components: { SearchBar },
     data() {
       return {
-        data
+        data,
+        links: [
+          {
+            title: 'Dashboard',
+            route: 'dashboard'
+          },
+          {
+            title: 'My Apartments',
+            route: 'stays'
+          },
+          {
+            title: 'Sponsor',
+            route: 'sponsor'
+          }
+        ],
+        userInfo: {}
       }
     },
     mounted() {
-      window.addEventListener( 'scroll', () => {
-        if (window.scrollY <= 0) {
-          this.$refs.header.classList.remove('scrolled')
-        } else this.$refs.header.classList.add('scrolled')
-      })
+      if (!this.$route.path.includes('user')) {
+        window.addEventListener( 'scroll', () => {
+          if (window.scrollY <= 0) {
+            this.$refs.header.classList.remove('scrolled')
+          } else this.$refs.header.classList.add('scrolled')
+        })
+      } else {
+        this.$refs.header.classList.add('scrolled')
+        // get user info
+        axios.get('user/manage').then( (response) => {
+          this.userInfo = response.data[0];
+        })
+      }
     },
     methods: {
       openMenu() {
@@ -87,7 +125,12 @@ export default {
       openAuth() {
         data.authOpened = true
         data.menuOpened = false
-      }
+      },
+      deleteUser() {
+        axios.delete(`/user/manage/${this.userInfo.id}`).then( (response) => {
+          location.reload();
+        });
+      } 
     },
     computed: {
       window() {
@@ -98,7 +141,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../sass/_variables.scss';
+@import '../../../sass/_variables.scss';
 .header {
   height: 80px;
   width: 100%;
@@ -150,6 +193,28 @@ export default {
   &__center {
     flex: 1;
     padding: 0 1rem;
+    .nav {
+      &__links {
+        display: none;
+        @media screen and (min-width: $medium) {
+          display: block;
+        }
+      }
+      &__list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        list-style: none;
+      }
+      &__item {
+        flex-shrink: 0;
+      }
+      &__link {
+        margin: 0 2rem;
+        color: black;
+        text-decoration: none;
+      }
+    }
   }
   &__right {
     display: flex;
@@ -189,6 +254,11 @@ export default {
         border-radius: .3rem;
         box-shadow: 0 0 .2rem rgba(0, 0, 0, 0.2);
         padding: .6rem 0;
+        @media screen and (min-width: $medium) {
+          .mobile {
+            display: none;
+          }
+        }
         .menu__ {
           &link {
             display: block;
