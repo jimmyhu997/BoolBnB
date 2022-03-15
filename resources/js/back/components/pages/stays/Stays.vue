@@ -9,6 +9,9 @@
       <ul class="apartments__list">
         <li class="apartment" v-for="stay in stays" :key="stay.id">
           <a class="apartment__link" :href="'/apartment/' + stay.id" :title="stay.title">
+          <div class="apartment__preview">
+            <img class="img" :src="'/storage/' + stay.image_path" :alt="stay.title + ' preview'">
+          </div>
             <h3 class="apartment__title">
               {{stay.title}}
             </h3>
@@ -134,20 +137,47 @@ export default {
     .apartment {
       padding: 1rem;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
-        min-width: 0;
+      flex-direction: column;
+        overflow: hidden;
+      @media screen and (min-width: $small) {
+        flex-direction: row;
+        align-items: center;
+      }
       &__link {
         color: black;
         text-decoration: none;
-        display: inline-block;
-        max-width: 50%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         transition: color .2s;
-        @media screen and (min-width: 574px) {
+        @media screen and (min-width: $small) {
           max-width: 75%;
+          flex-direction: row;
+          align-items: center;
         }
         &:hover {
           color: $pink;
+        }
+      }
+      &__preview {
+        flex-shrink: 0;
+        width: 100%;
+        height: 40vw;
+        margin-bottom: 1rem;
+        @media screen and (min-width: $small) {
+          margin-bottom: 0;
+          margin-right: 1rem;
+          width: 5rem;
+          height: 3rem;
+        }
+        .img {
+          object-fit: cover;
+          object-position: center;
+          width: 100%;
+          height: 100%;
+          border-radius: .2rem;
         }
       }
       &__title {
