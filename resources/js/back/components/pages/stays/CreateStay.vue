@@ -132,11 +132,11 @@
           </div>
         </div> 
 
-        <!-- <div>
-          <input type="file" id="image" ref="image">
+        <div>
+          <input type="file" id="image" @change="onChangeImage">
           <img src="" ref="prova" alt="">
           
-        </div> -->
+        </div>
 
         <div>
           <h5>Opzioni</h5>
@@ -163,6 +163,7 @@ export default {
     data() {
       return {
         data,
+        storedImage : '',
         perks: [],
         apartment: {
           title: '',
@@ -177,7 +178,7 @@ export default {
           city: '',
           province_state: '',
           country: '',
-          // imagePath:{},
+          imagePath:{},
           price: null,
           perks:[],
           latitude: null,
@@ -187,31 +188,36 @@ export default {
       }
     },
     methods: {
-      create() {
-        // const formData = new FormData();
-        // formData.append('title', this.apartment.title)
-        // console.log(formData);
-        // this.$refs.image
-        console.log(axios);
-        console.log(externalAxios);
-        externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
-          params: {
-            key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-            limit: 3,
-            // countrySet: 'IT/ITA',
-          }
-        }).then((response) => {
-            console.log(response.data.results)
-            // this.$router.push( {name: 'stays'})
-          }).catch(error => {
-            // console.log(error);
-            // this.errors = error.response.data.errors;
-          });
+      onChangeImage(e){
+        this.apartment['imagePath'] = e.target.files[0]
+        // metodo 2
 
-        axios.post("stays", this.apartment).then((response) => {
-            // console.log(response.data)
-            this.$router.push( {name: 'stays'})
-            
+        
+        // console.log(formData)
+        // console.log(this.apartment['imagePath'])
+      },
+      create() {
+        // tomtom Api call
+        // externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
+        //   params: {
+        //     key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+        //     limit: 3,
+        //   }
+        // }).then((response) => {
+        //     console.log(response.data.results)
+        //   }).catch(error => {
+        //     console.log(error);
+        //     this.errors = error.response.data.errors;
+        //   });
+
+        let dataImage = new FormData();
+
+        for (let element in this.apartment) {
+          dataImage.append(String(element),this.apartment[element])
+        }
+        axios.post("stays", dataImage).then((response) => {
+          this.$router.push( {name: 'stays'})
+          console.log(response.data)
           })
           .catch(error => {
             // console.log(error);
