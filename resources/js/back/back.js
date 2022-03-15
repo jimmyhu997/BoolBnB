@@ -17,10 +17,9 @@ delete externalAxios.defaults.headers.common['X-Requested-With']
 
 import App from './App.vue';
 import router from './router';
-import data from './global';
+import data from '../vue-commons/vueGlobal';
 
 axios.get("/user/stays").then( (response) => {
-    console.log(response.data);
     // this.stays = response.data[0];
     data.perks = response.data[1];
     data.perks.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
