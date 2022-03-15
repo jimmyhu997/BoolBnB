@@ -191,7 +191,7 @@ export default {
     },
     created() {
       axios.get('user/manage').then( (response) => {
-        this.userInfo = response.data[0];
+        this.userInfo = response.data;
         console.log(this.userInfo);
       })
     },
