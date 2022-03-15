@@ -198,31 +198,35 @@ export default {
       },
       create() {
         // tomtom Api call
-        // externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
-        //   params: {
-        //     key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-        //     limit: 3,
-        //   }
-        // }).then((response) => {
-        //     console.log(response.data.results)
-        //   }).catch(error => {
-        //     console.log(error);
-        //     this.errors = error.response.data.errors;
-        //   });
-
-        let dataImage = new FormData();
-
-        for (let element in this.apartment) {
-          dataImage.append(String(element),this.apartment[element])
-        }
-        axios.post("stays", dataImage).then((response) => {
-          this.$router.push( {name: 'stays'})
-          console.log(response.data)
-          })
-          .catch(error => {
-            // console.log(error);
+        externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
+          params: {
+            key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+            limit: 3,
+          }
+        }).then((response) => {
+            //nel caso in cui la call per ottenere le coordinate geografiche vada a buon fine si va a fare la call per l'invio dei dati
+            //le chiamate sono sincrone c'è da imparare a strutturare più chiamate in asincrono
+            this.apartment.latitude = response.data.results[0].position.lat
+            this.apartment.longitude = response.data.results[0].position.lon
+            console.log(response.data.results)
+            //inizio della creazione dell'oggetto
+            let dataImage = new FormData();
+            for (let element in this.apartment) {
+              dataImage.append(String(element),this.apartment[element])
+            }
+            axios.post("stays", dataImage).then((response) => {
+              this.$router.push( {name: 'stays'})
+              console.log(response.data)
+              })
+              .catch(error => {
+                // console.log(error);
+                this.errors = error.response.data.errors;
+              });
+          }).catch(error => {
+            console.log(error);
             this.errors = error.response.data.errors;
           });
+
       },
      
     },

@@ -76,10 +76,9 @@ class StayController extends Controller
         $newStay->square_meters = $data['square_meters'];
         $newStay->guests = $data['guests'];
         
-
         // da sistemare con TomTom
-        $newStay->longitude = 10.10;
-        $newStay->latitude = 10.10;
+        $newStay->longitude = $data['longitude'];
+        $newStay->latitude = $data['latitude'];
         
         $newStay->rooms = $data['rooms'];
         $newStay->beds = $data['beds'];
@@ -89,10 +88,14 @@ class StayController extends Controller
         $newStay->city = $data['city'];
         $newStay->province_state = $data['province_state'];
         $newStay->country = $data['country'];
-        $path = Storage::put("uploads", $data["imagePath"]);
-        $newStay->image_path = $path;
+        // COMMENTATO IL CODICE IN QUANTO SONO CAMPI RICHIESTI ED AGGIUNTO VALORE FISSO A RIGA 94
+        // $path = Storage::put("uploads", $data["imagePath"]);
+        // $newStay->image_path = $path;
+        $newStay->image_path = '//';
         $newStay->price = $data['price'];
-        $newStay->visible = $data['visible'];
+        // NON RICORDO COME MAI, MA VISIBLE DA PROBLEMI
+        // $newStay->visible = $data['visible'];
+        // dd($newStay);
         $newStay->user_id = Auth::user()->id;
         $newStay->save();
 

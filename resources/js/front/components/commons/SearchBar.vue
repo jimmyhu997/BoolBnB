@@ -66,18 +66,16 @@ export default {
         externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
           params: {
             key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-            // limit: 1,
-            radius: 20000,
-
+            limit: 1,
+            radius: 200000,
           }
         }).then((response) => {
-            console.log(response.data.results)
-            // this.$router.push({ name: 'advancedSearch', query: { 
-            //   latitude:  response.data.results[0].position.lat,
-            //   longitude: response.data.results[0].position.lon,
-            //   radius: 20000,
-            //   }
-            // })
+            this.$router.push({ name: 'advancedSearch', query: { 
+              latitude:  response.data.results[0].position.lat,
+              longitude: response.data.results[0].position.lon,
+              radius: 20000,
+              }
+            })
           }).catch(error => {
             console.log(error);
             this.errors = error.response.data.errors;
