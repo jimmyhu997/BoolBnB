@@ -1,6 +1,5 @@
 <template>
-  <main>
-
+  <main class="main">
     <router-view :key="$route.path"></router-view>
   </main>
 </template>
@@ -12,3 +11,9 @@ export default {
   
 };
 </script>
+
+<style lang="scss" scoped>
+.main {
+  margin-bottom: 5rem;
+}
+</style>
