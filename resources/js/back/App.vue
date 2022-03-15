@@ -30,6 +30,7 @@ export default {
         data.menuOpened = false
         data.authOpened = false
         data.hintsOpened = false
+        data.deleteOpened = false
       }
     }
 }
