@@ -152,10 +152,13 @@ export default {
         flex-direction: column;
         width: 100%;
         transition: color .2s;
+        margin-bottom: 1rem;
         @media screen and (min-width: $small) {
+          width: auto;
           max-width: 75%;
           flex-direction: row;
           align-items: center;
+          margin-bottom: 0;
         }
         &:hover {
           color: $pink;
