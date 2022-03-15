@@ -178,7 +178,7 @@ export default {
           city: '',
           province_state: '',
           country: '',
-          imagePath:{},
+          image_path:{},
           price: null,
           perks:[],
           latitude: null,
@@ -189,7 +189,7 @@ export default {
     },
     methods: {
       onChangeImage(e){
-        this.apartment['imagePath'] = e.target.files[0]
+        this.apartment['image_path'] = e.target.files[0]
         // metodo 2
 
         
@@ -213,7 +213,7 @@ export default {
         let dataImage = new FormData();
 
         for (let element in this.apartment) {
-          dataImage.append(String(element),this.apartment[element])
+          dataImage.append(String(element), this.apartment[element])
         }
         axios.post("stays", dataImage).then((response) => {
           this.$router.push( {name: 'stays'})

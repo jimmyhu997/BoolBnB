@@ -88,7 +88,7 @@ class StayController extends Controller
         $newStay->city = $data['city'];
         $newStay->province_state = $data['province_state'];
         $newStay->country = $data['country'];
-        $path = Storage::put("uploads", $data["imagePath"]);
+        $path = Storage::put("uploads", $data["image_path"]);
         $newStay->image_path = $path;
         $newStay->price = $data['price'];
 
@@ -97,7 +97,8 @@ class StayController extends Controller
         $newStay->save();
 
         if (isset($data["perks"]) ) {
-            $newStay->perks()->sync($data["perks"]);
+            $perks = explode(',', $data['perks']);
+            $newStay->perks()->sync($perks);
         }
         return response()->json([
            "stayId" => $newStay->id
