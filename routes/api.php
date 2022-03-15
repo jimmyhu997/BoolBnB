@@ -21,8 +21,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // API Routes 
 Route::get('/stays', "Api\StayController@index");
 Route::get("/stays/{slug}", "Api\StayController@show");
+Route::post('/send-message',"Api\MessageController@store" );
 
 Route::prefix('search')->namespace('Api')->group(function () {
-    Route::get('/basic{params}', 'SearchController@basic')->name('basic');
+    Route::get('/basic', 'SearchController@basic')->name('basic');
     Route::get('/advanced/{params}', 'SearchController@advanced')->name('advanced');
 });
