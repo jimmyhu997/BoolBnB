@@ -5,7 +5,7 @@
       <router-link class="header-btn large" :to="{name: 'create-stay'}">Add a new listing</router-link>
       <router-link class="header-btn small" :to="{name: 'create-stay'}">+</router-link>
     </div>
-    <div class="apartments__wrapper">
+    <div class="apartments__wrapper" v-if="stays.length > 0">
       <ul class="apartments__list">
         <li class="apartment" v-for="stay in stays" :key="stay.id">
           <a class="apartment__link" :href="'/apartment/' + stay.id" :title="stay.title">
@@ -29,6 +29,7 @@
         </li>
       </ul>
     </div>
+    <p class="no-apartments" v-else>You don't have any listing, start creating a new one.</p>
     <DeleteModal :apartment="apartmentToDelete" @delete="refresh()"/>
   </div>
 </template>
@@ -113,10 +114,16 @@ export default {
           }
         }
         &:hover {
-          background-color: rgba(0, 0, 0, .05);
+          background-color: rgba(0, 0, 0, .02);
         }
       }
     }
+  }
+  .no-apartments {
+    display: inline-block;
+    padding: 1rem;
+    font-size: 1.3rem;
+    font-weight: 300;
   }
   &__wrapper {
     border-radius: 1rem;
@@ -156,9 +163,9 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        .options {
+        // .options {
 
-        }
+        // }
         .actions {
           display: flex;
           align-items: center;
