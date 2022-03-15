@@ -25,10 +25,7 @@ class StayController extends Controller
         "city" => "required|string|max:50",
         "province_state" => "required|string|max:50",
         "country" => "required|string|max:50",
-
-        // da modificare il nullable 
-        // "image_path" => "nullable|mimes:jpeg,jpg,bmp,png|max:2048",
-
+        "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
         "price" => "required",
     ];
     /**
@@ -73,11 +70,11 @@ class StayController extends Controller
             $count++;
         }
         $newStay->slug = $slug;
-
+        
         $newStay->description = $data['description'];
         $newStay->square_meters = $data['square_meters'];
         $newStay->guests = $data['guests'];
-
+        
 
         // da sistemare con TomTom
         $newStay->longitude = 10.10;
@@ -91,13 +88,8 @@ class StayController extends Controller
         $newStay->city = $data['city'];
         $newStay->province_state = $data['province_state'];
         $newStay->country = $data['country'];
-
-        // if(isset($data["imagePath"])) {
-        //     // dd($data['imagePath']);
-        //     $stayImage = Storage::put("uploads", $data["imagePath"]);
-        //     $newStay->image_path = $stayImage;
-        // }
-        $newStay->image_path = '//';
+        $path = Storage::put("uploads", $data["imagePath"]);
+        $newStay->image_path = $path;
         $newStay->price = $data['price'];
 
        
