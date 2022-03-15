@@ -1,10 +1,6 @@
 <template>
   <div class="apartments container">
-    <div class="apartments__header">
-      <h2 class="header-title">All your listings</h2>
-      <router-link class="header-btn large" :to="{name: 'create-stay'}">Add a new listing</router-link>
-      <router-link class="header-btn small" :to="{name: 'create-stay'}">+</router-link>
-    </div>
+    <PageHeading :title="'All your listings'" :button="{ route: 'create-stay', desktop: 'Add a new listing', mobile: '+' }"/>
     <div class="apartments__wrapper" v-if="stays.length > 0">
       <ul class="apartments__list">
         <li class="apartment" v-for="stay in stays" :key="stay.id">
@@ -39,10 +35,11 @@
 
 <script>
 import DeleteModal from '../../modals/DeleteModal.vue'
+import PageHeading from './commons/PageHeading.vue'
 import data from '../../../../vue-commons/vueGlobal'
 export default {
     name: 'Stays',
-    components: { DeleteModal },
+    components: { DeleteModal, PageHeading },
     data() {
     return {
       data,
