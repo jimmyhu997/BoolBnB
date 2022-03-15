@@ -14,7 +14,7 @@
                 </div>
                 <div class="hero__content">
                     <h2 class="title">Let your curiosity do the booking</h2>
-                    <button class="lucky-btn">I'm feeling lucky</button>
+                    <router-link class="lucky-btn" :to="{ name: 'apartment', params: { stay: randomApartment } }">I'm feeling lucky</router-link>
                 </div>
             </div>
         </div>
@@ -23,7 +23,10 @@
 
 <script>
 export default {
-    name: 'Hero'
+    name: 'Hero',
+    props: {
+        randomApartment: Number
+    }
 }
 </script>
 
@@ -101,6 +104,7 @@ export default {
             }
         }
         .lucky-btn {
+            display: inline-block;
             margin-top: 1rem;
             background-color: #fff;
             height: 3rem;
