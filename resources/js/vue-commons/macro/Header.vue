@@ -45,16 +45,16 @@
             <div class="menu__hidden" ref="menu" v-show="data.menuOpened" @click.stop>
               <nav class="menu__list">
                 <div class="mobile" v-if="this.$route.path.includes('user')">
-                  <div class="menu__item" v-for="(option, index) in this.links" :key="index">
+                  <div class="menu__item" v-for="(option, index) in this.links" :key="index" @click="closeMenu()">
                     <router-link :to="{name: option.route}" class="menu__link">{{option.title}}</router-link>
                   </div>
                 </div>
                 <div class="menu__item" v-if="window.loggedIn">
                   <a class="menu__link" @click.prevent="logout()" title="Log out">Log out</a>
                 </div>
-                <div class="menu__item" v-if="window.loggedIn && this.$route.path.includes('user')">
+                <!-- <div class="menu__item" v-if="window.loggedIn && this.$route.path.includes('user')">
                   <a class="menu__link delete" @click.prevent="deleteUser()" title="Delete account">Delete account</a>
-                </div>
+                </div> -->
                 <div class="menu__item" v-if="window.loggedIn && !this.$route.path.includes('user')">
                   <a class="menu__link" href="/user" title="Dashboard">Dashboard</a>
                 </div>
@@ -106,9 +106,11 @@ export default {
       } else {
         this.$refs.header.classList.add('scrolled')
         // get user info
-        axios.get('user/manage').then( (response) => {
-          this.userInfo = response.data[0];
-        })
+        if (window.loggedIn) {
+          axios.get('user/manage').then( (response) => {
+            this.userInfo = response.data[0];
+          })
+        }
       }
     },
     methods: {
@@ -118,7 +120,12 @@ export default {
         } else this.$refs.header.classList.add('scrolled')
       },
       openMenu() {
-        data.menuOpened = true
+        if (data.menuOpened) {
+          this.closeMenu()
+        } else data.menuOpened = true
+      },
+      closeMenu() {
+        data.menuOpened = false
       },
       logout() {
         axios.post("/logout")
@@ -131,7 +138,7 @@ export default {
       },
       openAuth() {
         data.authOpened = true
-        data.menuOpened = false
+        this.closeMenu()
       },
       deleteUser() {
         axios.delete(`/user/manage/${this.userInfo.id}`).then( (response) => {
