@@ -25,7 +25,8 @@ class StayController extends Controller
         "city" => "required|string|max:50",
         "province_state" => "required|string|max:50",
         "country" => "required|string|max:50",
-        "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
+        // "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
+
         "price" => "required",
     ];
     /**
@@ -91,8 +92,7 @@ class StayController extends Controller
         $path = Storage::put("uploads", $data["image_path"]);
         $newStay->image_path = $path;
         $newStay->price = $data['price'];
-
-       
+        $newStay->visible = $data['visible'];
         $newStay->user_id = Auth::user()->id;
         $newStay->save();
 

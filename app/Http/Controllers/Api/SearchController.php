@@ -8,14 +8,16 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function basic($params) {
-        
-        Stay::query()
-        ->where('city','LIKE',"%{$params}%")
-        
-        ->orWhere('country','LIKE',"%{$params}%")
-        ->get();
+    public function basic(Request $request) {
+        // dd('forza roma');
+        // 0.18018
+        $max_lat = $request->latitude + 0.18018;
+        $min_lat = $request->latitude - 0.18018;
+        dd($max_lat);
+        // $max_lon = $request->longitude + 0.18018;
+        // $min_lon = $request->longitude + 0.18018;
 
-        // return response()->json()
+        // $result = Stay::where('latitude','<=',$max_lat)->where('latitude','>=',$min_lat)->where('longitude','<=',$max_lon)->where('longitude','>=',$min_lon)->get();
+        // return response()->json($result);
     }
 }
