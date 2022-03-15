@@ -5,7 +5,7 @@ window.axios.defaults.headers.common = {
     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
     'X-Requested-With': 'XMLHttpRequest'
 };
-
+window.dayJs = require('dayjs')
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

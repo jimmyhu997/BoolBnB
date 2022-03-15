@@ -118,12 +118,14 @@
 </template>
 
 <script>
+
 export default {
     name: 'Footer'
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../../sass/_variables.scss';
     footer{
       // CREAZIONE PARTE ALTA DEL FOOTER //
       .footer-top{
@@ -185,8 +187,8 @@ export default {
         }
       }
 
-      @media screen and (min-width: 744px) {
-        min-width: 744px;
+      @media screen and (min-width: $medium) {
+        min-width: $medium;
 
         .footer-top{
           ul{
@@ -228,8 +230,8 @@ export default {
         }
       }
 
-      @media screen and (min-width: 1130px) {
-        min-width: 1130px;
+      @media screen and (min-width: $x-large) {
+        min-width: $x-large;
 
         .footer-top{
           ul{display: flex;

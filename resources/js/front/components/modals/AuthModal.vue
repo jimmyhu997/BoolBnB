@@ -18,12 +18,13 @@
             <div class="input-list">
               <div class="input-group">
                 <input class="input" type="email" v-model="loginData.email" placeholder="Email*"/>
-                <span class="error" ref="loginEmail">Insert a valid email</span>
+                <span class="error" ref="loginEmail">Insert a valid email.</span>
               </div>
               <div class="input-group">
                 <input class="input" type="password" v-model="loginData.password" placeholder="Password*"/>
-
+                <span class="error" ref="loginPassword">Your password must be at least 8 characters long.</span>
               </div>
+            <span class="error" ref="loginError">Email or password is incorrect.</span>
             </div>
             <button class="action-btn" type="submit">Continue</button>
           </form>
@@ -35,20 +36,31 @@
           <h2 class="body-title">Sign up to Boolbnb</h2>
           <form @submit.prevent="register()">
             <div class="input-list">
-              <input class="input" ref="registerName" type="text" v-model="registerData.name" placeholder="Name*">
-              <input class="input" type="text" v-model="registerData.surname" placeholder="Surname">
-              <!-- <div class="input date"> -->
-                <input class="input" type="date" v-model="registerData.birthday" placeholder="Birthday">
-                <!-- Flowbite date picker using Tailwind framework -->
-                <!-- <div class="relative flex">
-                  <div class="z-auto flex absolute inset-y-0 left-0 items-center pointer-events-none"></div>
-                  <input @change="catchBirthday()" ref="birthday" v-model="registerData.birthday" datepicker datepicker-format="dd-mm-yyyy" datepicker-title="Birthday" datepicker-autohide type="text" class="p-0 text-gray-900 rounded-lg block w-full light:bg-gray-700 light:placeholder-gray-400 light:text-white" placeholder="Birthday">
-                  <svg class="w-5 h-5 text-gray-500 light:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
-                </div> -->
-              <!-- </div> -->
-              <input class="input" type="email" v-model="registerData.email" placeholder="Email*">
-              <input class="input" type="password" v-model="registerData.password" placeholder="Password*">
-              <input class="input" type="password" v-model="registerData.password_confirmation"  placeholder="Confirm password*">
+              <div class="input-group">
+                <input class="input" ref="registerName" type="text" v-model="registerData.name" placeholder="Name*">
+                <span class="error" ref="registerName">Name is required.</span>
+              </div>
+              <div class="input-group">
+                <input class="input" type="text" v-model="registerData.surname" placeholder="Surname">
+                <span class="error" ref="registerSurname">Insert a valid surname.</span>
+              </div>
+              <div class="input-group">
+                <label for="birthday" class="date-label">Birthday</label>
+                <input id="birthday" class="input date" type="date" v-model="registerData.birthdayNotFormatted" placeholder="Birthday">
+                <span class="error" ref="registerBirthday">Insert a valid birthday date.</span>
+              </div>
+              <div class="input-group">
+                <input class="input" type="email" v-model="registerData.email" placeholder="Email*">
+                <span class="error" ref="registerEmail">Email is required.</span>
+              </div>
+              <div class="input-group">
+                <input class="input" type="password" v-model="registerData.password" placeholder="Password*">
+                <span class="error" ref="registerPassword">Password is required.</span>
+              </div>
+              <div class="input-group">
+                <input class="input" type="password" v-model="registerData.password_confirmation"  placeholder="Confirm password*">
+                <span class="error" ref="registerPasswordConfirmation">Passwords do not match.</span>
+              </div>
             </div>
             <button class="action-btn" type="submit">Sign up</button>
           </form>
@@ -74,6 +86,7 @@ export default {
       registerData:{
         name: '',
         surname: '',
+        birthdayNotFormatted: '',
         birthday: '',
         email: '',
         password: '',
@@ -83,29 +96,119 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.loginData.email);
-      console.log(this.loginData.password);
-      axios.post("/login", this.loginData)
-        .then(response => {
-          location.href = '/user'
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      if (this.loginValidations()) {
+        axios.post("/login", this.loginData)
+          .then(() => {
+            location.href = '/user'
+          })
+          .catch(() => {
+            this.$refs.loginError.classList.add('visible')
+          });
+      }
     },
     register(){
-      if (this.registerData.name == '') {
-        this.$refs.registerName.classList.add('error')
+      if (this.registerValidations()) {
+        axios.post('/register', this.registerData)
+        .then(() => {
+          location.href = '/user'
+        }).catch(error => {
+          if (error.response.data.errors.email == 'The email has already been taken.') {
+            this.$refs.registerEmail.innerHTML = 'This user is already registered.'
+            this.$refs.registerEmail.classList.add('visible')
+          }
+        })
       }
-      axios.post('/register', this.registerData)
-      .then(response => {
-        location.href = '/user'
-      }).catch(error => {
-        console.log(error)
-      })
     },
     close() {
       data.authOpened = false
+    },
+    loginValidations() {
+      let validated = 0
+      // email
+      const email = this.loginData.email
+      if (email.length == 0 || !email.includes('@') || email.length > 255) {
+        this.$refs.loginEmail.classList.add('visible')
+        validated = 0
+      } else {
+        this.$refs.loginEmail.classList.remove('visible')
+        validated++
+      }
+      // password
+      const password = this.loginData.password
+      if (password.length < 8) {
+        password == '' ? this.$refs.registerPassword.innerHTML = 'Password is required.' : this.$refs.registerPassword.innerHTML = 'Your password must be at least 8 characters long.'
+        this.$refs.loginPassword.classList.add('visible')
+        validated = 0
+      } else {
+        this.$refs.loginPassword.classList.remove('visible')
+        validated++
+      }
+      return validated == 2
+    },
+    registerValidations() {
+      let validated = 0
+      // name
+      const name = this.registerData.name
+      if (name == '' || name.length > 255) {
+        validated = 0
+        name == '' ? this.$refs.registerName.innerHTML = 'Name is required.' : this.$refs.registerName.innerHTML = 'Insert a valid name.'
+        this.$refs.registerName.classList.add('visible')
+      } else {
+        validated++
+        this.$refs.registerName.classList.remove('visible')
+      }
+      // surname
+      const surname = this.registerData.surname
+      if (surname.length > 255) {
+        validated = 0
+        this.$refs.registerSurname.classList.add('visible')
+      } else {
+        validated++
+        this.$refs.registerSurname.classList.remove('visible')
+      }
+      // birthday
+      const birthday = this.registerData.birthdayNotFormatted
+      if (!dayJs(birthday).isBefore(dayJs()) && birthday.length > 0) {
+        validated = 0
+        this.$refs.registerBirthday.classList.add('visible')
+      } else {
+        validated++
+        this.$refs.registerBirthday.classList.remove('visible')
+      }
+      // email
+      const email = this.registerData.email
+      if (email.length == 0 || !email.includes('@') || email.length > 255 || email.includes(' ')) {
+        validated = 0
+        email == '' ? this.$refs.registerEmail.innerHTML = 'Email is required.' :
+        this.$refs.registerEmail.innerHTML = 'Insert a valid email.'
+        this.$refs.registerEmail.classList.add('visible')
+      } else {
+        validated++
+        this.$refs.registerEmail.classList.remove('visible')
+      }
+      // password
+      const password = this.registerData.password
+      if (password == '' || password.length > 255 || password.length < 8) {
+        validated = 0
+        password == '' ? this.$refs.registerPassword.innerHTML = 'Password is required.' :
+        password.length < 8 ? this.$refs.registerPassword.innerHTML = 'Your password must be at least 8 characters long.' :
+        this.$refs.registerPassword.innerHTML = 'Password must not be longer than 255 characters.'
+        this.$refs.registerPassword.classList.add('visible')
+      } else {
+        validated++
+        this.$refs.registerPassword.classList.remove('visible')
+      }
+      // password confirmation
+      const passwordConfirmation = this.registerData.password_confirmation
+      if (passwordConfirmation != password) {
+        validated = 0
+        this.$refs.registerPasswordConfirmation.classList.add('visible')
+      } else {
+        validated++
+        this.$refs.registerPasswordConfirmation.classList.remove('visible')
+      }
+
+      return validated == 6
     }
 
   },
@@ -219,7 +322,7 @@ export default {
         flex-direction: column;
         align-items: flex-start;
       }
-      .input, .date {
+      .input {
         width: 100%;
         border: none;
         padding: 1rem;
@@ -227,23 +330,23 @@ export default {
         font-weight: 300;
       }
       .error {
-        // display: inline-block;
+        display: none;
         padding: .3rem 1rem;
         border-top: .5px solid black;
         color: red;
+        &.visible {
+          display: inline;
+        }
       }
       .date {
-        svg {
-          fill: $darkPink;
-        }
-        input {
-          outline: none;
-          font-size: 1.2rem;
-          font-weight: 300;
-          cursor: pointer;
+        font-size: 1rem;
+        padding: 0 1rem 1rem;
+        &-label {
+          color: rgba(0, 0, 0, .3);
+          padding: .3rem 1rem;
         }
       }
-      .input-group:not(:last-of-type), .date {
+      .input-group:not(:last-of-type) {
         border-bottom: 1px solid #888;
       }
     }
