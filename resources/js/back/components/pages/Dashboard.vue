@@ -14,10 +14,10 @@
 
           <div class="messages" v-if="messaggi != '' ">
 
-            <ul v-for="(messaggio, i) in messaggi" :key="i">
-              <li>
+            <ul>
+              <li class="message" v-for="(messaggio, i) in messaggi" :key="i">
                 <div class="title">
-                  <span>{{messaggio.title}}</span>
+                  <span class="message-title">{{messaggio.title}}</span>
                 </div>
 
                 <div class="user">
@@ -27,7 +27,7 @@
 
                     <div class="name">
                       <span>{{messaggio.user}}</span>
-                      <span><span>➥ </span><a id="email" href="https://www.instagram.com/giorgiomonne/?hl=it">{{messaggio.email}}</a></span>
+                      <span><span>➥ </span><a class="email" href="https://www.instagram.com/giorgiomonne/?hl=it">{{messaggio.email}}</a></span>
                     </div>
 
                     <span id="date">{{messaggio.date}}</span>
@@ -191,7 +191,8 @@ export default {
     },
     created() {
       axios.get('user/manage').then( (response) => {
-        this.userInfo = response.data;
+        this.userInfo = response.data[0];
+        console.log(this.userInfo);
       })
     },
     
@@ -210,14 +211,14 @@ export default {
 
       .card {
         width: 100%;
-        border-radius: .4rem;
+        border-radius: 1rem;
         padding: 1rem;
-        border: 1px solid rgb(115, 146, 169);
+        border: .5px solid rgba(0, 0, 0, 0.1);
         background-color: $lightGrey;
 
-        .margine {
-          height: 500px;
-        }
+        // .margine {
+        //   height: 500px;
+        // }
 
         // .search {
         //   margin: 1rem 0;
@@ -236,31 +237,36 @@ export default {
         // }
 
         .top {
+          display: inline-block;
           font-size: 1.2rem;
           font-weight: bold;
+          padding-bottom: 1rem;
         }
 
         .messages {
-          margin: 1rem 0;
+          // margin: 1rem 0;
           height: 450px;
           overflow-y: auto;
+          padding: 0 1rem;
 
           ul {
             
             li {
-              width: 99%;
-              margin-bottom: .3rem;
-              margin-right: .2rem;
-              border: 1px solid grey;
-              border-radius: .5rem;
+              width: 100%;
+              margin: 1rem 0;
+              // margin-bottom: .3rem;
+              // margin-right: .2rem;
+              border: .5px solid rgba(0, 0, 0, 0.3);
+              border-radius: 1rem;
               list-style: none; 
               background-color: rgb(255, 255, 255);
 
               .title {
                 width: 100%;
-                padding: .3rem .5rem;
-                font-weight: bold;
-                border-bottom: 1px solid grey;
+                padding: .7rem;
+                font-weight: 300;
+                font-size: 1.2rem;
+                border-bottom: .5px solid rgba(0, 0, 0, 0.1);
               }
               
               .user {
@@ -284,6 +290,14 @@ export default {
 
                   .name{
                     cursor: pointer;
+                    .email {
+                      color: black;
+                      text-decoration: none;
+                      font-size: 1rem;
+                      &:hover {
+                        text-decoration: underline;
+                      }
+                    }
                   }
                   
                   #date{
@@ -297,7 +311,10 @@ export default {
               .content {
                 width: 100%;
                 padding: .5rem .4rem;
-                word-wrap: break-word;               
+                word-wrap: break-word;
+                font-weight: 300;
+                color: #333;
+                padding: 1rem;     
               }
             }
           }
