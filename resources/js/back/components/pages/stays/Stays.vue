@@ -1,55 +1,202 @@
 <template>
-  <div>
-    <router-link :to="{name:'create-stay'}">Crea Annuncio</router-link>
-
-
-    <h2>Elenco annunci</h2>
-    <ul>
-      <li v-for="stay in stays" :key="stay.id">
-        <h5>{{stay.title}}</h5>
-        <p>{{stay.description}}</p>
-        <router-link :to="{name:'edit-stay', params:{stay: stay.id}}">Modifica Annuncio</router-link>
-        
-        <form @submit.prevent="deleteStay(stay.id)">
-        
-          <button type="submit">Elimina Annuncio</button>
-        </form>
-      </li>
-    </ul>
+  <div class="apartments container">
+    <div class="apartments__header">
+      <h2 class="header-title">All your listings</h2>
+      <router-link class="header-btn large" :to="{name: 'create-stay'}">Add a new listing</router-link>
+      <router-link class="header-btn small" :to="{name: 'create-stay'}">+</router-link>
+    </div>
+    <div class="apartments__wrapper">
+      <ul class="apartments__list">
+        <li class="apartment" v-for="stay in stays" :key="stay.id">
+          <a class="apartment__link" :href="'/apartment/' + stay.id" :title="stay.title">
+            <h3 class="apartment__title">
+              {{stay.title}}
+            </h3>
+          </a>
+          <div class="informations">
+            <div class="options">
+              <!-- <span>Show</span> -->
+            </div>
+            <div class="actions">
+              <div class="edit">
+                <router-link class="link" :to="{name:'edit-stay', params:{stay: stay.id}}">Edit</router-link>
+              </div>
+              <div class="delete">
+                <button class="link" @click.stop="deleteConfirmation(stay)">Delete</button>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <DeleteModal :apartment="apartmentToDelete" @delete="refresh()"/>
   </div>
 </template>
 
 <script>
-import data from '../../../global.js'
+import DeleteModal from '../../modals/DeleteModal.vue'
+import data from '../../../../vue-commons/vueGlobal'
 export default {
     name: 'Stays',
-        data() {
-        return {
-            data,
-            stays: [],
-        }
+    components: { DeleteModal },
+    data() {
+    return {
+      data,
+      stays: [],
+      apartmentToDelete: {}
+    }
     },
 
     created() {
       axios.get("/user/stays").then( (response) => {
-          console.log(response.data);
           this.stays = response.data[0];
       });
     },
 
     methods: {
-      deleteStay(stay) {
-        axios.delete(`/user/stays/${stay}`).then( (response) => {
-          console.log(response);
-          axios.get("/user/stays").then( (response) => {
+      deleteConfirmation(stay) {
+        this.apartmentToDelete = stay
+        data.deleteOpened = true
+      },
+      refresh() {
+        axios.get("/user/stays").then( (response) => {
             this.stays = response.data[0];
-          });
         });
       }
     }
 }
 </script>
 
-<style>
+<style lang="scss" >
+@import '../../../../../sass/_variables.scss';
+.apartments {
+  margin-top: 1rem;
+  @media screen and (min-width: $medium) {
+    margin-top: 2rem;
+  }
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    .header {
+      &-title {
+        font-weight: 500;
+      }
+      &-btn {
+        border: 1px solid black;
+        color: black;
+        text-decoration: none;
+        transition: background-color .2s;
+        &.small {
+          flex-shrink: 0;
+          border-radius: 50%;
+          height: 2.4rem;
+          width: 2.4rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 1.7rem;
+          font-weight: 300;
+        }
+        &.large {
+          display: none;
+          border-radius: .7rem;
+          padding: 1rem 2rem;
+        }
+        @media screen and (min-width: $medium) {
+          &.large {
+            display: inline-block;
+          }
+          &.small {
+            display: none;
+          }
+        }
+        &:hover {
+          background-color: rgba(0, 0, 0, .05);
+        }
+      }
+    }
+  }
+  &__wrapper {
+    border-radius: 1rem;
+    border: .5px solid rgba(0, 0, 0, .2);
+  }
+  &__list {
+    list-style: none;
+    .apartment {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+        min-width: 0;
+      &__link {
+        color: black;
+        text-decoration: none;
+        display: inline-block;
+        max-width: 50%;
+        transition: color .2s;
+        @media screen and (min-width: 574px) {
+          max-width: 75%;
+        }
+        &:hover {
+          color: $pink;
+        }
+      }
+      &__title {
+        font-weight: 400;
+        width: 100%;
+        display: inline-block;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .informations {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .options {
 
+        }
+        .actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          .link {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: .9rem;
+            color: black;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            margin-left: 1rem;
+            @media screen and (min-width: $medium) {
+              margin-left: 2rem;
+            }
+          }
+          .edit {
+            .link {
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+          .delete {
+            .link {
+              transition: color .2s;
+              &:hover {
+                color: red;
+              }
+            }
+          }
+        }
+      }
+    }
+    .apartment:not(:last-of-type) {
+      border-bottom: .5px solid rgba(0, 0, 0, .2);
+    }
+  }
+}
 </style>
