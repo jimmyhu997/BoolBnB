@@ -16,6 +16,7 @@ class StayController extends Controller
     public function index()
     {
         $stays = Stay::all();
+        // dd($stays);
         return response()->json($stays);
     }
 
@@ -27,8 +28,9 @@ class StayController extends Controller
      */
     public function show($slug)
     {
-        $stays = Stay::where("slug", $slug)->with("category")->first();
+        $stays = Stay::all()->where("slug", $slug)->first();
         return response()->json($stays);    
     }
 
-}
+    
+}   
