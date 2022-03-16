@@ -19,10 +19,10 @@ class SearchController extends Controller
 
 
         // dd($max_lat);
-
         $result = Stay::where('latitude','<=',$max_lat)->where('latitude','>=',$min_lat)->where('longitude','<=',$max_lon)->where('longitude','>=',$min_lon)->get();
-        return response()->json($result);
-
+        if (count($result) < 1){
+            $result = Stay::where('street_address','LIKE',"%".$request->queryKey."%")->orWhere('city','LIKE','%'.$request->queryKey."%")->orWhere('province_state','LIKE','%'.$request->queryKey."%")->orWhere('country','LIKE','%'.$request->queryKey."%")->get();
+        }
         // $result = Stay::whereBetween('latitude', [$min_lat, $max_lat])->whereBetween('latitude', [$min_lon, $max_lon])->get();
         return response()->json($result);
     }
