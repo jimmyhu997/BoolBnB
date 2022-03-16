@@ -71,54 +71,6 @@ export default {
 <style lang="scss" >
 @import '../../../../../sass/_variables.scss';
 .apartments {
-  margin-top: 1rem;
-  @media screen and (min-width: $medium) {
-    margin-top: 2rem;
-  }
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    .header {
-      &-title {
-        font-weight: 500;
-      }
-      &-btn {
-        border: 1px solid black;
-        color: black;
-        text-decoration: none;
-        transition: background-color .2s;
-        &.small {
-          flex-shrink: 0;
-          border-radius: 50%;
-          height: 2.4rem;
-          width: 2.4rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 1.7rem;
-          font-weight: 300;
-        }
-        &.large {
-          display: none;
-          border-radius: .7rem;
-          padding: 1rem 2rem;
-        }
-        @media screen and (min-width: $medium) {
-          &.large {
-            display: inline-block;
-          }
-          &.small {
-            display: none;
-          }
-        }
-        &:hover {
-          background-color: rgba(0, 0, 0, .02);
-        }
-      }
-    }
-  }
   .no-apartments {
     display: inline-block;
     padding: 1rem;
