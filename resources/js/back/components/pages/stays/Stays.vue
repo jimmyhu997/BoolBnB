@@ -35,7 +35,7 @@
 
 <script>
 import DeleteModal from '../../modals/DeleteModal.vue'
-import PageHeading from './commons/PageHeading.vue'
+import PageHeading from '../../commons/PageHeading.vue'
 import data from '../../../../vue-commons/vueGlobal'
 export default {
     name: 'Stays',
