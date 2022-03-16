@@ -13,11 +13,17 @@ export default {
             stays:{},
         }
     },
-    created() {        
-        axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
+    created() {
+        if(!this.$route.query) {
+            axios.get("/api/stays").then( (response) => {
             this.stays = response.data;
-          console.log(response.data);
-      });
+            });
+        }
+        else{
+            axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
+                this.stays = response.data;
+            });
+        }
     }
 }
 </script>
