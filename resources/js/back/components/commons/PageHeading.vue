@@ -1,8 +1,10 @@
 <template>
     <div class="page__heading">
-        <h2 class="heading-title">{{title}}</h2>
-        <router-link class="heading-btn large" :to="{name: button.route}">{{button.desktop}}</router-link>
-        <router-link class="heading-btn small" :to="{name: button.route}">{{button.mobile}}</router-link>
+        <h2 class="heading-title" v-if="!title.includes('undefined')">{{title}}</h2>
+        <div class="button" v-if="button">
+            <router-link class="heading-btn large" :to="{name: button.route}">{{button.desktop}}</router-link>
+            <router-link class="heading-btn small" :to="{name: button.route}">{{button.mobile}}</router-link>
+        </div>
     </div>
 </template>
 
@@ -17,12 +19,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../../../sass/_variables.scss';
+@import '../../../../sass/_variables.scss';
 .page__heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-top: 1rem;
     margin-bottom: 2rem;
+    @media screen and (min-width: $medium) {
+        margin-top: 2rem;
+    }
     .heading {
         &-title {
         font-weight: 500;
