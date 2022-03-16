@@ -75,10 +75,9 @@ class StayController extends Controller
         $newStay->square_meters = $data['square_meters'];
         $newStay->guests = $data['guests'];
         
-
         // da sistemare con TomTom
-        $newStay->longitude = 10.10;
-        $newStay->latitude = 10.10;
+        $newStay->longitude = $data['longitude'];
+        $newStay->latitude = $data['latitude'];
         
         $newStay->rooms = $data['rooms'];
         $newStay->beds = $data['beds'];
