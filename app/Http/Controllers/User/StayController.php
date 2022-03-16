@@ -25,7 +25,7 @@ class StayController extends Controller
         "city" => "required|string|max:50",
         "province_state" => "required|string|max:50",
         "country" => "required|string|max:50",
-        // "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
+        "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
 
         "price" => "required",
     ];
@@ -38,8 +38,7 @@ class StayController extends Controller
      public function index()
     {   
         $stays = Stay::all()->where('user_id', Auth::user()->id);
-        $perks = Perk::all();
-        return response()->json([$stays, $perks]);
+        return response()->json($stays);
     }
 
 
@@ -88,19 +87,16 @@ class StayController extends Controller
         $newStay->city = $data['city'];
         $newStay->province_state = $data['province_state'];
         $newStay->country = $data['country'];
-        // COMMENTATO IL CODICE IN QUANTO SONO CAMPI RICHIESTI ED AGGIUNTO VALORE FISSO A RIGA 94
-        // $path = Storage::put("uploads", $data["imagePath"]);
-        // $newStay->image_path = $path;
-        $newStay->image_path = '//';
+        $path = Storage::put("uploads", $data["image_path"]);
+        $newStay->image_path = $path;
         $newStay->price = $data['price'];
-        // NON RICORDO COME MAI, MA VISIBLE DA PROBLEMI
-        // $newStay->visible = $data['visible'];
-        // dd($newStay);
+        $newStay->visible = isset($data['visible']);
         $newStay->user_id = Auth::user()->id;
         $newStay->save();
 
         if (isset($data["perks"]) ) {
-            $newStay->perks()->sync($data["perks"]);
+            $perks = explode(',', $data['perks']);
+            $newStay->perks()->sync($perks);
         }
         return response()->json([
            "stayId" => $newStay->id

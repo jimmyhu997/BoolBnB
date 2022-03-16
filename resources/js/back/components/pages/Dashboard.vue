@@ -1,8 +1,6 @@
 <template>
-    <div class="dashboard-content">
-      <h3>Welcome {{userInfo.name}}</h3>
-      <!-- <button @click="deleteUser()">Cancella Account</button>
-      <router-link :to="{name:'create-stay'}">Nuovo annuncio</router-link> -->
+    <div class="dashboard-content container">
+      <PageHeading :title="'Welcome ' + userInfo.name" :button="{ route: 'create-stay', desktop: 'Create a new listing', mobile: '+' }"/>
 
       <div class="card">
         <div class="margine">
@@ -81,9 +79,10 @@
 </template>
 
 <script>
-
+import PageHeading from '../commons/PageHeading.vue'
 export default {
     name: 'Dashboard',
+    components: { PageHeading },
     data() {
       return {
         userInfo: {},
@@ -191,7 +190,7 @@ export default {
     },
     created() {
       axios.get('user/manage').then( (response) => {
-        this.userInfo = response.data[0];
+        this.userInfo = response.data;
         console.log(this.userInfo);
       })
     },
@@ -202,8 +201,6 @@ export default {
 <style lang="scss" scoped>
 @import '../../../../sass/_variables.scss';
     .dashboard-content {
-      width: 96%;
-      margin: 2rem auto ;
 
       h3 {
         padding: 2rem 0;

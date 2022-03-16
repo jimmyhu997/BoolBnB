@@ -1,6 +1,11 @@
 <template>
-  <div>
-      <h2>Crea Annuncio</h2>
+  <div class="new-apartment container">
+    <PageHeading :title="'Create a new listing'" :button="{ route: 'stays', desktop: 'Cancel', mobile: '-' }"/>
+    <form @submit.prevent>
+
+
+
+    </form>
 
       <form @submit.prevent="create()" enctype="multipart/form-data">
         <div>
@@ -143,11 +148,16 @@
           <div v-for="(perk,i) in data.perks" :key="i">
             <label :for="perk.name">{{perk.name}}</label>
             <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
-           
           </div>
            <!-- <p>
               {{apartment.perks}}
             </p> -->
+        </div>
+
+        <div>
+          <h5>Visibile</h5>
+          <label for="visibile">seleziona la visibilità</label>
+          <input type="checkbox" v-model="apartment.visibile" id="visibile" >
         </div>
 
         <button type="submit">Salva Dati</button>
@@ -157,9 +167,11 @@
 </template>
 
 <script>
-import data from '../../../global.js'
+import PageHeading from '../../commons/PageHeading.vue'
+import data from '../../../../vue-commons/vueGlobal'
 export default {
     name: 'CreateStay',
+    components: { PageHeading },
     data() {
       return {
         data,
@@ -178,18 +190,19 @@ export default {
           city: '',
           province_state: '',
           country: '',
-          imagePath:{},
+          image_path:{},
           price: null,
           perks:[],
           latitude: null,
           longitude: null,
+          visible: null,
         },
         errors:{},
       }
     },
     methods: {
       onChangeImage(e){
-        this.apartment['imagePath'] = e.target.files[0]
+        this.apartment['image_path'] = e.target.files[0]
         // metodo 2
 
         
@@ -247,6 +260,11 @@ export default {
 </script>
 
 
-<style>
+<style lang="scss" scoped>
+@import '../../../../../sass/_variables.scss';
+// .new-apartment {
+  // .create {
 
+  // }
+// }
 </style>
