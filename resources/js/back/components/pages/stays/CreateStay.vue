@@ -1,6 +1,11 @@
 <template>
-  <div>
-      <h2>Crea Annuncio</h2>
+  <div class="new-apartment container">
+    <PageHeading :title="'Create a new listing'" :button="{ route: 'stays', desktop: 'Cancel', mobile: '-' }"/>
+    <form @submit.prevent>
+
+
+
+    </form>
 
       <form @submit.prevent="create()" enctype="multipart/form-data">
         <div>
@@ -157,9 +162,11 @@
 </template>
 
 <script>
-import data from '../../../global.js'
+import PageHeading from './commons/PageHeading.vue'
+import data from '../../../../vue-commons/vueGlobal'
 export default {
     name: 'CreateStay',
+    components: { PageHeading },
     data() {
       return {
         data,
@@ -183,6 +190,7 @@ export default {
           perks:[],
           latitude: null,
           longitude: null,
+          visible: true
         },
         errors:{},
       }
@@ -243,6 +251,11 @@ export default {
 </script>
 
 
-<style>
+<style lang="scss" scoped>
+@import '../../../../../sass/_variables.scss';
+// .new-apartment {
+  // .create {
 
+  // }
+// }
 </style>
