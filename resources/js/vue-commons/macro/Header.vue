@@ -93,6 +93,10 @@ export default {
             route: 'stays'
           },
           {
+            title: 'Inbox',
+            route: 'inbox'
+          },
+          {
             title: 'Sponsor',
             route: 'sponsor'
           }
