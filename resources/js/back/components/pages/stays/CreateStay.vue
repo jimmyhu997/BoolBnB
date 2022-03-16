@@ -148,11 +148,16 @@
           <div v-for="(perk,i) in data.perks" :key="i">
             <label :for="perk.name">{{perk.name}}</label>
             <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
-           
           </div>
            <!-- <p>
               {{apartment.perks}}
             </p> -->
+        </div>
+
+        <div>
+          <h5>Visibile</h5>
+          <label for="visibile">seleziona la visibilità</label>
+          <input type="checkbox" v-model="apartment.visibile" id="visibile" >
         </div>
 
         <button type="submit">Salva Dati</button>
@@ -190,7 +195,7 @@ export default {
           perks:[],
           latitude: null,
           longitude: null,
-          visible: true
+          visible: null,
         },
         errors:{},
       }
