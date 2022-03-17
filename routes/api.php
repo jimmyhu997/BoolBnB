@@ -25,5 +25,5 @@ Route::post('/send-message',"Api\MessageController@store" );
 
 Route::prefix('search')->namespace('Api')->group(function () {
     Route::get('/basic', 'SearchController@basic')->name('basic');
-    Route::get('/advanced/{params}', 'SearchController@advanced')->name('advanced');
+    Route::get('/advanced', 'SearchController@advanced')->name('advanced');
 });
