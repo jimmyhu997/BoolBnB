@@ -38,8 +38,7 @@ class StayController extends Controller
      public function index()
     {   
         $stays = Stay::all()->where('user_id', Auth::user()->id);
-        $perks = Perk::all();
-        return response()->json([$stays, $perks]);
+        return response()->json($stays);
     }
 
 
@@ -76,10 +75,9 @@ class StayController extends Controller
         $newStay->square_meters = $data['square_meters'];
         $newStay->guests = $data['guests'];
         
-
         // da sistemare con TomTom
-        $newStay->longitude = 10.10;
-        $newStay->latitude = 10.10;
+        $newStay->longitude = $data['longitude'];
+        $newStay->latitude = $data['latitude'];
         
         $newStay->rooms = $data['rooms'];
         $newStay->beds = $data['beds'];

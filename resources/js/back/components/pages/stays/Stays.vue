@@ -50,7 +50,13 @@ export default {
 
     created() {
       axios.get("/user/stays").then( (response) => {
-          this.stays = response.data[0];
+        // console.log(this.stays);
+        
+        for (const key in response.data) {
+            this.stays.push(response.data[key])
+          // console.log(key);
+        }
+
       });
     },
 
@@ -61,7 +67,7 @@ export default {
       },
       refresh() {
         axios.get("/user/stays").then( (response) => {
-            this.stays = response.data[0];
+            this.stays = response.data;
         });
       }
     }
