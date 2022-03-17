@@ -8,14 +8,22 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function basic($params) {
-        
-        Stay::query()
-        ->where('city','LIKE',"%{$params}%")
-        
-        ->orWhere('country','LIKE',"%{$params}%")
-        ->get();
+    public function basic(Request $request) {
+        // tabella di conversione delle cordite in decimali
+        // http://wiki.gis.com/wiki/index.php/Decimal_degrees
+        $offset = (($request->radius / 111) * 0.001);
+        $max_lat = $request->latitude + $offset;
+        $min_lat = $request->latitude - $offset;
+        $max_lon = $request->longitude + $offset;
+        $min_lon = $request->longitude - $offset;
 
-        // return response()->json()
+
+        // dd($max_lat);
+        $result = Stay::where('latitude','<=',$max_lat)->where('latitude','>=',$min_lat)->where('longitude','<=',$max_lon)->where('longitude','>=',$min_lon)->get();
+        if (count($result) < 1){
+            $result = Stay::where('street_address','LIKE',"%".$request->queryKey."%")->orWhere('city','LIKE','%'.$request->queryKey."%")->orWhere('province_state','LIKE','%'.$request->queryKey."%")->orWhere('country','LIKE','%'.$request->queryKey."%")->get();
+        }
+        // $result = Stay::whereBetween('latitude', [$min_lat, $max_lat])->whereBetween('latitude', [$min_lon, $max_lon])->get();
+        return response()->json($result);
     }
 }

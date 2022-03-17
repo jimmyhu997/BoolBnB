@@ -6,6 +6,9 @@ window.axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest'
 };
 window.dayJs = require('dayjs')
+window.externalAxios = axios.create()
+delete externalAxios.defaults.headers.common['X-CSRF-TOKEN']
+delete externalAxios.defaults.headers.common['X-Requested-With']
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -1,17 +1,19 @@
 <template>
   <div class="search__wrapper" @click.stop title="Start search">
       <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search" @input="searchHints()" @click="searchHints()">
-      <div class="search__icon" @click="search()">
+      <!-- <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search"> -->
+      <div class="search__icon" @click="search(searchKeyword)">
         <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: white; stroke-width: 5.333333333333333px; overflow: visible;"><g fill="none"><path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"></path></g></svg>
       </div>
       <div class="hints" ref="hints">
         <ul class="hints__list" v-if="searchResults.length > 0">
-          <li class="hints__item" v-for="(hint, index) in searchResults" :key="index">
-            <a  class="hints__link" :title="hint.city">
+          <li class="hints__item" v-for="(hint, index) in searchResults.slice(0,5)" :key="index">
+            <a class="hints__link" :title="hint.address.postalCode" @click="search(`${searchKeyword} ${hint.address.countryCode} ${hint.address.countrySubdivision} ${hint.address.postalCode}`)">
               <div class="place-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
               </div>
-              <span>{{ hint.city }}, {{ hint.country }}</span>
+              <span v-if="hint.type == 'Street' "> {{searchKeyword}} , {{ hint.address.municipality }}, {{ hint.address.countryCode }}</span>
+              <span v-else>{{searchKeyword}}, {{ hint.address.countryCode }}</span>
             </a>
           </li>
         </ul>
@@ -29,64 +31,82 @@ export default {
     name: 'SearchBar',
     data() {
       return {
+        timeout: null,
         data,
         searchKeyword: '',
-        stays: [
-          {
-            city: 'Rome',
-            country: 'Italy',
-            province_state: 'Lazio'
-          },
-          {
-            city: 'Los Angeles',
-            country: 'United States',
-            province_state: 'California'
-          },
-          {
-            city: 'San Francisco',
-            country: 'United States',
-            province_state: 'California'
-          },
-          {
-            city: 'Lecce',
-            country: 'Italy',
-            province_state: 'Puglia'
-          },
-          {
-            city: 'Dublin',
-            country: 'Ireland',
-            province_state: 'Dublin'
-          },
-          {
-            city: 'New York',
-            country: 'United States',
-            province_state: 'New York'
-          },
-          {
-            city: 'London',
-            country: 'United Kingdom',
-            province_state: 'London'
-          },
-          {
-            city: 'Dubai',
-            country: 'United Arab Emirates',
-            province_state: 'Dubai'
-          },
-        ],
+        stays: [],
         searchResults: []
       }
     },
+    // created() {
+    //   axios.get("api/stays").then((response) => {
+    //     const result = response.data
+    //     const resultMap = result.map(item => {
+    //       return {
+    //         city: item['city'], country: item['country'], province_state: item['province_state'], street_address: item['street_address']
+    //       }
+    //     })
+    //     const seen = new Set()
+    //     const resultValues = resultMap.filter(item => {
+    //       const duplicate = seen.has(item.city,item.country,item.province_state)
+    //       seen.add(item.city,item.country,item.province_state)
+    //       return !duplicate
+    //     })
+    //     this.stays = resultValues
+    //   })
+    // },
     methods: {
+      search(keyword) {
+        console.log(keyword)
+        if (keyword.length < 1){
+          this.$router.push({ name: 'advancedSearch'})
+        } 
+        else {
+          externalAxios.get(`https://api.tomtom.com/search/2/geocode/${keyword}.json?`,{
+            params: {
+              key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+              limit: 1,
+            }
+          })
+          .then((response) => {
+            this.$router.push({ name: 'advancedSearch', query: { 
+              queryKey: keyword,
+              latitude:  response.data.results[0].position.lat,
+              longitude: response.data.results[0].position.lon,
+              radius: 20000,
+              }
+            })
+            this.searchKeyword = ''
+            data.hintsOpened = false
+          })
+          .catch(error => {
+            console.log(error);
+            this.errors = error.response.data.errors;
+          });
+        }
+      },
       searchHints() {
-        if (this.searchKeyword) {
-          data.hintsOpened = true
-
-          this.searchResults = this.stays.filter( stay => {
-            return stay.city.toLowerCase().includes(this.searchKeyword.toLowerCase()) ||
-            stay.country.toLowerCase().includes(this.searchKeyword.toLowerCase()) ||
-            stay.province_state.toLowerCase().includes(this.searchKeyword.toLowerCase())
-          } )
-
+        if (this.searchKeyword){
+          clearTimeout(this.timeout);
+          this.timeout = setTimeout(() => {
+            // operatore ternario per costruzione api call per definire il type della risposta ${this.searchKeyword.toLowerCase().includes('street ' || 'via ') ? '&type' : 'type'}
+            externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
+              params: {
+                key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+                limit: 5,
+                radius: 200000,
+              }
+            })
+            .then((response) => {
+              console.log(response.data.results)
+              data.hintsOpened = true
+              this.searchResults = response.data.results
+            })
+            .catch(error => {
+              console.log(error);
+              this.errors = error.response.data.errors;
+            });
+          },500);
         } else {
           data.hintsOpened = false
           this.searchResults = []

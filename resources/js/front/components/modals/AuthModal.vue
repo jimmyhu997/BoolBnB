@@ -46,7 +46,7 @@
               </div>
               <div class="input-group">
                 <label for="birthday" class="date-label">Birthday</label>
-                <input id="birthday" class="input date" type="date" v-model="registerData.birthdayNotFormatted" placeholder="Birthday">
+                <input id="birthday" class="input date" type="date" v-model="registerData.birthday" placeholder="Birthday">
                 <span class="error" ref="registerBirthday">Insert a valid birthday date.</span>
               </div>
               <div class="input-group">
@@ -86,7 +86,7 @@ export default {
       registerData:{
         name: '',
         surname: '',
-        birthdayNotFormatted: '',
+        // birthdayNotFormatted: '',
         birthday: '',
         email: '',
         password: '',
@@ -167,7 +167,7 @@ export default {
         this.$refs.registerSurname.classList.remove('visible')
       }
       // birthday
-      const birthday = this.registerData.birthdayNotFormatted
+      const birthday = this.registerData.birthday
       if (!dayJs(birthday).isBefore(dayJs()) && birthday.length > 0) {
         validated = 0
         this.$refs.registerBirthday.classList.add('visible')

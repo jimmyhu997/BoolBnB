@@ -10,7 +10,7 @@
 import Header from '../vue-commons/macro/Header.vue';
 import Main from './components/macro/Main.vue';
 import Footer from '../vue-commons/macro/Footer.vue';
-import data from './global'
+import data from '../vue-commons/vueGlobal'
 
 export default {
     name: "App",

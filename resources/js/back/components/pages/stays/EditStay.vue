@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import data from '../../../global.js'
+import data from '../../../../vue-commons/vueGlobal'
 
 export default {
   name:'EditStay',
@@ -223,6 +223,3 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
