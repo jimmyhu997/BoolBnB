@@ -2,13 +2,13 @@
     <div class="dashboard-content container">
       <PageHeading :title="'Welcome ' + userInfo.name" :button="{ route: 'create-stay', desktop: 'Create a new listing', mobile: '+' }"/>
 
-      <div class="card">
+      <!-- <div class="card">
         <div class="margine">
           <span class="top">All messages</span>
-          <!-- <div class="search">
+          <div class="search">
             <input type="text" placeholder="Cerca messaggio ...">
             <button type="submit">Cerca</button>
-          </div> -->
+          </div>
 
           <div class="messages" v-if="messaggi != '' ">
 
@@ -45,7 +45,7 @@
               <p>No messages found</p>
           </div>
         </div>
-      </div>
+      </div> -->
 
 
       <!-- <div class="card">
