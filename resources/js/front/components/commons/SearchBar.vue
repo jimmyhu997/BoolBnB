@@ -2,7 +2,7 @@
   <div class="search__wrapper" @click.stop title="Start search">
       <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search" @input="searchHints()" @click="searchHints()">
       <!-- <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search"> -->
-      <div class="search__icon" @click="search(searchKeyword)">
+      <div class="search__icon" @click="search(`${searchKeyword}`)">
         <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: white; stroke-width: 5.333333333333333px; overflow: visible;"><g fill="none"><path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"></path></g></svg>
       </div>
       <div class="hints" ref="hints">
@@ -38,26 +38,11 @@ export default {
         searchResults: []
       }
     },
-    // created() {
-    //   axios.get("api/stays").then((response) => {
-    //     const result = response.data
-    //     const resultMap = result.map(item => {
-    //       return {
-    //         city: item['city'], country: item['country'], province_state: item['province_state'], street_address: item['street_address']
-    //       }
-    //     })
-    //     const seen = new Set()
-    //     const resultValues = resultMap.filter(item => {
-    //       const duplicate = seen.has(item.city,item.country,item.province_state)
-    //       seen.add(item.city,item.country,item.province_state)
-    //       return !duplicate
-    //     })
-    //     this.stays = resultValues
-    //   })
-    // },
     methods: {
       search(keyword) {
-        console.log(keyword)
+        if (keyword == null){
+          keyword = this.keyword
+        }
         if (keyword.length < 1){
           this.$router.push({ name: 'advancedSearch'})
         } 
@@ -93,7 +78,6 @@ export default {
             externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
               params: {
                 key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-                limit: 5,
                 radius: 200000,
               }
             })
