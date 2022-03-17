@@ -8,12 +8,12 @@
       <div class="hints" ref="hints">
         <ul class="hints__list" v-if="searchResults.length > 0">
           <li class="hints__item" v-for="(hint, index) in searchResults.slice(0,5)" :key="index">
-            <a class="hints__link" :title="hint.address.postalCode" @click="search(`${searchKeyword} ${hint.address.countryCode} ${hint.address.countrySubdivision} ${hint.address.postalCode}`)">
+            <a class="hints__link" :title="hint.address.postalCode" @click="search(`${hint.address.streetName ? hint.address.streetName : searchKeyword} ${hint.address.countryCode} ${hint.address.countrySubdivision ? hint.address.countrySubdivision : ''} ${hint.address.countrySecondarySubdivision ? hint.address.countrySecondarySubdivision : ''} ${hint.address.postalCode}`)">
               <div class="place-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
               </div>
-              <span v-if="hint.type == 'Street' "> {{searchKeyword}} , {{ hint.address.municipality }}, {{ hint.address.countryCode }}</span>
-              <span v-else>{{searchKeyword}}, {{ hint.address.countryCode }}</span>
+              <span v-if="hint.type == 'Street' "> {{hint.address.streetName+','}} {{ hint.address.countrySubdivision+',' }} {{hint.address.countrySecondarySubdivision && hint.address.countrySecondarySubdivision != hint.address.countrySubdivision+',' ? hint.address.countrySecondarySubdivision : ''}} {{ hint.address.countryCode+','}}</span>
+              <span v-else>{{ hint.address.countrySubdivision+',' }} {{hint.address.countrySecondarySubdivision && hint.address.countrySecondarySubdivision != hint.address.countrySubdivision ? hint.address.countrySecondarySubdivision+',' : ''}} {{hint.address.countryCode}}</span>
             </a>
           </li>
         </ul>
@@ -33,28 +33,12 @@ export default {
       return {
         timeout: null,
         data,
+        types: ['Street', 'Geography'],
         searchKeyword: '',
         stays: [],
         searchResults: []
       }
     },
-    // created() {
-    //   axios.get("api/stays").then((response) => {
-    //     const result = response.data
-    //     const resultMap = result.map(item => {
-    //       return {
-    //         city: item['city'], country: item['country'], province_state: item['province_state'], street_address: item['street_address']
-    //       }
-    //     })
-    //     const seen = new Set()
-    //     const resultValues = resultMap.filter(item => {
-    //       const duplicate = seen.has(item.city,item.country,item.province_state)
-    //       seen.add(item.city,item.country,item.province_state)
-    //       return !duplicate
-    //     })
-    //     this.stays = resultValues
-    //   })
-    // },
     methods: {
       search(keyword) {
         console.log(keyword)
@@ -64,8 +48,8 @@ export default {
         else {
           externalAxios.get(`https://api.tomtom.com/search/2/geocode/${keyword}.json?`,{
             params: {
-              key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-              limit: 1,
+            key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+            limit: 1,
             }
           })
           .then((response) => {
@@ -87,20 +71,37 @@ export default {
       },
       searchHints() {
         if (this.searchKeyword){
+          this.searchResults = []
           clearTimeout(this.timeout);
           this.timeout = setTimeout(() => {
             // operatore ternario per costruzione api call per definire il type della risposta ${this.searchKeyword.toLowerCase().includes('street ' || 'via ') ? '&type' : 'type'}
             externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
               params: {
                 key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-                limit: 5,
                 radius: 200000,
               }
             })
             .then((response) => {
-              console.log(response.data.results)
+              // console.log(response.data.results)
               data.hintsOpened = true
-              this.searchResults = response.data.results
+              for(let result in  response.data.results){
+                if(this.types.includes(response.data.results[result].type)){
+                  if (response.data.results[result].type == 'Geography' && response.data.results[result].entityType == 'Municipality') {
+                    this.searchResults.push(response.data.results[result])
+                  } else if (response.data.results[result].type == 'Street'){
+                    this.searchResults.push(response.data.results[result])
+                  } else{
+                    continue
+                  }
+                }
+              }
+              let key = 'countrySubdivision'
+              function getUniqueListBy(arr, key) {
+                return [...new Map(arr.map(item => [item.address[key], item])).values()]
+              }
+              this.searchResults = getUniqueListBy(this.searchResults, key)
+              console.log(this.searchResults)
+              console.log(response.data.results)
             })
             .catch(error => {
               console.log(error);
