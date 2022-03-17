@@ -52,6 +52,7 @@ export default {
             }
           })
           .then((response) => {
+            console.log(response.data)
             this.$router.push({ name: 'advancedSearch', query: { 
               queryKey: keyword,
               latitude:  response.data.results[0].position.lat,
