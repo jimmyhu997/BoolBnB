@@ -75,101 +75,15 @@
 export default {
     name: 'Messages',
     data() {
-
       return {
-
-        stays : [
-            {
-              title: 'Hotel room',
-              message:
-              [
-                {
-                  content: "ciao sono interessato al tuo annucio",
-                  email: "ciccio@gmnail.com",
-                  name:"giorgio",
-                  date: "12:20"
-                },
-                {
-                  content: "mi interessa il tuo appartamento",
-                  email: "franco@gmnail.com",
-                  name:"franco",
-                  date: "14:20"
-                },
-                {
-                  content: "che prezzo mi fai per il tuo appartamento,che prezzo mi fai per il tuo appartamento",
-                  email: "pippo@gmnail.com",
-                  name:"pippo",
-                  date: "15:20"
-                }
-              ] 
-            },
-            {
-              title: 'Hotel room',
-              message:
-              [
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                }
-              ] 
-            },
-            {
-              title: 'Hotel room',
-              message:
-              [
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                }
-              ] 
-            }
-        ]
+        stays : []
       }
     },
-    methods: {
-      
+    created() {
+        axios.get("/user/messages").then( (response) => {
+          this.stays = response.data;
+          console.log(this.stays)
+        })
     }
     
 }
