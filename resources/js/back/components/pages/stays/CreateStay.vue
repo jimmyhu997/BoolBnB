@@ -1,13 +1,66 @@
 <template>
   <div class="new-apartment container">
     <PageHeading :title="'Create a new listing'" :button="{ route: 'stays', desktop: 'Cancel', mobile: '-' }"/>
-    <form @submit.prevent>
+    <form @submit.prevent="create()" class="new-apartment__form">
 
-
-
+      <section class="input__category" v-for="(inputCategory, index) in formInputs" :key="index">
+        <!-- Category title -->
+        <h3 class="input__category-title">
+          {{inputCategory.category}}
+        </h3>
+        <div class="input__group-list">
+          <div class="input__group" v-for="input in inputCategory.inputs" :key="input.name">
+            <!-- Text input -->
+            <div :class="input.type" v-if="input.type == 'text'">
+              <label :for="input.name" class="input__group-label">{{input.label}}</label>
+              <input :type="input.type" :id="input.name" class="input__group-input" v-model="apartment[input.name]" :placeholder="input.placeholder">
+            </div>
+            <!-- Textarea input -->
+            <div :class="input.type" v-else-if="input.type == 'textarea'">
+              <label :for="input.name" class="input__group-label">{{input.label}}</label>
+              <textarea class="input__group-input" :id="input.name" v-model="apartment[input.name]" :placeholder="input.placeholder" rows="2"></textarea>
+            </div>
+            <!-- Image input -->
+            <div :class="input.type" v-if="input.type == 'file'">
+              <input :type="input.type" :id="input.name" ref="fileSelector" @change="onChangeImage">
+              <div class="image-preview" @click="fileSelector()">
+                <span class="plus">+</span>
+                <img class="img" ref="imagePreview">
+              </div>
+            </div>
+            <!-- Number input -->
+            <div :class="input.type" v-else-if="input.type == 'number'">
+              <label class="input__group-label">{{input.label}}</label>
+              <div class="number-buttons">
+                <button class="round-btn disabled" :ref="input.name + 'Decrement'" @click.prevent="decrement(input.name)">-</button>
+                <div class="choice">{{apartment[input.name]}} {{input.name == 'price' ? '€' : ''}}</div>
+                <button class="round-btn" :ref="input.name + 'Increment'" @click.prevent="increment(input.name)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="separator"></div>
+      </section>
+      <!-- Checkboxes -->
+      <section class="input__category">
+        <!-- Category title -->
+        <h3 class="input__category-title">
+          Amenities
+        </h3>
+        <div class="input__group" v-for="perk in data.perks" :key="perk.id">
+          <div class="checkbox">
+            <label :for="perk.name" class="input__group-label">{{perk.name}}</label>
+            <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id">
+          </div>
+        </div>
+      </section>
+      <!-- Submit -->
+      <div class="submit">
+        <button class="submit-btn" type="submit">Save listing</button>
+      </div>
     </form>
 
-      <form @submit.prevent="create()" enctype="multipart/form-data">
+      <!-- <form @submit.prevent="create()" enctype="multipart/form-data" style="margin-top: 5rem">
         <div>
           <input type="text" v-model="apartment.title" placeholder="Inserisci il titolo">
           <div v-if="errors.title" >
@@ -149,9 +202,6 @@
             <label :for="perk.name">{{perk.name}}</label>
             <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
           </div>
-           <!-- <p>
-              {{apartment.perks}}
-            </p> -->
         </div>
 
         <div>
@@ -161,7 +211,7 @@
         </div>
 
         <button type="submit">Salva Dati</button>
-      </form>
+      </form> -->
 
   </div>
 </template>
@@ -180,34 +230,196 @@ export default {
         apartment: {
           title: '',
           description: '',
-          square_meters: null,
-          guests: null,
-          rooms: null,
-          beds: null,
-          bathrooms: null,
+          square_meters: 10,
+          guests: 1,
+          rooms: 1,
+          beds: 1,
+          bathrooms: 1,
           street_address: '',
           zip_code: '',
           city: '',
           province_state: '',
           country: '',
           image_path:{},
-          price: null,
+          price: 10,
           perks:[],
           latitude: null,
           longitude: null,
-          visible: null,
+          visible: true,
         },
         errors:{},
+        formInputs: [
+          {
+            category: 'Photo',
+            inputs: [
+              {
+                name: 'image',
+                type: 'file'
+              },
+            ]
+          },
+          {
+            category: 'Listing basics',
+            inputs: [
+              {
+                name: 'title',
+                label: 'Listing title:',
+                placeholder: 'Insert a title',
+                type: 'text'
+              },
+              {
+                name: 'description',
+                label: 'Listing description:',
+                placeholder: 'Insert a description',
+                type: 'textarea'
+              },
+              {
+                name: 'guests',
+                label: 'Number of guests',
+                type: 'number'
+              },
+              {
+                name: 'visible',
+                label: 'Listing status',
+                type: 'boolean'
+              },
+            ]
+          },
+          {
+            category: 'Rooms and spaces',
+            inputs: [
+              {
+                name: 'beds',
+                label: 'Beds',
+                type: 'number'
+              },
+              {
+                name: 'rooms',
+                label: 'Bedrooms',
+                type: 'number'
+              },
+              {
+                name: 'bathrooms',
+                label: 'Bathrooms',
+                type: 'number'
+              },
+              {
+                name: 'square_meters',
+                label: 'Square meters',
+                type: 'number'
+              },
+            ]
+          },
+          {
+            category: 'Location',
+            inputs: [
+              {
+                name: 'street_address',
+                label: 'Street address',
+                placeholder: 'Insert a street address',
+                type: 'text'
+              },
+              {
+                name: 'city',
+                label: 'City',
+                placeholder: 'Insert a city',
+                type: 'text'
+              },
+              {
+                name: 'province_state',
+                label: 'Province/State',
+                placeholder: 'Insert a province or a state',
+                type: 'text'
+              },
+              {
+                name: 'zip_code',
+                label: 'Postal code',
+                placeholder: 'Insert a postal code',
+                type: 'text'
+              },
+              {
+                name: 'country',
+                label: 'Country',
+                placeholder: 'Insert a country',
+                type: 'text'
+              },
+            ]
+          },
+          {
+            category: 'Pricing',
+            inputs: [
+              {
+                name: 'price',
+                label: 'Nightly price',
+                type: 'number'
+              }
+            ]
+          }
+        ]
       }
     },
     methods: {
+      fileSelector() {
+        this.$refs.fileSelector[0].click()
+      },
       onChangeImage(e){
-        this.apartment['image_path'] = e.target.files[0]
-        // metodo 2
-
-        
-        // console.log(formData)
-        // console.log(this.apartment['imagePath'])
+        const image = e.target.files[0]
+        this.$refs.imagePreview[0].src = URL.createObjectURL(image)
+        this.apartment['image_path'] = image
+      },
+      increment(input) {
+        if (input == 'square_meters') {
+          if (this.apartment[input] < 990) {
+            this.$refs[input + 'Decrement'][0].classList.remove('disabled')
+            this.apartment[input]+= 10
+          }
+          if (this.apartment[input] == 990) {
+            this.$refs[input + 'Increment'][0].classList.add('disabled')
+          }
+        } else if (input == 'price') {
+          if (this.apartment[input] < 990) {
+            this.$refs[input + 'Decrement'][0].classList.remove('disabled')
+            this.apartment[input]+= 10
+          }
+          if (this.apartment[input] == 990) {
+            this.$refs[input + 'Increment'][0].classList.add('disabled')
+          }
+        } else {
+          if (this.apartment[input] < 16) {
+            this.$refs[input + 'Decrement'][0].classList.remove('disabled')
+            this.apartment[input]++
+          }
+          if (this.apartment[input] == 16) {
+            this.$refs[input + 'Increment'][0].classList.add('disabled')
+          }
+        }
+      },
+      decrement(input) {
+        if (input == 'square_meters') {
+          if (this.apartment[input] > 10) {
+            this.$refs[input + 'Increment'][0].classList.remove('disabled')
+            this.apartment[input]-= 10
+          }
+          if (this.apartment[input] == 10) {
+            this.$refs[input + 'Decrement'][0].classList.add('disabled')
+          }
+        } else if (input == 'price') {
+          if (this.apartment[input] > 10) {
+            this.$refs[input + 'Increment'][0].classList.remove('disabled')
+            this.apartment[input]-= 10
+          }
+          if (this.apartment[input] == 10) {
+            this.$refs[input + 'Decrement'][0].classList.add('disabled')
+          }
+        } else {
+          if (this.apartment[input] > 1) {
+            this.$refs[input + 'Increment'][0].classList.remove('disabled')
+            this.apartment[input]--
+          }
+          if (this.apartment[input] == 1) {
+            this.$refs[input + 'Decrement'][0].classList.add('disabled')
+          }
+        }
       },
       create() {
         // tomtom Api call
@@ -258,9 +470,168 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../../sass/_variables.scss';
-// .new-apartment {
-  // .create {
-
-  // }
-// }
+.new-apartment {
+  &__form {
+    .input__ {
+      &category {
+        max-width: 600px;
+        margin: 0 auto 3rem;
+        border-bottom: .5px solid rgba(0, 0, 0, .4);
+        &-title {
+          font-size: 1.2rem;
+          font-weight: 500;
+          margin-bottom: 2rem;
+        }
+        .separator {
+          width: 100%;
+          padding: 1rem;
+        }
+      }
+      &group {
+        &-list {
+          margin-bottom: 2rem;
+        }
+        &>* {
+          margin: 1rem;
+          display: flex;
+          flex-direction: column;
+        }
+        &-label {
+          font-size: 1.1rem;
+          color: #111;
+        }
+        &-input {
+          margin-top: .5rem;
+          box-shadow: none;
+          font-size: 1.2rem;
+          font-weight: 200;
+          padding: .5rem;
+          border: none;
+          outline: none;
+          color: #777;
+          &::placeholder {
+            color: #aaa;
+          }
+        }
+        .file {
+          #image {
+            display: none;
+          }
+          .image-preview {
+            width: 100%;
+            max-width: 350px;
+            height: 40vw;
+            max-height: 200px;
+            background-color: rgba(0, 0, 0, .05);
+            border: .5px solid rgba(0, 0, 0, .4);
+            box-shadow: 0 0 .2rem .2rem rgba(0, 0, 0, 0.05);
+            margin: 0 auto;
+            border-radius: .5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            .plus {
+              color: rgba(0, 0, 0, 0.5);
+              font-size: 3rem;
+              font-weight: 300;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              z-index: -1;
+            }
+            .img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              object-position: center;
+            }
+          }
+        }
+        .number {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 1rem;
+          &-buttons {
+            display: flex;
+            align-items: center;
+            .choice {
+              flex-shrink: 0;
+              // width: 1rem;
+              text-align: center;
+              font-size: 1rem;
+              font-weight: 300;
+              margin: 0 1rem;
+              flex-wrap: nowrap;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .round-btn {
+              flex-shrink: 0;
+              width: 2rem;
+              height: 2rem;
+              border-radius: 50%;
+              border: 1px solid grey;
+              font-size: 1.4rem;
+              line-height: 2rem;
+              font-weight: 100;
+              background-color: transparent;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              &.disabled {
+                cursor: not-allowed;
+                color: grey;
+                border: 1px solid lightgrey;
+                &:hover {
+                  background-color: transparent;
+                  border: 1px solid lightgrey;
+                }
+              }
+              &:hover {
+                border: 1px solid black;
+                background-color: rgba(0, 0, 0, .02);
+              }
+            }
+          }
+        }
+        .text, .textarea {
+          border-bottom: .5px solid rgba(0, 0, 0, .2);
+        }
+        .checkbox {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 1rem;
+        }
+      }
+    }
+    .submit {
+      display: flex;
+      justify-content: flex-end;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      &-btn {
+        background-color: transparent;
+        font-size: 1rem;
+        cursor: pointer;
+        border: 1px solid black;
+        color: black;
+        text-decoration: none;
+        transition: background-color .2s;
+        border-radius: .7rem;
+        padding: 1rem 2rem;
+        &:hover {
+          background-color: rgba(0, 0, 0, .02);
+        }
+      }
+    }
+  }
+}
 </style>
