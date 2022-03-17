@@ -4,7 +4,7 @@
     <div class="apartments__wrapper" v-if="stays.length > 0">
       <ul class="apartments__list">
         <li class="apartment" v-for="stay in stays" :key="stay.id">
-          <a class="apartment__link" :href="'/apartment/' + stay.id" :title="stay.title">
+          <a class="apartment__link" :href="'/apartment/' + stay.slug" :title="stay.title">
           <div class="apartment__preview">
             <img class="img" :src="'/storage/' + stay.image_path" :alt="stay.title + ' preview'">
           </div>

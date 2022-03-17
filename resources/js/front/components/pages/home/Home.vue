@@ -13,15 +13,16 @@ export default {
     data() {
       return {
         apartments: [],
-        randomApartment: null
+        randomApartment: ''
       }
     },
     created() {
       axios.get('/api/stays')
         .then(response => {
+          console.log(response.data)
           this.apartments = response.data
-          const ids = this.apartments.map(apartment => apartment.id)
-          this.randomApartment = ids[ Math.floor( Math.random() * ids.length ) ]
+          const slugs = this.apartments.map(apartment => apartment.slug)
+          this.randomApartment = slugs[ Math.floor( Math.random() * slugs.length ) ]
         })
     }
 }
