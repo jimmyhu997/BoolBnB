@@ -1,37 +1,10 @@
 <template>
   <div class="contenitore">
 
-    <div class="left">
-    </div>
+    <!-- <div class="left">
+    </div> -->
 
     
-
-    <div class="messages">
-      <div class="title">
-        <div>
-          <h2>Titolo annuncio</h2>
-        </div>
-      </div>
-      <div class="messages-box" v-for="(message,i) in stays[0].messages" :key="i">
-       <div class="message">
-          <div class="date">
-          <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
-        </div>
-        <div class="head-message">
-          <div class="name">
-            {{message.name}}
-          </div>
-          <div class="mail">
-            {{message.email}}
-          </div>
-        </div>
-        <div class="main-message">
-          <div>
-            {{message.content}}
-          </div>
-        </div>
-       </div>
-      </div>
     <nav role="navigation">
       <div id="menuToggle">
         <!--
@@ -63,9 +36,36 @@
       </div>
     </nav>
 
-    <div class="content">
-      Lista messaggi cada Annuncio
+    <div class="messages">
+      <div class="title">
+        <div>
+          <h2>Titolo annuncio</h2>
+        </div>
+      </div>
+      <div class="messages-box" v-for="(message,i) in stays[0].messages" :key="i">
+       <div class="message">
+        <div class="date">
+          <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
+        </div>
+        <div class="head-message">
+          <div class="name">
+            {{message.name}}
+          </div>
+          <div class="mail">
+            {{message.email}}
+          </div>
+        </div>
+        <div class="main-message">
+          <div>
+            {{message.content}}
+          </div>
+        </div>
+       </div>
+      </div>
     </div>
+    <!-- <div class="content">
+      Lista messaggi cada Annuncio
+    </div> -->
 
   </div>
 
@@ -183,18 +183,18 @@ export default {
   .contenitore { 
     height: 71vh;
     position: relative;
-      margin: 0;
-      padding: 0;
-      background: #ffffff;
-      color: black;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: black;
 
-    .content {
-      position: absolute;
-      width: 100%;
-      left: 100px;
-      top: 50px;
-      // background-color: aqua;
-    }
+    // .content {
+    //   position: absolute;
+    //   width: 100%;
+    //   left: 100px;
+    //   top: 50px;
+    //   background-color: aqua;
+    // }
 
     .navigation {
       width: 300px;
