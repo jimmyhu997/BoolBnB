@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MessageController extends Controller
 {
@@ -16,7 +17,12 @@ class MessageController extends Controller
      */
     public function index()
     {
-        $stays = Stay::all()->where('user_id', Auth::user()->id);
+        // $stays = DB::table('stays')
+        //             ->join('messages', 'stays.id', '=', 'messages.stays_id')
+        //             ->select('stays.title')
+        //             ->where('user_id', Auth::user()->id)
+        //             ->get();
+        $stays = Stay::with('messages')->where('user_id', Auth::user()->id)->get();
         return response()->json($stays);
     }
 
