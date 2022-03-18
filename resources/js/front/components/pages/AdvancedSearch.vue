@@ -51,7 +51,6 @@ export default {
                 bathrooms: this.$route.query.bathrooms,
                 rooms: this.$route.query.rooms,
             } ,
-            stays:[]
         }
     },
     methods: {
@@ -78,22 +77,22 @@ export default {
             else{
                 axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
                     for (let stay in response.data){
-                        let validate = true
+                        let isIncluded = true
                         for (const [filterKey, filterValue] of Object.entries(this.filters)) {
                             if (Array.isArray(filterValue)){
                                 for (let elem in filterValue){
-                                    if(!response.data[stay].filterKey.includes(elem)){
-                                        validate = false
+                                    if(!response.data[stay][filterKey].includes(elem)){
+                                        isIncluded = false
                                         break
                                     }
                                 }
                             } else {
                                 if (!isNaN(filterValue) && parseInt(filterValue) > response.data[stay][filterKey] ){
-                                    validate = false
+                                    isIncluded = false
                                 } 
                             }
                         }
-                        if (validate == true){
+                        if (isIncluded == true){
                             this.stays.push(response.data[stay])
                         }
                     }
