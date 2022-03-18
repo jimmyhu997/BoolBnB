@@ -41,8 +41,8 @@
                 <span class="error" ref="registerName">Name is required.</span>
               </div>
               <div class="input-group">
-                <input class="input" type="text" v-model="registerData.surname" placeholder="Surname">
-                <span class="error" ref="registerSurname">Insert a valid surname.</span>
+                <input class="input" type="text" v-model="registerData.surname" placeholder="Surname*">
+                <span class="error" ref="registerSurname">Surname is required.</span>
               </div>
               <div class="input-group">
                 <label for="birthday" class="date-label">Birthday</label>
@@ -159,8 +159,9 @@ export default {
       }
       // surname
       const surname = this.registerData.surname
-      if (surname.length > 255) {
+      if (surname == '' || surname.length > 255) {
         validated = 0
+        surname == '' ? this.$refs.registerSurname.innerHTML = 'Surname is required.' : this.$refs.registerSurname.innerHTML = 'Insert a valid surname.'
         this.$refs.registerSurname.classList.add('visible')
       } else {
         validated++
