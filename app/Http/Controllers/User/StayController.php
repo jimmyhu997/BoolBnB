@@ -178,8 +178,9 @@ class StayController extends Controller
      */
     public function destroy(Stay $stay)
     {
+        Storage::delete($stay->image_path);
         $stay->delete();
-
+        
         return response()->json([
             "stayId" => $stay->id
         ]);
