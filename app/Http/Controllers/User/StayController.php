@@ -14,7 +14,7 @@ class StayController extends Controller
 {
     protected $validationRule = [
         "title" => "required|string|max:50",
-        "description" => "required|text|max:500",
+        "description" => "required|string|max:500",
         "square_meters" => "required|numeric|max:999",
         "guests" => "required|numeric|max:99",
         "rooms" => "required|numeric|max:99",

@@ -10,12 +10,34 @@
         </h3>
         <div class="input__group-list">
           <div class="input__group" v-for="input in inputCategory.inputs" :key="input.name">
-            <!-- Text input -->
-            <div :class="input.type" v-if="input.type == 'text'">
+            <!-- Title input -->
+            <div :class="input.type" v-if="input.name == 'title'">
               <label :for="input.name" class="input__group-label">{{input.label}}</label>
               <input :type="input.type" :id="input.name" class="input__group-input" v-model="apartment[input.name]" :placeholder="input.placeholder" :maxlength="input.maxLength">
               <span v-if="input.name == 'title'" class="words-limit">{{apartment.title.length}}/{{input.maxLength}}</span>
               <span class="error" :ref="input.name">{{input.label}} is required.</span>
+            </div>
+            <!-- Address input -->
+            <div :class="input.type" v-if="input.name == 'street_address'">
+              <label :for="input.name" class="input__group-label">{{input.label}}</label>
+              <input :type="input.type" :id="input.name" class="input__group-input" :placeholder="input.placeholder" v-model="searchKeyword" @input="searchHints()" @keydown.enter="validateAddress()">
+              <span class="error" :ref="input.name">{{input.label}} is required.</span>
+              <!-- address hints -->
+              <div class="hints" ref="hints">
+                <ul class="hints__list" v-if="searchResults.length > 0">
+                  <li class="hints__item" v-for="(hint, index) in searchResults.slice(0,5)" :key="index">
+                    <div class="hints__link" :title="hint.address.postalCode" @click="addPosition(hint)">
+                      <div class="place-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
+                      </div>
+                      <span>{{string(hint.address)}}</span>
+                    </div>
+                  </li>
+                </ul>
+                <div v-else class="hints__list">
+                    <span class="hints__no-results">No results.</span>
+                </div>
+              </div>
             </div>
             <!-- Textarea input -->
             <div :class="input.type" v-else-if="input.type == 'textarea'">
@@ -232,7 +254,12 @@ export default {
               }
             ]
           }
-        ]
+        ],
+        timeout: null,
+        types: ['Street', 'Geography','Point Address'],
+        searchKeyword: '',
+        searchResults: [],
+        preciseAddress: false
       }
     },
     created() {
@@ -305,37 +332,90 @@ export default {
           this.apartment.visible = true
         }
       },
+      searchHints() {
+        if (this.searchKeyword){
+          this.searchResults = []
+          clearTimeout(this.timeout);
+          this.timeout = setTimeout(() => {
+            externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
+              params: {
+                key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+                limit: 50,
+              }
+            })
+            .then((response) => {
+              data.addressHintsOpened = true
+              for(let result in response.data.results){
+                if(this.types.includes(response.data.results[result].type)){
+                  if (response.data.results[result].type == 'Point Address'){
+                    this.searchResults.push(response.data.results[result])
+                  } else if (response.data.results[result].type == 'Street'){
+                    this.searchResults.push(response.data.results[result])
+                  }
+                }
+              }
+            })
+            .catch(error => {
+              this.errors = error.response.data.errors;
+            });
+          },500);
+        } else {
+          data.addressHintsOpened = false
+          this.searchResults = []
+        }
+      },
+      string(object){
+        let result = ''
+        result += `${object.streetName}, `
+        if (object.streetNumber){
+          result += `${object.streetNumber}, `
+        }
+        if (object.municipality){
+          result += `${object.municipality}, `
+        }
+        if (object.countrySecondarySubdivision){
+          result += `${object.countrySecondarySubdivision}, `
+        }
+        if (object.countrySubdivision){
+          result += `${object.countrySubdivision}, `
+        }
+        result += object.countryCode
+        return result
+      },
+      addPosition(object) {
+        this.searchKeyword = this.string(object.address)
+        data.addressHintsOpened = false
+        if (!object.address.streetNumber) {
+          this.preciseAddress = false
+        } else {
+          this.preciseAddress = true
+          this.apartment.latitude = object.position.lat
+          this.apartment.longitude = object.position.lon
+          this.apartment.city = object.address.municipality
+          this.apartment.province_state = object.address.countrySubdivision
+          this.apartment.country = object.address.country
+          this.apartment.zip_code = object.address.postalCode
+          this.apartment.street_address = `${object.address.streetName}, ${object.address.streetNumber}`
+        }
+      },
+      validateAddress() {
+        if (this.searchResults.length > 0) {
+          this.addPosition(this.searchResults[0])
+        }
+      },
       create() {
         if (this.validations()) {
-        // tomtom Api call
-        externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
-          params: {
-            key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-            limit: 3,
+          //inizio della creazione dell'oggetto
+          let dataImage = new FormData();
+          for (let element in this.apartment) {
+            dataImage.append(String(element),this.apartment[element])
           }
-        }).then((response) => {
-            //nel caso in cui la call per ottenere le coordinate geografiche vada a buon fine si va a fare la call per l'invio dei dati
-            //le chiamate sono sincrone c'è da imparare a strutturare più chiamate in asincrono
-            this.apartment.latitude = response.data.results[0].position.lat
-            this.apartment.longitude = response.data.results[0].position.lon
-            console.log(response.data.results)
-            //inizio della creazione dell'oggetto
-            let dataImage = new FormData();
-            for (let element in this.apartment) {
-              dataImage.append(String(element),this.apartment[element])
-            }
-            axios.post("stays", dataImage).then((response) => {
-              this.$router.push( {name: 'stays'})
-              console.log(response.data)
-              })
-              .catch(error => {
-                // console.log(error);
-                this.errors = error.response.data.errors;
-              });
-          }).catch(error => {
-            console.log(error);
-            this.errors = error.response.data.errors;
-          });
+          axios.post("stays", dataImage).then((response) => {
+            this.$router.push( {name: 'stays'})
+            })
+            .catch(error => {
+              this.errors = error.response.data.errors;
+            });
         }
       },
       validations() {
@@ -371,10 +451,10 @@ export default {
           this.$refs.image[0].classList.remove('visible')
         }
         // address
-        const address = this.apartment.street_address
-        if (address == '') {
+        const address = this.searchKeyword
+        if (address == '' || !this.preciseAddress) {
           validated = 0
-          address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : ''
+          address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : this.$refs.street_address[0].innerHTML = 'Specify a street number.'
           this.$refs.street_address[0].classList.add('visible')
         } else {
           validated++
@@ -410,19 +490,15 @@ export default {
       }
      
     },
-    // mounted() {
-    //   // console.log(this.$refs.image);
-    //   this.$refs.image.addEventListener('change', () => {
-    //     const [file] = this.$refs.image.files;
-    //     if (file) {
-    //       // let formData = new FormData();
-    //       this.apartment.imagePath =  file;
-    //       // formData.append('file', file) 
-    //       // console.log(formData);
-    //       // this.$refs.prova.src = URL.createObjectURL(file);
-    //     } 
-    //   })
-    // },
+    watch: {
+      '$data.data.addressHintsOpened'(hints) {
+        if (hints) {
+          this.$refs.hints[0].classList.add('active')
+        } else {
+          this.$refs.hints[0].classList.remove('active')
+        }
+      }
+    }
 }
 </script>
 
@@ -647,6 +723,54 @@ export default {
         &:hover {
           background-color: rgba(0, 0, 0, .02);
         }
+      }
+    }
+    .hints {
+      display: none;
+      position: absolute;
+      top: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 500px;
+      height: max-content;
+      background-color: #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 .7rem rgba(0, 0, 0, .2);
+      &.active {
+        display: block;
+      }
+      &__list {
+        list-style: none;
+        padding: 1rem 0;
+      }
+      &__link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        .place-icon {
+          flex-shrink: 0;
+          width: 2.7rem;
+          height: 2.7rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: .5rem;
+          background-color: rgba(0, 0, 0, .07);
+          border: 1px solid $lightGrey;
+          margin-right: 1rem;
+          svg {
+            width: 1.2rem;
+          }
+        }
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+      }
+      &__no-results {
+        padding: 1rem 1.5rem;
+        display: block;
       }
     }
   }
