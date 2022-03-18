@@ -113,6 +113,9 @@ export default {
         if (object.streetNumber){
           result += `${object.streetNumber}, `
         }
+        if (object.municipality){
+          result += `${object.municipality},`
+        }
         if (object.countrySecondarySubdivision){
           result += `${object.countrySecondarySubdivision}, `
         }
