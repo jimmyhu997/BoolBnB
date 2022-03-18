@@ -29,7 +29,7 @@ class StayController extends Controller
      */
     public function show($slug)
     {   
-        $stay = Stay::with('perks')->where("slug", $slug)->first();
+        $stay = Stay::with('perks')->where("slug", $slug)->where('visible', true )->first();
         return response()->json($stay) ; 
     }
 

@@ -1,19 +1,19 @@
 {
     "perks": [
         "Wi-fi",
-        "Posto Macchina",
-        "Piscina",
-        "Portineria",
+        "Free parking on premises",
+        "Pool",
+        "Concierge",
         "Sauna",
-        "Vista Mare",
-        "Cortile",
-        "Aria condizionata",
-        "Riscaldamento",
-        "Animali domestici ammessi",
-        "Piatti e posate",
-        "Servizi di base per cucinare",
-        "Allarme antincendio",
-        "Ascensore",
+        "Sea view",
+        "Yard",
+        "Air conditioning",
+        "Heating",
+        "Pets allowed",
+        "Dishes and silverware",
+        "Cooking basics",
+        "Smoke alarm",
+        "Elevator",
         "Tv"
     ]
 }
