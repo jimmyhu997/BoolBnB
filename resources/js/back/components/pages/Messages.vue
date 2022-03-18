@@ -1,40 +1,59 @@
 <template>
   <div class="contenitore">
 
-    <!-- <div class="left">
-    </div> -->
+    <div class="left">
+      
+      <div class="menu">
 
-    
-    <nav role="navigation">
-      <div id="menuToggle">
-        <!--
-        A fake / hidden checkbox is used as click reciever,
-        so you can use the :checked selector on it.
-        -->
-        <input type="checkbox" name="checkbox">
-        
-        <!--
-        Some spans to act as a hamburger.
-        
-        They are acting like a real hamburger,
-        not that McDonalds stuff.
-        -->
-        <span></span>
-        <span></span>
-        <span></span>
-        
-        <!--
-        Too bad the menu has to be inside of the button
-        but hey, it's pure CSS magic.
-        -->
-        <ul class="menu">
-          <h4>Annunci</h4>
+        <!-- IN LAVORAZIONE (MANCANO DELLE MODIFICHE) -->
+        <div class="hamburger-menu">
+              <ul class="listato">
+                <li v-for="(stay , index) in stays" :key="index" >
 
-          <li v-for="(stay , i) in stays" :key="i" >{{stay.title}}</li>
+                  <div class="mini-card" @click="changeStay(index)">
+                    
+                    <div class="content">
 
+                      <span class="title ">{{stay.title}}</span>
+                      <span class="time ">data last message</span>
+
+                    </div>
+
+                  </div>
+
+                </li>
+              </ul>
+
+            <div class="close">
+              <span>chiudi</span>
+            </div>
+
+        </div>
+        <!-- IN LAVORAZIONE (MANCANO DELLE MODIFICHE) -->
+
+        <span class="build-ads">Annunci</span>
+      </div>
+
+      <div class="stays">
+        <ul class="hambg-list">
+          <li class="list" v-for="(stay , index) in stays" :key="index" >
+
+            <div class="mini-card" @click="changeStay(index)">
+              
+              <div class="content">
+                <!-- <img src="" alt="Icona"> -->
+                <span class="title">{{stay.title}}</span>
+                <span class="time">data last message</span>
+
+              </div>
+
+            </div>
+
+          </li>
         </ul>
       </div>
-    </nav>
+
+    </div>
 
     <div class="messages">
       <div class="title">
@@ -42,8 +61,8 @@
           <h2>Titolo annuncio</h2>
         </div>
       </div>
-      <div class="messages-box" v-for="(message,i) in stays[0].messages" :key="i">
-       <div class="message">
+       <div class="message" v-if="stays.length > 0">
+      <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
         <div class="date">
           <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
         </div>
@@ -63,10 +82,6 @@
        </div>
       </div>
     </div>
-    <!-- <div class="content">
-      Lista messaggi cada Annuncio
-    </div> -->
-
   </div>
 
 </template>
@@ -75,103 +90,35 @@
 export default {
     name: 'Messages',
     data() {
-
       return {
-
-        stays : [
-            {
-              title: 'Hotel room',
-              message:
-              [
-                {
-                  content: "ciao sono interessato al tuo annucio",
-                  email: "ciccio@gmnail.com",
-                  name:"giorgio",
-                  date: "12:20"
-                },
-                {
-                  content: "mi interessa il tuo appartamento",
-                  email: "franco@gmnail.com",
-                  name:"franco",
-                  date: "14:20"
-                },
-                {
-                  content: "che prezzo mi fai per il tuo appartamento,che prezzo mi fai per il tuo appartamento",
-                  email: "pippo@gmnail.com",
-                  name:"pippo",
-                  date: "15:20"
-                }
-              ] 
-            },
-            {
-              title: 'Hotel room',
-              message:
-              [
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                }
-              ] 
-            },
-            {
-              title: 'Hotel room',
-              message:
-              [
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                },
-                {
-                  content: "sdf sdfg sdfg sdf sdf s drh sdfh  sdfh sdf sdf hgsdfh",
-                  email: "ciccio@gmnail.com",
-                  date: "12:20"
-                }
-              ] 
-            }
-        ]
+        currentStay : 0,
+        stays : []
       }
     },
+    created() {
+        axios.get("/user/messages").then( (response) => {
+          this.stays = response.data;
+        })
+    },
     methods: {
-      
-    }
-    
+      changeStay: function(index){
+        this.currentStay = index;
+      }
+    },   
+    menu : function (){
+      const openMenu = document.querySelector(".header-right > .icone");
+      const closeMenu = document.querySelector(".close");
+
+    // ***creo le funzioni
+
+    openMenu.addEventListener("click", function(){
+        document.querySelector(".hamburger-menu").classList.add("active")
+    });
+
+    closeMenu.addEventListener("click", function(){
+        document.querySelector(".hamburger-menu").classList.remove("active")
+    });
+    }   
 }
 
 
@@ -181,33 +128,102 @@ export default {
 @import '../../../../sass/_variables.scss';
   
   .contenitore { 
-    height: 71vh;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    background: #ffffff;
-    color: black;
+    height: 70vh;
+    max-width: 1750px;
+    margin:1rem auto;
+    padding: 0 4.8rem;
+    display: flex;
 
-    // .content {
-    //   position: absolute;
-    //   width: 100%;
-    //   left: 100px;
-    //   top: 50px;
-    //   background-color: aqua;
-    // }
+    .left {
+      width: 450px;
+      border: .8px solid $lightGrey;
 
-    .navigation {
-      width: 300px;
-      background-color: antiquewhite;
+      .menu {
+        padding: .5rem .5rem;
+
+        .hamburger-menu {
+            .listato {
+              list-style: none;
+              height: 100%;
+              text-align: right;
+            }
+        }
+
+        .build-ads {
+          padding-left: 1rem;
+          font-size: 1.6rem;
+          font-weight: bold;
+        }
+      }
+
+      .stays {
+        width: 300px;
+        margin: 1rem 1rem;
+        overflow-y: auto;
+
+        .mini-card{
+          padding: 2rem 1rem;
+        }
+      }
+
+      .stays li {
+        border-bottom: 1px solid $lightGrey;
+        display: none;
+      }
+
+      .stays ul{
+        list-style: none;
+      }
+
+      .stays ul li {
+        display: inline-block;     
+      }
+
+      .hamburger-menu {
+        display: none;
+        width: 100%;
+        height: 100%;
+        min-width: 100vw;
+        min-height: 100vh;
+        background-color: $cyan;
+      }
+
+      .hamburger-menu ul{
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: flex-start;
+        list-style: none;
+      }
+
+      .hamburger-menu ul li .mini-card {
+        color: white;
+      }
+
+      .content{
+        display: flex;
+        justify-content: space-between; 
+      }
     }
+
+    // DIVISIONE
+
 
     .messages{
       width: 100%;
+
+      // HO MODIFICATO UN PO PER AGGIUSTARE LA GRAFICA
+      border: .8px solid $lightGrey; 
+      overflow-y: auto;
+      // HO MODIFICATO UN PO PER AGGIUSTARE LA GRAFICA
+
       .title{
         display: flex;
         justify-content: space-between;
         margin: 0 auto;
         margin-bottom: 50px;
+        padding-top: 10px;
         width: 80%;
       }
       .messages-box{
@@ -243,112 +259,6 @@ export default {
           font-weight: 300;
         }
       }
-    }
-
-    #menuToggle {
-      display: block;
-      position: relative;
-      top: 50px;
-      left: 50px;     
-      z-index: 1;     
-      -webkit-user-select: none;
-      user-select: none;
-    }
-
-    #menuToggle a {
-      text-decoration: none;
-      color: #232323;      
-      transition: color 0.3s ease;
-    }
-
-    #menuToggle a:hover {
-      color: tomato;
-    }
-
-
-    #menuToggle input {
-      display: block;
-      width: 40px;
-      height: 32px;
-      position: absolute;
-      top: -7px;
-      left: -5px;     
-      cursor: pointer;      
-      opacity: 0; 
-      z-index: 2;     
-      -webkit-touch-callout: none;
-    }
-
-    #menuToggle span {
-      display: block;
-      width: 33px;
-      height: 4px;
-      margin-bottom: 5px;
-      position: relative; 
-      background: #cdcdcd;
-      border-radius: 3px;
-      z-index: 1;  
-      transform-origin: 4px 0px;
-      transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-                  background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-                  opacity 0.55s ease;
-    }
-
-    #menuToggle span:first-child {
-      transform-origin: 0% 0%;
-    }
-
-    #menuToggle span:nth-last-child(2)
-    {
-      transform-origin: 0% 100%;
-    }
-
-    #menuToggle input:checked ~ span {
-      opacity: 1;
-      transform: rotate(45deg) translate(-2px, -1px);
-      background: #232323;
-    }
-
-    #menuToggle input:checked ~ span:nth-last-child(3) {
-      opacity: 0;
-      transform: rotate(0deg) scale(0.2, 0.2);
-    }
-
-    #menuToggle input:checked ~ span:nth-last-child(2) {
-      transform: rotate(-45deg) translate(0, -1px);
-    }
-
-    .menu {
-      position: absolute;
-      width: 100%;
-      height: 74.1vh;
-      margin: -100px 0 0 -50px;
-      padding: 50px;
-      padding-top: 125px;
-      background: #ededed;
-      list-style-type: none;
-      -webkit-font-smoothing: antialiased;
-      transform-origin: 0% 0%;
-      transform: translate(-100%, 0); 
-      transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
-    }
-
-    .menu li {
-      padding: 10px 0;
-      font-size: 22px;
-    }
-
-    #menuToggle input:checked ~ ul {
-      transform: none;
-    }
-
-    @media screen and (min-width: $medium) {
-
-      .menu {
-        width: 300px;
-      }
-
-
     }
   }
 
