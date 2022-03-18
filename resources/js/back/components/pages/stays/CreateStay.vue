@@ -69,7 +69,7 @@
         <h3 class="input__category-title">
           Amenities
         </h3>
-        <div class="input__group" v-for="perk in data.perks" :key="perk.id">
+        <div class="input__group" v-for="perk in perks" :key="perk.id">
           <div class="checkbox">
             <label :for="perk.name" class="input__group-label">{{perk.name}}</label>
             <div class="checkbox-buttons">
@@ -234,6 +234,12 @@ export default {
           }
         ]
       }
+    },
+    created() {
+      axios.get('/api/perks')
+        .then(response => {
+          this.perks = response.data
+        })
     },
     methods: {
       fileSelector() {
