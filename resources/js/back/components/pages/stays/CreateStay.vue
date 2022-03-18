@@ -13,29 +13,51 @@
             <!-- Text input -->
             <div :class="input.type" v-if="input.type == 'text'">
               <label :for="input.name" class="input__group-label">{{input.label}}</label>
-              <input :type="input.type" :id="input.name" class="input__group-input" v-model="apartment[input.name]" :placeholder="input.placeholder">
+              <input :type="input.type" :id="input.name" class="input__group-input" v-model="apartment[input.name]" :placeholder="input.placeholder" :maxlength="input.maxLength">
+              <span v-if="input.name == 'title'" class="words-limit">{{apartment.title.length}}/{{input.maxLength}}</span>
+              <span class="error" :ref="input.name">{{input.label}} is required.</span>
             </div>
             <!-- Textarea input -->
             <div :class="input.type" v-else-if="input.type == 'textarea'">
               <label :for="input.name" class="input__group-label">{{input.label}}</label>
-              <textarea class="input__group-input" :id="input.name" v-model="apartment[input.name]" :placeholder="input.placeholder" rows="2"></textarea>
+              <textarea class="input__group-input" :id="input.name" v-model="apartment[input.name]" :placeholder="input.placeholder" rows="2" :maxlength="input.maxLength"></textarea>
+              <span class="words-limit">{{apartment.description.length}}/{{input.maxLength}}</span>
+              <span class="error" :ref="input.name">{{input.name}} is required.</span>
             </div>
             <!-- Image input -->
             <div :class="input.type" v-if="input.type == 'file'">
-              <input :type="input.type" :id="input.name" ref="fileSelector" @change="onChangeImage">
+              <input :type="input.type" :id="input.name" accept=".png, .jpg, .jpeg" ref="fileSelector" @change="onChangeImage">
               <div class="image-preview" @click="fileSelector()">
                 <span class="plus">+</span>
                 <img class="img" ref="imagePreview">
               </div>
+              <span class="image-info">Accepted formats: png/jpg/jpeg.<br>Max size: 5MB</span>
+              <span class="error" ref="image">{{input.name}} is required.</span>
             </div>
             <!-- Number input -->
             <div :class="input.type" v-else-if="input.type == 'number'">
               <label class="input__group-label">{{input.label}}</label>
               <div class="number-buttons">
-                <button class="round-btn disabled" :ref="input.name + 'Decrement'" @click.prevent="decrement(input.name)">-</button>
+                <button class="round-btn disabled" :ref="input.name + 'Decrement'" @click.prevent="decrement(input.name)">
+                  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
+                </button>
                 <div class="choice">{{apartment[input.name]}} {{input.name == 'price' ? '€' : ''}}</div>
-                <button class="round-btn" :ref="input.name + 'Increment'" @click.prevent="increment(input.name)">+</button>
+                <button class="round-btn" :ref="input.name + 'Increment'" @click.prevent="increment(input.name)">
+                  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
+                </button>
               </div>
+            </div>
+            <!-- Radius input -->
+            <div :class="input.type" v-else-if="input.type == 'radius'">
+              <label class="input__group-label">{{input.label}}</label>
+              <button class="option" @click.prevent="visibility()">
+                <div class="radius-btn checked" ref="listed"></div>
+                <span class="option-name listed">Listed</span>
+              </button>
+              <button class="option" @click.prevent="visibility()">
+                <div class="radius-btn" ref="unlisted"></div>
+                <span class="option-name unlisted">Unlisted</span>
+              </button>
             </div>
           </div>
         </div>
@@ -50,7 +72,14 @@
         <div class="input__group" v-for="perk in data.perks" :key="perk.id">
           <div class="checkbox">
             <label :for="perk.name" class="input__group-label">{{perk.name}}</label>
-            <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id">
+            <div class="checkbox-buttons">
+              <button class="round-btn" :ref="perk.id + 'Uncheck'" @click.prevent="uncheck(perk.id)">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3px; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
+              </button>
+              <button class="round-btn unchecked" :ref="perk.id + 'Check'" @click.prevent="check(perk.id)">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3px; overflow: visible;"><path fill="none" d="m4 16.5 8 8 16-16"></path></svg>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -59,160 +88,6 @@
         <button class="submit-btn" type="submit">Save listing</button>
       </div>
     </form>
-
-      <!-- <form @submit.prevent="create()" enctype="multipart/form-data" style="margin-top: 5rem">
-        <div>
-          <input type="text" v-model="apartment.title" placeholder="Inserisci il titolo">
-          <div v-if="errors.title" >
-            <p v-for="(error, i)  in errors.title" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <textarea  v-model="apartment.description" placeholder="Inserisci la descrizione" rows="4" cols="50"></textarea>
-          <div v-if="errors.description" >
-            <p v-for="(error, i)  in errors.description" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="square_meters">Inserisci numero metri quadrati</label>
-          <input type="number" v-model="apartment.square_meters" id="square_meters" >
-          <div v-if="errors.square_meters" >
-            <p v-for="(error, i)  in errors.square_meters" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="guests">Inserisci numero Ospiti</label>
-          <input type="number" v-model="apartment.guests" id="guests" >
-          <div v-if="errors.guests" >
-            <p v-for="(error, i)  in errors.guests" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-        
-        <div>
-          <label for="rooms">Inserisci numero stanze</label>
-          <input type="number" v-model="apartment.rooms" id="rooms" >
-          <div v-if="errors.rooms" >
-            <p v-for="(error, i)  in errors.rooms" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="beds">Inserisci numero dei letti</label>
-          <input type="number" v-model="apartment.beds" id="beds">
-          <div v-if="errors.beds" >
-            <p v-for="(error, i)  in errors.beds" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="bathrooms">Inserisci numero dei bagni</label>
-          <input type="number" v-model="apartment.bathrooms" id="bathrooms" >
-          <div v-if="errors.bathrooms" >
-            <p v-for="(error, i)  in errors.bathrooms" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="street_address">Inserisci indirizzo</label>
-          <input type="text" v-model="apartment.street_address" id="street_address" >
-          <div v-if="errors.street_address" >
-            <p v-for="(error, i)  in errors.street_address" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="zip_code">Inserisci codice postale</label>
-          <input type="text" v-model="apartment.zip_code" id="zip_code" >
-          <div v-if="errors.zip_code" >
-            <p v-for="(error, i)  in errors.zip_code" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="city">Inserisci Città</label>
-          <input type="text" v-model="apartment.city" id="city" >
-          <div v-if="errors.city" >
-            <p v-for="(error, i)  in errors.city" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="province_state">Inserisci Provincia</label>
-          <input type="text" v-model="apartment.province_state" id="province_state" >
-          <div v-if="errors.province_state" >
-            <p v-for="(error, i)  in errors.province_state" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <label for="country">Inserisci Paese</label>
-          <input type="text" v-model="apartment.country" id="country" >
-          <div v-if="errors.country" >
-            <p v-for="(error, i)  in errors.country" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-
-        
-        <div>
-          <label for="price">Inserisci prezzo per notte</label>
-          <input type="number" step="0.01" v-model="apartment.price" id="price" >
-          <div v-if="errors.price" >
-            <p v-for="(error, i)  in errors.price" :key="i">
-              {{ error }}
-            </p>
-          </div>
-        </div> 
-
-        <div>
-          <input type="file" id="image" @change="onChangeImage">
-          <img src="" ref="prova" alt="">
-          
-        </div>
-
-        <div>
-          <h5>Opzioni</h5>
-          <div v-for="(perk,i) in data.perks" :key="i">
-            <label :for="perk.name">{{perk.name}}</label>
-            <input type="checkbox" v-model="apartment.perks" :id="perk.name" :value="perk.id" >
-          </div>
-        </div>
-
-        <div>
-          <h5>Visibile</h5>
-          <label for="visibile">seleziona la visibilità</label>
-          <input type="checkbox" v-model="apartment.visibile" id="visibile" >
-        </div>
-
-        <button type="submit">Salva Dati</button>
-      </form> -->
-
   </div>
 </template>
 
@@ -250,7 +125,7 @@ export default {
         errors:{},
         formInputs: [
           {
-            category: 'Photo',
+            category: 'Photo*',
             inputs: [
               {
                 name: 'image',
@@ -263,14 +138,16 @@ export default {
             inputs: [
               {
                 name: 'title',
-                label: 'Listing title:',
-                placeholder: 'Insert a title',
+                maxLength: 50,
+                label: 'Listing title',
+                placeholder: 'Insert a title*',
                 type: 'text'
               },
               {
                 name: 'description',
-                label: 'Listing description:',
-                placeholder: 'Insert a description',
+                maxLength: 500,
+                label: 'Listing description',
+                placeholder: 'Insert a description*',
                 type: 'textarea'
               },
               {
@@ -281,7 +158,7 @@ export default {
               {
                 name: 'visible',
                 label: 'Listing status',
-                type: 'boolean'
+                type: 'radius'
               },
             ]
           },
@@ -316,7 +193,7 @@ export default {
               {
                 name: 'street_address',
                 label: 'Street address',
-                placeholder: 'Insert a street address',
+                placeholder: 'Insert a street address*',
                 type: 'text'
               },
               {
@@ -368,60 +245,62 @@ export default {
         this.apartment['image_path'] = image
       },
       increment(input) {
-        if (input == 'square_meters') {
-          if (this.apartment[input] < 990) {
-            this.$refs[input + 'Decrement'][0].classList.remove('disabled')
-            this.apartment[input]+= 10
-          }
-          if (this.apartment[input] == 990) {
-            this.$refs[input + 'Increment'][0].classList.add('disabled')
-          }
-        } else if (input == 'price') {
-          if (this.apartment[input] < 990) {
-            this.$refs[input + 'Decrement'][0].classList.remove('disabled')
-            this.apartment[input]+= 10
-          }
-          if (this.apartment[input] == 990) {
-            this.$refs[input + 'Increment'][0].classList.add('disabled')
-          }
-        } else {
-          if (this.apartment[input] < 16) {
-            this.$refs[input + 'Decrement'][0].classList.remove('disabled')
-            this.apartment[input]++
-          }
-          if (this.apartment[input] == 16) {
-            this.$refs[input + 'Increment'][0].classList.add('disabled')
-          }
+        let limit = 16
+        let num = 1
+        if (input == 'square_meters' || input == 'price') {
+            limit = 990
+            num = 10
+        }
+        if (this.apartment[input] < limit) {
+          this.$refs[input + 'Decrement'][0].classList.remove('disabled')
+          this.apartment[input] += num
+        }
+        if (this.apartment[input] == limit) {
+          this.$refs[input + 'Increment'][0].classList.add('disabled')
         }
       },
       decrement(input) {
-        if (input == 'square_meters') {
-          if (this.apartment[input] > 10) {
-            this.$refs[input + 'Increment'][0].classList.remove('disabled')
-            this.apartment[input]-= 10
-          }
-          if (this.apartment[input] == 10) {
-            this.$refs[input + 'Decrement'][0].classList.add('disabled')
-          }
-        } else if (input == 'price') {
-          if (this.apartment[input] > 10) {
-            this.$refs[input + 'Increment'][0].classList.remove('disabled')
-            this.apartment[input]-= 10
-          }
-          if (this.apartment[input] == 10) {
-            this.$refs[input + 'Decrement'][0].classList.add('disabled')
-          }
+        let limit = 1
+        let num = 1
+        if (input == 'square_meters' || input == 'price') {
+            limit = 10
+            num = 10
+        }
+        if (this.apartment[input] > limit) {
+          this.$refs[input + 'Increment'][0].classList.remove('disabled')
+          this.apartment[input] -= num
+        }
+        if (this.apartment[input] == limit) {
+          this.$refs[input + 'Decrement'][0].classList.add('disabled')
+        }
+      },
+      check(input) {
+        if (!this.apartment.perks.includes(input)) {
+          this.apartment.perks.push(input)
+          this.$refs[input + 'Uncheck'][0].classList.add('unchecked')
+          this.$refs[input + 'Check'][0].classList.remove('unchecked')
+        }
+      },
+      uncheck(input) {
+        if (this.apartment.perks.includes(input)) {
+          this.apartment.perks.splice(this.apartment.perks.indexOf(input), 1)
+          this.$refs[input + 'Uncheck'][0].classList.remove('unchecked')
+          this.$refs[input + 'Check'][0].classList.add('unchecked')
+        }
+      },
+      visibility() {
+        if (this.apartment.visible) {
+          this.$refs.listed[0].classList.remove('checked')
+          this.$refs.unlisted[0].classList.add('checked')
+          this.apartment.visible = ''
         } else {
-          if (this.apartment[input] > 1) {
-            this.$refs[input + 'Increment'][0].classList.remove('disabled')
-            this.apartment[input]--
-          }
-          if (this.apartment[input] == 1) {
-            this.$refs[input + 'Decrement'][0].classList.add('disabled')
-          }
+          this.$refs.unlisted[0].classList.remove('checked')
+          this.$refs.listed[0].classList.add('checked')
+          this.apartment.visible = true
         }
       },
       create() {
+        if (this.validations()) {
         // tomtom Api call
         externalAxios.get( `https://api.tomtom.com/search/2/geocode/${this.apartment.street_address},${this.apartment.zip_code},${this.apartment.city},${this.apartment.province_state},${this.apartment.country}.json?`,{
           params: {
@@ -451,8 +330,78 @@ export default {
             console.log(error);
             this.errors = error.response.data.errors;
           });
-
+        }
       },
+      validations() {
+        let validated = 0
+        // title
+        const title = this.apartment.title
+        if (title == '' || title.length > 50) {
+          validated = 0
+          title == '' ? this.$refs.title[0].innerHTML = 'Title is required.' : this.$refs.title[0].innerHTML = 'Insert a valid title.'
+          this.$refs.title[0].classList.add('visible')
+        } else {
+          validated++
+          this.$refs.title[0].classList.remove('visible')
+        }
+        // description
+        const description = this.apartment.description
+        if (description == '' || description.length > 500) {
+          validated = 0
+          description == '' ? this.$refs.description[0].innerHTML = 'Description is required.' : this.$refs.description[0].innerHTML = 'Insert a valid description.'
+          this.$refs.description[0].classList.add('visible')
+        } else {
+          validated++
+          this.$refs.description[0].classList.remove('visible')
+        }
+        // image
+        const image = this.apartment.image_path
+        if (!image.size || image.size > 5120000) {
+          validated = 0
+          !image.size ? this.$refs.image[0].innerHTML = 'Image is required.' : this.$refs.image[0].innerHTML = 'Image max size is 5MB.'
+          this.$refs.image[0].classList.add('visible')
+        } else {
+          validated++
+          this.$refs.image[0].classList.remove('visible')
+        }
+        // address
+        const address = this.apartment.street_address
+        if (address == '') {
+          validated = 0
+          address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : ''
+          this.$refs.street_address[0].classList.add('visible')
+        } else {
+          validated++
+          this.$refs.street_address[0].classList.remove('visible')
+        }
+        // hidden validations
+        const guests = this.apartment.guests
+        if (guests < 0 || guests > 16) {
+          validated = 0
+        } else validated++
+        const beds = this.apartment.beds
+        if (beds < 0 || beds > 16) {
+          validated = 0
+        } else validated++
+        const rooms = this.apartment.rooms
+        if (rooms < 0 || rooms > 16) {
+          validated = 0
+        } else validated++
+        const bathrooms = this.apartment.bathrooms
+        if (bathrooms < 0 || bathrooms > 16) {
+          validated = 0
+        } else validated++
+        const square_meters = this.apartment.square_meters
+        if (square_meters < 10 || square_meters > 990) {
+          validated = 0
+        } else validated++
+        const price = this.apartment.price
+        if (price < 10 || price > 990) {
+          validated = 0
+        } else validated++
+
+        return validated == 10
+      }
      
     },
     // mounted() {
@@ -474,6 +423,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../../sass/_variables.scss';
+@import '../../../../../sass/mixins.scss';
 .new-apartment {
   &__form {
     .input__ {
@@ -513,13 +463,30 @@ export default {
           border: none;
           outline: none;
           color: #777;
+          resize: none;
           &::placeholder {
             color: #aaa;
+          }
+        }
+        .error {
+          display: none;
+          &::first-letter {
+            text-transform: uppercase;
+          }
+          padding: .3rem 0;
+          color: red;
+          &.visible {
+            display: inline;
           }
         }
         .file {
           #image {
             display: none;
+          }
+          .image-info {
+            margin-top: 1rem;
+            line-height: 1.4rem;
+            color: grey;
           }
           .image-preview {
             width: 100%;
@@ -575,44 +542,84 @@ export default {
               align-items: center;
               justify-content: center;
             }
-            .round-btn {
-              flex-shrink: 0;
-              width: 2rem;
-              height: 2rem;
-              border-radius: 50%;
-              border: 1px solid grey;
-              font-size: 1.4rem;
-              line-height: 2rem;
-              font-weight: 100;
-              background-color: transparent;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              &.disabled {
-                cursor: not-allowed;
-                color: grey;
-                border: 1px solid lightgrey;
-                &:hover {
-                  background-color: transparent;
-                  border: 1px solid lightgrey;
-                }
-              }
-              &:hover {
-                border: 1px solid black;
-                background-color: rgba(0, 0, 0, .02);
-              }
-            }
+            @include round-btn;
           }
         }
         .text, .textarea {
           border-bottom: .5px solid rgba(0, 0, 0, .2);
+          margin-bottom: 2rem;
+          position: relative;
+          .words-limit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            color: grey;
+            font-size: .8rem;
+          }
         }
         .checkbox {
           flex-direction: row;
           justify-content: space-between;
           align-items: center;
           padding-top: 1rem;
+          &-buttons {
+            display: flex;
+            align-items: center;
+            @include round-btn;
+            .round-btn {
+              margin-left: 1rem;
+            }
+          }
+        }
+        .radius {
+          margin-top: 2.5rem;
+          .input__group-label {
+            margin-bottom: 1.2rem;
+          }
+          .option {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: max-content;
+            cursor: pointer;
+            margin: 1rem 0;
+            border: none;
+            background-color: transparent;
+            &:hover .radius-btn {
+              border: 1px solid black;
+              background-color: rgba(0, 0, 0, .02);
+            }
+            .radius-btn {
+              flex-shrink: 0;
+              width: 1.5rem;
+              height: 1.5rem;
+              border-radius: 50%;
+              border: 1px solid grey;
+              &.checked {
+                border: .5rem solid black;
+              }
+            }
+            .option-name {
+              display: flex;
+              align-items: center;
+              font-size: 1rem;
+              font-weight: 300;
+              &::before {
+                content: '';
+                display: block;
+                width: .7rem;
+                height: .7rem;
+                border-radius: 50%;
+                margin: 0 .5rem 0 1rem;
+              }
+              &.listed::before {
+                background-color: rgb(0, 138, 5);
+              }
+              &.unlisted::before {
+                background-color: rgb(193, 53, 21);
+              }
+            }
+          }
         }
       }
     }
