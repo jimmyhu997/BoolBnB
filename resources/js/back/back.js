@@ -17,14 +17,6 @@ delete externalAxios.defaults.headers.common['X-Requested-With']
 
 import App from './App.vue';
 import router from './router';
-import data from '../vue-commons/vueGlobal';
-
-axios.get("/user/perks").then( (response) => {
-    // this.stays = response.data[0];
-    data.perks = response.data;
-    console.log(data.perks);
-    data.perks.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
-});
 
 const reservedArea = new Vue({
     el: '#reserved-area',
