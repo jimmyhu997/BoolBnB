@@ -8,11 +8,11 @@
       <div class="hints" ref="hints">
         <ul class="hints__list" v-if="searchResults.length > 0">
           <li class="hints__item" v-for="(hint, index) in searchResults.slice(0,5)" :key="index">
-            <a class="hints__link" :title="hint.address.postalCode" @click="search(`${hint.address.streetName ? hint.address.streetName : searchKeyword} ${hint.address.countryCode} ${hint.address.countrySubdivision ? hint.address.countrySubdivision : ''} ${hint.address.countrySecondarySubdivision ? hint.address.countrySecondarySubdivision : ''} ${hint.address.postalCode}`)">
+            <a class="hints__link" :title="hint.address.postalCode" @click="search(searchBuilder(hint.address))">
               <div class="place-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
               </div>
-              <span v-if="hint.type == 'Street'">{{streetString(hint.address)}}</span>
+              <span v-if="hint.type == 'Street' || hint.type == 'Point Address'">{{streetString(hint.address)}}</span>
               <span v-else>{{geographyString(hint.address)}}</span>
             </a>
           </li>
@@ -33,7 +33,7 @@ export default {
       return {
         timeout: null,
         data,
-        types: ['Street', 'Geography'],
+        types: ['Street', 'Geography','Point Address'],
         searchKeyword: '',
         stays: [],
         searchResults: []
@@ -52,7 +52,6 @@ export default {
             }
           })
           .then((response) => {
-            console.log(response.data)
             this.$router.push({ name: 'advancedSearch', query: { 
               queryKey: keyword,
               latitude:  response.data.results[0].position.lat,
@@ -83,14 +82,14 @@ export default {
             .then((response) => {
               // console.log(response.data.results)
               data.hintsOpened = true
-              for(let result in  response.data.results){
+              for(let result in  response.data.results){                
                 if(this.types.includes(response.data.results[result].type)){
                   if (response.data.results[result].type == 'Geography' && response.data.results[result].entityType == 'Municipality') {
                     this.searchResults.push(response.data.results[result])
                   } else if (response.data.results[result].type == 'Street'){
                     this.searchResults.push(response.data.results[result])
-                  } else{
-                    continue
+                  } else if (response.data.results[result].type == 'Point Address'){
+                    this.searchResults.push(response.data.results[result])
                   }
                 }
               }
@@ -108,6 +107,9 @@ export default {
       streetString(object){
         let result = ''
         result += `${object.streetName}, `
+        if (object.streetNumber){
+          result += `${object.streetNumber}, `
+        }
         if (object.countrySecondarySubdivision){
           result += `${object.countrySecondarySubdivision}, `
         }
@@ -126,6 +128,27 @@ export default {
         result += object.countryCode
         return result
       },
+      searchBuilder(object){
+        let result = ''
+        if (object.streetName){
+          result += `${object.streetName},`
+        }
+        if (object.streetNumber){
+          result += `${object.streetNumber},`
+        }
+        if (object.municipality){
+          result += `${object.municipality},`
+        }
+        if (object.countrySecondarySubdivision){
+          result += `${object.countrySecondarySubdivision},`
+        }
+        if (object.countrySubdivision){
+          result += `${object.countrySubdivision},`
+        }
+        result += object.countryCode
+        // console.log(`${(object.streetName || 'fasfsev')}`)
+        return result
+      }
     },
     watch: {
       '$data.data.hintsOpened'(hints) {
