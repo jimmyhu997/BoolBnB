@@ -20,6 +20,14 @@
                 </div>
                 <button type="submit">Apply Fileters</button>
             </div>
+                <div class="perksDiv">
+                    <ul class="perksul">
+                        <li v-for="(perk, index) in indexPerks" :key="index">
+                            <label :for="perk.name">{{perk.name}}</label>
+                            <input :ref="perk.name" type="checkbox" :id="perk.name" :checked="filters.perks.includes(perk.name)" :value="perk.name" @change="togglePerk(perk.name)">
+                        </li>
+                    </ul>
+                </div>
         </form>
         <div v-if="this.stays.length > 0">
             <ul>
@@ -44,13 +52,15 @@ export default {
     
     data() {
         return {
+            indexPerks: [],
             filters:{
-                perks: [],
+                perks: this.$route.query.perks == undefined ? []  : this.$route.query.perks.split(','),
                 beds: this.$route.query.beds,
                 guests: this.$route.query.guests,
                 bathrooms: this.$route.query.bathrooms,
                 rooms: this.$route.query.rooms,
             } ,
+            stays: []
         }
     },
     methods: {
@@ -60,7 +70,7 @@ export default {
                 latitude:  this.$route.query.latitude,
                 longitude: this.$route.query.longitude,
                 radius: 20000,
-                perks: this.filters.perks,  
+                perks: this.filters.perks.join(','),  
                 beds: this.filters.beds,
                 guests: this.filters.guests,
                 bathrooms: this.filters.bathrooms,
@@ -68,8 +78,21 @@ export default {
               }
             })
         },
+        togglePerk(name){
+            if (this.$refs[name][0].checked && !this.filters.perks.includes(name)){
+                this.filters.perks.push(name)
+            } else if (!this.$refs[name][0].checked){
+                let index = this.filters.perks.indexOf(name)
+                this.filters.perks.splice(index,1)
+            }
+            console.log(this.filters.perks)
+        }
     },
     created() {
+        axios.get('api/perks').then((response) => {
+            this.indexPerks = response.data
+            console.log(this.indexPerks)
+        })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
             if(Object.keys(this.$route.query).length <= 4) {
                 this.stays = response.data;
@@ -123,5 +146,14 @@ export default {
     font-weight: 900;
     font-size: 60px;
     text-align: center;
+}
+.perksul{
+    li {
+        margin: 15px;
+
+    }
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
 }
 </style>
