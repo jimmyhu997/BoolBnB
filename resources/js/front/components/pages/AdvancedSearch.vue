@@ -50,7 +50,8 @@ export default {
                 guests: this.$route.query.guests,
                 bathrooms: this.$route.query.bathrooms,
                 rooms: this.$route.query.rooms,
-            } ,
+            },
+            stays: []
         }
     },
     methods: {

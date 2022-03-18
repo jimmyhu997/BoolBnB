@@ -5,6 +5,7 @@ export default Vue.observable({
     menuOpened: false,
     authOpened: false,
     hintsOpened: false,
+    addressHintsOpened: false,
     deleteOpened: false,
     loggedUserId: null,
     loggedUserName:'',

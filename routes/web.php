@@ -29,7 +29,6 @@ Route::prefix('user')->middleware('auth')->namespace('User')->group( function ()
     Route::get('messages' , 'MessageController@index');
     Route::post('add-sponsor' , 'SponsorPackageStayController@store')->name('add-sponsor');
     Route::get('sponsor-packages' , 'SponsorPackageStayController@index')->name('sponsor-packages');
-    Route::get('perks','PerkController@index')->name('perks');
 
     Route::get('/{any?}', function () {
         return view('registered_user.dashboard');

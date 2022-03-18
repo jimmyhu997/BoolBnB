@@ -1,14 +1,15 @@
 <template>
-  <div class="search__wrapper" @click.stop title="Start search">
-      <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search" @input="searchHints()">
+  <div class="search__wrapper" @click.stop="inputFocus()" title="Start search">
+      <input class="search__input" ref="searchInput" type="text" v-model="searchKeyword" placeholder="Start your search" @input="searchHints()">
       <!-- <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search"> -->
-      <div class="search__icon" @click="search(`${searchKeyword}`)">
+      <!-- <div class="search__icon" @click="search(`${searchKeyword}`)"> -->
+      <div class="search__icon">
         <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: white; stroke-width: 5.333333333333333px; overflow: visible;"><g fill="none"><path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"></path></g></svg>
       </div>
       <div class="hints" ref="hints">
         <ul class="hints__list" v-if="searchResults.length > 0">
           <li class="hints__item" v-for="(hint, index) in searchResults.slice(0,5)" :key="index">
-            <a class="hints__link" :title="hint.address.postalCode" @click="search(searchBuilder(hint.address))">
+            <a class="hints__link" :title="hint.address.postalCode" @click.prevent="search(searchBuilder(hint.address))">
               <div class="place-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
               </div>
@@ -151,6 +152,10 @@ export default {
         result += object.countryCode
         // console.log(`${(object.streetName || 'fasfsev')}`)
         return result
+      },
+      inputFocus() {
+        this.$refs.searchInput.focus()
+        data.hintsOpened = true
       }
     },
     watch: {

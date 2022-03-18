@@ -27,5 +27,4 @@ Route::get('/perks', "Api\PerkController@index");
 
 Route::prefix('search')->namespace('Api')->group(function () {
     Route::get('/basic', 'SearchController@basic')->name('basic');
-    Route::get('/advanced', 'SearchController@advanced')->name('advanced');
 });
