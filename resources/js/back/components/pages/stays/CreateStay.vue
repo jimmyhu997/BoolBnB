@@ -20,7 +20,7 @@
             <!-- Address input -->
             <div :class="input.type" v-if="input.name == 'street_address'">
               <label :for="input.name" class="input__group-label">{{input.label}}</label>
-              <input :type="input.type" :id="input.name" class="input__group-input" :placeholder="input.placeholder" v-model="searchKeyword" @input="searchHints()" @keydown.enter="validateAddress()">
+              <input :type="input.type" :id="input.name" class="input__group-input" :placeholder="input.placeholder" v-model="searchKeyword" @input="searchHints()" @keydown.enter="validateAddress()" @click.stop="data.addressHintsOpened = true">
               <span class="error" :ref="input.name">{{input.label}} is required.</span>
               <!-- address hints -->
               <div class="hints" ref="hints">
