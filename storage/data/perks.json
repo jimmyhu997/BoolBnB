@@ -1,10 +1,19 @@
 {
     "perks": [
-        "Vasca da Bagno",
-        "Asciugacapelli",
-        "Prodotti per la pulizia",
-        "Sapone per il corpo",
-        "Acqua calda",
-        "Gel doccia"
+        "Wi-fi",
+        "Posto Macchina",
+        "Piscina",
+        "Portineria",
+        "Sauna",
+        "Vista Mare",
+        "Cortile",
+        "Aria condizionata",
+        "Riscaldamento",
+        "Animali domestici ammessi",
+        "Piatti e posate",
+        "Servizi di base per cucinare",
+        "Allarme antincendio",
+        "Ascensore",
+        "Tv"
     ]
 }

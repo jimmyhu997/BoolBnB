@@ -1,67 +1,153 @@
 <template>
   <div class="search__wrapper" @click.stop title="Start search">
-      <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search" @input="searchHints()" @click="searchHints()">
-      <div class="search__icon" @click="search()">
+      <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search" @input="searchHints()">
+      <!-- <input class="search__input" type="text" v-model="searchKeyword" placeholder="Start your search"> -->
+      <div class="search__icon" @click="search(searchKeyword)">
         <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: white; stroke-width: 5.333333333333333px; overflow: visible;"><g fill="none"><path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"></path></g></svg>
       </div>
       <div class="hints" ref="hints">
-        <ul class="hints__list">
-          <li class="hints__item">
-            <a class="hints__link">
+        <ul class="hints__list" v-if="searchResults.length > 0">
+          <li class="hints__item" v-for="(hint, index) in searchResults.slice(0,5)" :key="index">
+            <a class="hints__link" :title="hint.address.postalCode" @click="search(searchBuilder(hint.address))">
               <div class="place-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
               </div>
-              <span>Rome, IT</span>
-            </a>
-          </li>
-          <li class="hints__item">
-            <a class="hints__link">
-              <div class="place-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
-              </div>
-              <span>London, UK</span>
-            </a>
-          </li>
-          <li class="hints__item">
-            <a class="hints__link">
-              <div class="place-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
-              </div>
-              <span>New York, US</span>
-            </a>
-          </li>
-          <li class="hints__item">
-            <a class="hints__link">
-              <div class="place-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>
-              </div>
-              <span>Los Angeles, US</span>
+              <span v-if="hint.type == 'Street' || hint.type == 'Point Address'">{{streetString(hint.address)}}</span>
+              <span v-else>{{geographyString(hint.address)}}</span>
             </a>
           </li>
         </ul>
+        <div v-else class="hints__list">
+            <span class="hints__no-results">No results.</span>
+        </div>
       </div>
   </div>
 </template>
 
 <script>
-import data from '../../global'
+import data from '../../../vue-commons/vueGlobal'
 
 export default {
     name: 'SearchBar',
     data() {
       return {
+        timeout: null,
         data,
-        searchKeyword: ''
+        types: ['Street', 'Geography','Point Address'],
+        searchKeyword: '',
+        stays: [],
+        searchResults: []
       }
     },
     methods: {
+      search(keyword) {
+        if (keyword.length < 1){
+          this.$router.push({ name: 'advancedSearch'})
+        } 
+        else {
+          externalAxios.get(`https://api.tomtom.com/search/2/geocode/${keyword}.json?`,{
+            params: {
+            key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+            limit: 1,
+            }
+          })
+          .then((response) => {
+            this.$router.push({ name: 'advancedSearch', query: { 
+              queryKey: keyword,
+              latitude:  response.data.results[0].position.lat,
+              longitude: response.data.results[0].position.lon,
+              radius: 20000,
+              }
+            })
+            this.searchKeyword = ''
+            data.hintsOpened = false
+          })
+          .catch(error => {
+            console.log(error);
+            this.errors = error.response.data.errors;
+          });
+        }
+      },
       searchHints() {
-        console.log(this.searchKeyword);
-        if (this.searchKeyword) {
-          data.hintsOpened = true
+        if (this.searchKeyword){
+          this.searchResults = []
+          clearTimeout(this.timeout);
+          this.timeout = setTimeout(() => {
+            externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
+              params: {
+                key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+                limit: 50,
+              }
+            })
+            .then((response) => {
+              // console.log(response.data.results)
+              data.hintsOpened = true
+              for(let result in  response.data.results){                
+                if(this.types.includes(response.data.results[result].type)){
+                  if (response.data.results[result].type == 'Geography' && response.data.results[result].entityType == 'Municipality') {
+                    this.searchResults.push(response.data.results[result])
+                  } else if (response.data.results[result].type == 'Street'){
+                    this.searchResults.push(response.data.results[result])
+                  } else if (response.data.results[result].type == 'Point Address'){
+                    this.searchResults.push(response.data.results[result])
+                  }
+                }
+              }
+            })
+            .catch(error => {
+              console.log(error);
+              this.errors = error.response.data.errors;
+            });
+          },500);
         } else {
           data.hintsOpened = false
+          this.searchResults = []
         }
+      },
+      streetString(object){
+        let result = ''
+        result += `${object.streetName}, `
+        if (object.streetNumber){
+          result += `${object.streetNumber}, `
+        }
+        if (object.countrySecondarySubdivision){
+          result += `${object.countrySecondarySubdivision}, `
+        }
+        if (object.countrySubdivision){
+          result += `${object.countrySubdivision}, `
+        }
+        result += object.countryCode
+        return result
+      },
+      geographyString(object){
+        let result = ''
+        result += `${object.municipality}, `
+        if (object.countrySubdivision){
+          result += `${object.countrySubdivision}, `
+        }
+        result += object.countryCode
+        return result
+      },
+      searchBuilder(object){
+        let result = ''
+        if (object.streetName){
+          result += `${object.streetName},`
+        }
+        if (object.streetNumber){
+          result += `${object.streetNumber},`
+        }
+        if (object.municipality){
+          result += `${object.municipality},`
+        }
+        if (object.countrySecondarySubdivision){
+          result += `${object.countrySecondarySubdivision},`
+        }
+        if (object.countrySubdivision){
+          result += `${object.countrySubdivision},`
+        }
+        result += object.countryCode
+        // console.log(`${(object.streetName || 'fasfsev')}`)
+        return result
       }
     },
     watch: {
@@ -124,6 +210,7 @@ export default {
         align-items: center;
         padding: 1rem 1.5rem;
         .place-icon {
+          flex-shrink: 0;
           width: 2.7rem;
           height: 2.7rem;
           display: flex;
@@ -140,6 +227,10 @@ export default {
         &:hover {
           background-color: rgba(0, 0, 0, 0.05);
         }
+      }
+      &__no-results {
+        padding: 1rem 1.5rem;
+        display: block;
       }
     }
   }

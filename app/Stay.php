@@ -22,11 +22,8 @@ class Stay extends Model
         return $this->belongsToMany('App\Perk');
     }
     
-    public function sponsorPackages() {
-        return $this->belongsToMany('App\SponsorPackage')->withPivot('start_date', 'end_date')->withTimestamps();
+    public function sponsorPackageStays() {
+        return $this->belongsToMany('App\SponsorPackageStay');
     }
-
-
-
 
 }

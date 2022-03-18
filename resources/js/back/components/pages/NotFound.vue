@@ -1,12 +1,13 @@
 <template>
-  <footer>
-    <h1>Fiiga</h1>
-  </footer>
+  <div>
+      <h2>404</h2>
+  </div>
 </template>
 
 <script>
+
 export default {
-    name: 'Footer'
+    name: 'NotFound',
 }
 </script>
 

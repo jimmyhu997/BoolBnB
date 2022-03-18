@@ -25,9 +25,7 @@ class StayController extends Controller
         "city" => "required|string|max:50",
         "province_state" => "required|string|max:50",
         "country" => "required|string|max:50",
-
-        // da modificare il nullable 
-        // "image_path" => "nullable|mimes:jpeg,jpg,bmp,png|max:2048",
+        "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
 
         "price" => "required",
     ];
@@ -40,8 +38,7 @@ class StayController extends Controller
      public function index()
     {   
         $stays = Stay::all()->where('user_id', Auth::user()->id);
-        $perks = Perk::all();
-        return response()->json([$stays, $perks]);
+        return response()->json($stays);
     }
 
 
@@ -73,15 +70,14 @@ class StayController extends Controller
             $count++;
         }
         $newStay->slug = $slug;
-
+        
         $newStay->description = $data['description'];
         $newStay->square_meters = $data['square_meters'];
         $newStay->guests = $data['guests'];
-
-
+        
         // da sistemare con TomTom
-        $newStay->longitude = 10.10;
-        $newStay->latitude = 10.10;
+        $newStay->longitude = $data['longitude'];
+        $newStay->latitude = $data['latitude'];
         
         $newStay->rooms = $data['rooms'];
         $newStay->beds = $data['beds'];
@@ -91,27 +87,34 @@ class StayController extends Controller
         $newStay->city = $data['city'];
         $newStay->province_state = $data['province_state'];
         $newStay->country = $data['country'];
-
-        // if(isset($data["imagePath"])) {
-        //     // dd($data['imagePath']);
-        //     $stayImage = Storage::put("uploads", $data["imagePath"]);
-        //     $newStay->image_path = $stayImage;
-        // }
-        $newStay->image_path = '//';
+        $path = Storage::put("uploads", $data["image_path"]);
+        $newStay->image_path = $path;
         $newStay->price = $data['price'];
-
-       
+        $newStay->visible = isset($data['visible']);
         $newStay->user_id = Auth::user()->id;
         $newStay->save();
+
+        if (isset($data["perks"]) ) {
+            $perks = explode(',', $data['perks']);
+            $newStay->perks()->sync($perks);
+        }
         return response()->json([
            "stayId" => $newStay->id
         ]);
     }
 
   
-    public function edit(Stay $stay) {
-        
-        return response()->json($stay);
+    public function edit($stayId) {
+        $stay = Stay::where('id','=',$stayId)->with(['perks'])->get()->first();
+
+        if($stay->user_id == Auth::user()->id) {
+            return response()->json($stay);
+        }
+        else {
+            return response()->json([
+                'success' => false
+            ],404);
+        }
     }
     /**
      * Update the specified resource in storage.
@@ -164,6 +167,10 @@ class StayController extends Controller
         $stay->image_path = '//';
         $stay->price = $data['price'];
         $stay->save();
+
+        if (isset($data["perks"]) ) {
+            $stay->perks()->sync($data["perks"]);
+        }
 
         return response()->json([
             "stayId" => $stay->id

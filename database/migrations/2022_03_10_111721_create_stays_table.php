@@ -31,6 +31,7 @@ class CreateStaysTable extends Migration
             $table->string('province_state');
             $table->string('country');
             $table->text('image_path');
+            $table->boolean('visible')->default(true);
             $table->decimal('price', 6, 2);
             
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

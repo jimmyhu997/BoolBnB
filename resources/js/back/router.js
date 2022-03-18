@@ -11,6 +11,8 @@ import CreateStay from './components/pages/stays/CreateStay.vue';
 import EditStay from './components/pages/stays/EditStay.vue';
 import SponsorPackages from './components/pages/SponsorPackages.vue';
 import Statistics from './components/pages/Statistics.vue';
+import NotFound from './components/pages/NotFound.vue';
+
 
 const router = new VueRouter({
     mode: "history",
@@ -41,7 +43,7 @@ const router = new VueRouter({
         },
 
         {
-            path:'/user/sponsor/:stay',
+            path:'/user/sponsor',
             name:'sponsor',
             component: SponsorPackages
         },
@@ -50,6 +52,12 @@ const router = new VueRouter({
             path:'/user/statistics/:stay',
             name:'statistics',
             component: Statistics
+        },     
+
+        {
+            path:'/user/404',
+            name:'404',
+            component: NotFound
         },     
 
     ]

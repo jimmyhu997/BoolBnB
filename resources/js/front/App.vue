@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import Header from './components/macro/Header.vue';
+import Header from '../vue-commons/macro/Header.vue';
 import Main from './components/macro/Main.vue';
-import Footer from './components/macro/Footer.vue';
-import data from './global'
+import Footer from '../vue-commons/macro/Footer.vue';
+import data from '../vue-commons/vueGlobal'
 
 export default {
     name: "App",
@@ -33,3 +33,7 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+  
+</style>

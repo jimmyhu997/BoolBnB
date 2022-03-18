@@ -17,3 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// API Routes 
+Route::get('/stays', "Api\StayController@index");
+Route::get("/stays/{slug}", "Api\StayController@show");
+Route::post('/send-message',"Api\MessageController@store" );
+
+Route::prefix('search')->namespace('Api')->group(function () {
+    Route::get('/basic', 'SearchController@basic')->name('basic');
+    Route::get('/advanced', 'SearchController@advanced')->name('advanced');
+});
