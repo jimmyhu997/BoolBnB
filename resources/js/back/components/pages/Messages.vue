@@ -62,24 +62,24 @@
         </div>
       </div>
        <div class="message" v-if="stays.length > 0">
-      <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
-        <div class="date">
-          <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
-        </div>
-        <div class="head-message">
-          <div class="name">
-            {{message.name}}
+        <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
+          <div class="date">
+            <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
           </div>
-          <div class="mail">
-            {{message.email}}
+          <div class="head-message">
+            <div class="name">
+              {{message.name}}
+            </div>
+            <div class="mail">
+              {{message.email}}
+            </div>
+          </div>
+          <div class="main-message">
+            <div>
+              {{message.content}}
+            </div>
           </div>
         </div>
-        <div class="main-message">
-          <div>
-            {{message.content}}
-          </div>
-        </div>
-       </div>
       </div>
     </div>
   </div>
@@ -214,7 +214,8 @@ export default {
       width: 100%;
 
       // HO MODIFICATO UN PO PER AGGIUSTARE LA GRAFICA
-      border: .8px solid $lightGrey; 
+      border: .5px solid $lightGrey; 
+      border-left:none;
       overflow-y: auto;
       // HO MODIFICATO UN PO PER AGGIUSTARE LA GRAFICA
 
@@ -226,13 +227,19 @@ export default {
         padding-top: 10px;
         width: 80%;
       }
-      .messages-box{
+      
+      .message{
+
+        .messages-box{
         width: 75%;
         margin: 0 auto;
-      }
-      .message{
-        border-bottom: 0.5px solid rgba(0,0,0,0.1);
         padding: 25px 0;
+        &:not(:last-of-type){
+        border-bottom: 0.5px solid rgba(0,0,0,0.1);
+      }
+      }
+      
+        
         .date{
           display: flex;
           justify-content: center;
@@ -250,9 +257,11 @@ export default {
           display: flex;
           flex-direction: column;
           font-weight: 500;
-          margin-bottom: 10px;
           .name{
             font-weight: 600;
+          }
+          .mail{
+            margin: 10px 0;
           }
         }
         .main-message{
