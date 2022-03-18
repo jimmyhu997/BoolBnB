@@ -25,7 +25,7 @@
 export default {
     name: 'Hero',
     props: {
-        randomApartment: Number
+        randomApartment: String
     }
 }
 </script>

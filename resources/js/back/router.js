@@ -11,6 +11,7 @@ import CreateStay from './components/pages/stays/CreateStay.vue';
 import EditStay from './components/pages/stays/EditStay.vue';
 import SponsorPackages from './components/pages/SponsorPackages.vue';
 import Statistics from './components/pages/Statistics.vue';
+import Messages from './components/pages/Messages.vue';
 import NotFound from './components/pages/NotFound.vue';
 
 
@@ -52,7 +53,13 @@ const router = new VueRouter({
             path:'/user/statistics/:stay',
             name:'statistics',
             component: Statistics
-        },     
+        }, 
+        
+        {
+            path:'/user/inbox',
+            name:'inbox',
+            component: Messages
+        },  
 
         {
             path:'/user/404',

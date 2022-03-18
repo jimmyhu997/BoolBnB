@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Perk;
@@ -15,7 +15,8 @@ class PerkController extends Controller
      */
     public function index()
     {
-        $perks = Perk::all();
+        $perks = Perk::orderBy('name')->get();
+
         return response()->json($perks);
     }
 

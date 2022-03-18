@@ -6,6 +6,21 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @guest
+        <meta name="userID" content="guest">
+        <meta name="userName" content="guest">
+        <meta name="userEmail" content="guest">
+        <script>
+            window.loggedIn = false
+        </script>
+    @else
+        <meta name="userID" content="{{ Auth::user()->id}}">
+        <meta name="userName" content="{{ Auth::user()->name}}">
+        <meta name="userEmail" content="{{ Auth::user()->email}}">
+        <script>
+            window.loggedIn = true            
+        </script>
+    @endguest
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -28,15 +43,7 @@
 
     </div>
 
-    @guest
-        <script>
-            window.loggedIn = false
-        </script>
-    @else
-        <script>
-            window.loggedIn = true
-        </script>
-    @endguest
+   
 
     <script src="{{ asset('js/front.js') }}"></script>
 </body>

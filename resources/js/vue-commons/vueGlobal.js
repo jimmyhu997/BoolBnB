@@ -6,4 +6,7 @@ export default Vue.observable({
     authOpened: false,
     hintsOpened: false,
     deleteOpened: false,
+    loggedUserId: null,
+    loggedUserName:'',
+    loggedUserEmail:''
 })

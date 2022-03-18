@@ -18,7 +18,10 @@ delete externalAxios.defaults.headers.common['X-Requested-With']
 
 import App from './App.vue';
 import router from './router';
-
+import data from '../vue-commons/vueGlobal';
+data.loggedUserId = document.querySelector('meta[name="userID"]').getAttribute('content');
+data.loggedUserName = document.querySelector('meta[name="userName"]').getAttribute('content');
+data.loggedUserEmail = document.querySelector('meta[name="userEmail"]').getAttribute('content');
 
 const publicArea = new Vue({
     el: '#public-area',
