@@ -20,8 +20,13 @@ class SponsorPackageStayController extends Controller
     {
         $stays = Stay::all()->where('user_id', Auth::user()->id);
         $sponsorPackages = SponsorPackage::all();
-        $sponsorHistory = SponsorPackageStay::all()->join('stays','stays.user_id','=',Auth::user()->id);
-        return response()->json([$stays, $sponsorPackages, $sponsorHistory]); 
+        // $sponsorHistory = SponsorPackageStay::all();
+        $sponsorHistory = SponsorPackageStay::select('sponsor_package_stay.*','stays.id','stays.title as stays_title')
+                                            ->leftjoin('stays','stays.id','=','sponsor_package_stay.stay_id')
+                                            ->where('user_id', Auth::user()->id)
+                                            ->get();
+        return response()->json([$stays, $sponsorPackages,$sponsorHistory]); 
+        // return response()->json($sponsorPackages);
     }
 
     /**
@@ -31,8 +36,18 @@ class SponsorPackageStayController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {   
+        $data = $request->all();
+        // dd($data);
+        // dd($sponsorHistory);
+        $newSponsor = new SponsorPackageStay();
+        $newSponsor->stay_id = $data['stay_id'];
+        $newSponsor->sponsor_package_id = $data['sponsorPackage_id'];
+        $newSponsor->start_date = $data['start_date'];
+        $newSponsor->end_date = $data['end_date'];
+
+        $newSponsor->save();
+        return response()->json('forza roma');
     }
 
 }
