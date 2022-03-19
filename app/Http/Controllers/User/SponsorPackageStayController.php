@@ -21,7 +21,7 @@ class SponsorPackageStayController extends Controller
         $stays = Stay::all()->where('user_id', Auth::user()->id);
         $sponsorPackages = SponsorPackage::all();
         // $sponsorHistory = SponsorPackageStay::all();
-        $sponsorHistory = SponsorPackageStay::select('sponsor_package_stay.*','stays.id','stays.title as stays_title')
+        $sponsorHistory = SponsorPackageStay::select('sponsor_package_stay.*','stays.title as stays_title')
                                             ->leftjoin('stays','stays.id','=','sponsor_package_stay.stay_id')
                                             ->where('user_id', Auth::user()->id)
                                             ->get();
