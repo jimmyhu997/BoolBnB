@@ -35,13 +35,19 @@
         <div v-else>
             <h2 class="noMatch">No Match</h2>
         </div>
+        <div class="map_box">
+            <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)"/>
+        </div>
     </div>
 </template>
 
 <script>
+import Map from '../commons/InteractiveMap.vue'
 export default {
     name:'AdvancedSearch',
-    
+    components: {
+        Map,
+    },
     data() {
         return {
             filters:{
@@ -124,5 +130,9 @@ export default {
     font-weight: 900;
     font-size: 60px;
     text-align: center;
+}
+.map_box{
+    height: 500px;
+    width: 500px;
 }
 </style>
