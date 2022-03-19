@@ -73,11 +73,11 @@
             <div :class="input.type" v-else-if="input.type == 'radius'">
               <label class="input__group-label">{{input.label}}</label>
               <button class="option" @click.prevent="visibility()">
-                <div class="radius-btn checked" ref="listed"></div>
+                <div class="radius-btn" :class="{'checked' : apartment.visible}" ref="listed"></div>
                 <span class="option-name listed">Listed</span>
               </button>
               <button class="option" @click.prevent="visibility()">
-                <div class="radius-btn" ref="unlisted"></div>
+                <div class="radius-btn" :class="{'checked' : !apartment.visible}" ref="unlisted"></div>
                 <span class="option-name unlisted">Unlisted</span>
               </button>
             </div>
@@ -95,10 +95,10 @@
           <div class="checkbox">
             <label :for="perk.name" class="input__group-label">{{perk.name}}</label>
             <div class="checkbox-buttons">
-              <button class="round-btn" :ref="perk.id + 'Uncheck'" @click.prevent="uncheck(perk.id)">
+              <button class="round-btn" :class="{'unchecked' : apartment.perks.includes(perk.id)}" @click.prevent="uncheck(perk.id)">
                 <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3px; overflow: visible;"><path d="m6 6 20 20"></path><path d="m26 6-20 20"></path></svg>
               </button>
-              <button class="round-btn unchecked" :ref="perk.id + 'Check'" @click.prevent="check(perk.id)">
+              <button class="round-btn" :class="{'unchecked' : !apartment.perks.includes(perk.id)}" @click.prevent="check(perk.id)">
                 <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3px; overflow: visible;"><path fill="none" d="m4 16.5 8 8 16-16"></path></svg>
               </button>
             </div>
@@ -117,391 +117,380 @@
 import PageHeading from '../../commons/PageHeading.vue'
 import data from '../../../../vue-commons/vueGlobal'
 export default {
-    name: 'CreateStay',
-    components: { PageHeading },
-    data() {
-      return {
-        data,
-        storedImage : '',
-        perks: [],
-        apartment: {
-          title: '',
-          description: '',
-          square_meters: 10,
-          guests: 1,
-          rooms: 1,
-          beds: 1,
-          bathrooms: 1,
-          street_address: '',
-          zip_code: '',
-          city: '',
-          province_state: '',
-          country: '',
-          image_path:{},
-          price: 10,
-          perks:[],
-          latitude: null,
-          longitude: null,
-          visible: true,
+  name: 'CreateStay',
+  components: { PageHeading },
+  data() {
+    return {
+      data,
+      perks: [],
+      apartment: {
+        title: '',
+        description: '',
+        square_meters: 10,
+        guests: 1,
+        rooms: 1,
+        beds: 1,
+        bathrooms: 1,
+        street_address: '',
+        zip_code: '',
+        city: '',
+        province_state: '',
+        country: '',
+        image_path:{},
+        price: 10,
+        perks:[],
+        latitude: null,
+        longitude: null,
+        visible: true,
+      },
+      errors:{},
+      formInputs: [
+        {
+          category: 'Photo*',
+          inputs: [
+            {
+              name: 'image',
+              type: 'file'
+            },
+          ]
         },
-        errors:{},
-        formInputs: [
-          {
-            category: 'Photo*',
-            inputs: [
-              {
-                name: 'image',
-                type: 'file'
-              },
-            ]
-          },
-          {
-            category: 'Listing basics',
-            inputs: [
-              {
-                name: 'title',
-                maxLength: 50,
-                label: 'Listing title',
-                placeholder: 'Insert a title*',
-                type: 'text'
-              },
-              {
-                name: 'description',
-                maxLength: 500,
-                label: 'Listing description',
-                placeholder: 'Insert a description*',
-                type: 'textarea'
-              },
-              {
-                name: 'guests',
-                label: 'Number of guests',
-                type: 'number'
-              },
-              {
-                name: 'visible',
-                label: 'Listing status',
-                type: 'radius'
-              },
-            ]
-          },
-          {
-            category: 'Rooms and spaces',
-            inputs: [
-              {
-                name: 'beds',
-                label: 'Beds',
-                type: 'number'
-              },
-              {
-                name: 'rooms',
-                label: 'Bedrooms',
-                type: 'number'
-              },
-              {
-                name: 'bathrooms',
-                label: 'Bathrooms',
-                type: 'number'
-              },
-              {
-                name: 'square_meters',
-                label: 'Square meters',
-                type: 'number'
-              },
-            ]
-          },
-          {
-            category: 'Location',
-            inputs: [
-              {
-                name: 'street_address',
-                label: 'Street address',
-                placeholder: 'Insert a street address*',
-                type: 'text'
-              },
-              {
-                name: 'city',
-                label: 'City',
-                placeholder: 'Insert a city',
-                type: 'text'
-              },
-              {
-                name: 'province_state',
-                label: 'Province/State',
-                placeholder: 'Insert a province or a state',
-                type: 'text'
-              },
-              {
-                name: 'zip_code',
-                label: 'Postal code',
-                placeholder: 'Insert a postal code',
-                type: 'text'
-              },
-              {
-                name: 'country',
-                label: 'Country',
-                placeholder: 'Insert a country',
-                type: 'text'
-              },
-            ]
-          },
-          {
-            category: 'Pricing',
-            inputs: [
-              {
-                name: 'price',
-                label: 'Nightly price',
-                type: 'number'
-              }
-            ]
-          }
-        ],
-        timeout: null,
-        types: ['Street', 'Geography','Point Address'],
-        searchKeyword: '',
-        searchResults: [],
-        preciseAddress: false
+        {
+          category: 'Listing basics',
+          inputs: [
+            {
+              name: 'title',
+              maxLength: 50,
+              label: 'Listing title',
+              placeholder: 'Insert a title*',
+              type: 'text'
+            },
+            {
+              name: 'description',
+              maxLength: 500,
+              label: 'Listing description',
+              placeholder: 'Insert a description*',
+              type: 'textarea'
+            },
+            {
+              name: 'guests',
+              label: 'Number of guests',
+              type: 'number'
+            },
+            {
+              name: 'visible',
+              label: 'Listing status',
+              type: 'radius'
+            },
+          ]
+        },
+        {
+          category: 'Rooms and spaces',
+          inputs: [
+            {
+              name: 'beds',
+              label: 'Beds',
+              type: 'number'
+            },
+            {
+              name: 'rooms',
+              label: 'Bedrooms',
+              type: 'number'
+            },
+            {
+              name: 'bathrooms',
+              label: 'Bathrooms',
+              type: 'number'
+            },
+            {
+              name: 'square_meters',
+              label: 'Square meters',
+              type: 'number'
+            },
+          ]
+        },
+        {
+          category: 'Location',
+          inputs: [
+            {
+              name: 'street_address',
+              label: 'Street address',
+              placeholder: 'Insert a street address*',
+              type: 'text'
+            },
+            {
+              name: 'city',
+              label: 'City',
+              placeholder: 'Insert a city',
+              type: 'text'
+            },
+            {
+              name: 'province_state',
+              label: 'Province/State',
+              placeholder: 'Insert a province or a state',
+              type: 'text'
+            },
+            {
+              name: 'zip_code',
+              label: 'Postal code',
+              placeholder: 'Insert a postal code',
+              type: 'text'
+            },
+            {
+              name: 'country',
+              label: 'Country',
+              placeholder: 'Insert a country',
+              type: 'text'
+            },
+          ]
+        },
+        {
+          category: 'Pricing',
+          inputs: [
+            {
+              name: 'price',
+              label: 'Nightly price',
+              type: 'number'
+            }
+          ]
+        }
+      ],
+      timeout: null,
+      types: ['Street', 'Point Address'],
+      searchKeyword: '',
+      searchResults: [],
+      preciseAddress: false
+    }
+  },
+  created() {
+    axios.get('/api/perks')
+      .then(response => {
+        this.perks = response.data
+      })
+  },
+  methods: {
+    fileSelector() {
+      this.$refs.fileSelector[0].click()
+    },
+    onChangeImage(e){
+      const image = e.target.files[0]
+      this.$refs.imagePreview[0].src = URL.createObjectURL(image)
+      this.apartment['image_path'] = image
+    },
+    increment(input) {
+      let limit = 16
+      let num = 1
+      if (input == 'square_meters' || input == 'price') {
+          limit = 990
+          num = 10
+      }
+      if (this.apartment[input] < limit) {
+        this.$refs[input + 'Decrement'][0].classList.remove('disabled')
+        this.apartment[input] += num
+      }
+      if (this.apartment[input] == limit) {
+        this.$refs[input + 'Increment'][0].classList.add('disabled')
       }
     },
-    created() {
-      axios.get('/api/perks')
-        .then(response => {
-          this.perks = response.data
-        })
+    decrement(input) {
+      let limit = 1
+      let num = 1
+      if (input == 'square_meters' || input == 'price') {
+          limit = 10
+          num = 10
+      }
+      if (this.apartment[input] > limit) {
+        this.$refs[input + 'Increment'][0].classList.remove('disabled')
+        this.apartment[input] -= num
+      }
+      if (this.apartment[input] == limit) {
+        this.$refs[input + 'Decrement'][0].classList.add('disabled')
+      }
     },
-    methods: {
-      fileSelector() {
-        this.$refs.fileSelector[0].click()
-      },
-      onChangeImage(e){
-        const image = e.target.files[0]
-        this.$refs.imagePreview[0].src = URL.createObjectURL(image)
-        this.apartment['image_path'] = image
-      },
-      increment(input) {
-        let limit = 16
-        let num = 1
-        if (input == 'square_meters' || input == 'price') {
-            limit = 990
-            num = 10
-        }
-        if (this.apartment[input] < limit) {
-          this.$refs[input + 'Decrement'][0].classList.remove('disabled')
-          this.apartment[input] += num
-        }
-        if (this.apartment[input] == limit) {
-          this.$refs[input + 'Increment'][0].classList.add('disabled')
-        }
-      },
-      decrement(input) {
-        let limit = 1
-        let num = 1
-        if (input == 'square_meters' || input == 'price') {
-            limit = 10
-            num = 10
-        }
-        if (this.apartment[input] > limit) {
-          this.$refs[input + 'Increment'][0].classList.remove('disabled')
-          this.apartment[input] -= num
-        }
-        if (this.apartment[input] == limit) {
-          this.$refs[input + 'Decrement'][0].classList.add('disabled')
-        }
-      },
-      check(input) {
-        if (!this.apartment.perks.includes(input)) {
-          this.apartment.perks.push(input)
-          this.$refs[input + 'Uncheck'][0].classList.add('unchecked')
-          this.$refs[input + 'Check'][0].classList.remove('unchecked')
-        }
-      },
-      uncheck(input) {
-        if (this.apartment.perks.includes(input)) {
-          this.apartment.perks.splice(this.apartment.perks.indexOf(input), 1)
-          this.$refs[input + 'Uncheck'][0].classList.remove('unchecked')
-          this.$refs[input + 'Check'][0].classList.add('unchecked')
-        }
-      },
-      visibility() {
-        if (this.apartment.visible) {
-          this.$refs.listed[0].classList.remove('checked')
-          this.$refs.unlisted[0].classList.add('checked')
-          this.apartment.visible = ''
-        } else {
-          this.$refs.unlisted[0].classList.remove('checked')
-          this.$refs.listed[0].classList.add('checked')
-          this.apartment.visible = true
-        }
-      },
-      searchHints() {
-        if (this.searchKeyword){
-          this.searchResults = []
-          clearTimeout(this.timeout);
-          this.timeout = setTimeout(() => {
-            externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
-              params: {
-                key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
-                limit: 50,
-              }
-            })
-            .then((response) => {
-              data.addressHintsOpened = true
-              for(let result in response.data.results){
-                if(this.types.includes(response.data.results[result].type)){
-                  if (response.data.results[result].type == 'Point Address'){
-                    this.searchResults.push(response.data.results[result])
-                  } else if (response.data.results[result].type == 'Street'){
-                    this.searchResults.push(response.data.results[result])
-                  }
+    check(input) {
+      if (!this.apartment.perks.includes(input)) {
+        this.apartment.perks.push(input)
+      }
+    },
+    uncheck(input) {
+      if (this.apartment.perks.includes(input)) {
+        this.apartment.perks.splice(this.apartment.perks.indexOf(input), 1)
+      }
+    },
+    visibility() {
+      if (this.apartment.visible) {
+        this.apartment.visible = ''
+      } else {
+        this.apartment.visible = true
+      }
+    },
+    searchHints() {
+      if (this.searchKeyword){
+        this.searchResults = []
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          externalAxios.get(`https://api.tomtom.com/search/2/geocode/${this.searchKeyword}.json?`,{
+            params: {
+              key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
+              limit: 50,
+            }
+          })
+          .then((response) => {
+            data.addressHintsOpened = true
+            for(let result in response.data.results){
+              if(this.types.includes(response.data.results[result].type)){
+                if (response.data.results[result].type == 'Point Address'){
+                  this.searchResults.push(response.data.results[result])
+                } else if (response.data.results[result].type == 'Street'){
+                  this.searchResults.push(response.data.results[result])
                 }
               }
-            })
-            .catch(error => {
-              this.errors = error.response.data.errors;
-            });
-          },500);
-        } else {
-          data.addressHintsOpened = false
-          this.searchResults = []
-        }
-      },
-      string(object){
-        let result = ''
-        result += `${object.streetName}, `
-        if (object.streetNumber){
-          result += `${object.streetNumber}, `
-        }
-        if (object.municipality){
-          result += `${object.municipality}, `
-        }
-        if (object.countrySecondarySubdivision){
-          result += `${object.countrySecondarySubdivision}, `
-        }
-        if (object.countrySubdivision){
-          result += `${object.countrySubdivision}, `
-        }
-        result += object.countryCode
-        return result
-      },
-      addPosition(object) {
-        this.searchKeyword = this.string(object.address)
+            }
+          })
+          .catch(error => {
+            this.errors = error.response.data.errors;
+          });
+        },500);
+      } else {
         data.addressHintsOpened = false
-        if (!object.address.streetNumber) {
-          this.preciseAddress = false
-        } else {
-          this.preciseAddress = true
-          this.apartment.latitude = object.position.lat
-          this.apartment.longitude = object.position.lon
-          this.apartment.city = object.address.municipality
-          this.apartment.province_state = object.address.countrySubdivision
-          this.apartment.country = object.address.country
-          this.apartment.zip_code = object.address.postalCode
-          this.apartment.street_address = `${object.address.streetName}, ${object.address.streetNumber}`
-        }
-      },
-      validateAddress() {
-        if (this.searchResults.length > 0) {
-          this.addPosition(this.searchResults[0])
-        }
-      },
-      create() {
-        if (this.validations()) {
-          //inizio della creazione dell'oggetto
-          let dataImage = new FormData();
-          for (let element in this.apartment) {
-            dataImage.append(String(element),this.apartment[element])
-          }
-          axios.post("stays", dataImage).then((response) => {
-            this.$router.push( {name: 'stays'})
-            })
-            .catch(error => {
-              this.errors = error.response.data.errors;
-            });
-        }
-      },
-      validations() {
-        let validated = 0
-        // title
-        const title = this.apartment.title
-        if (title == '' || title.length > 50) {
-          validated = 0
-          title == '' ? this.$refs.title[0].innerHTML = 'Title is required.' : this.$refs.title[0].innerHTML = 'Insert a valid title.'
-          this.$refs.title[0].classList.add('visible')
-        } else {
-          validated++
-          this.$refs.title[0].classList.remove('visible')
-        }
-        // description
-        const description = this.apartment.description
-        if (description == '' || description.length > 500) {
-          validated = 0
-          description == '' ? this.$refs.description[0].innerHTML = 'Description is required.' : this.$refs.description[0].innerHTML = 'Insert a valid description.'
-          this.$refs.description[0].classList.add('visible')
-        } else {
-          validated++
-          this.$refs.description[0].classList.remove('visible')
-        }
-        // image
-        const image = this.apartment.image_path
-        if (!image.size || image.size > 5120000) {
-          validated = 0
-          !image.size ? this.$refs.image[0].innerHTML = 'Image is required.' : this.$refs.image[0].innerHTML = 'Image max size is 5MB.'
-          this.$refs.image[0].classList.add('visible')
-        } else {
-          validated++
-          this.$refs.image[0].classList.remove('visible')
-        }
-        // address
-        const address = this.searchKeyword
-        if (address == '' || !this.preciseAddress) {
-          validated = 0
-          address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : this.$refs.street_address[0].innerHTML = 'Specify a street number.'
-          this.$refs.street_address[0].classList.add('visible')
-        } else {
-          validated++
-          this.$refs.street_address[0].classList.remove('visible')
-        }
-        // hidden validations
-        const guests = this.apartment.guests
-        if (guests < 0 || guests > 16) {
-          validated = 0
-        } else validated++
-        const beds = this.apartment.beds
-        if (beds < 0 || beds > 16) {
-          validated = 0
-        } else validated++
-        const rooms = this.apartment.rooms
-        if (rooms < 0 || rooms > 16) {
-          validated = 0
-        } else validated++
-        const bathrooms = this.apartment.bathrooms
-        if (bathrooms < 0 || bathrooms > 16) {
-          validated = 0
-        } else validated++
-        const square_meters = this.apartment.square_meters
-        if (square_meters < 10 || square_meters > 990) {
-          validated = 0
-        } else validated++
-        const price = this.apartment.price
-        if (price < 10 || price > 990) {
-          validated = 0
-        } else validated++
-
-        return validated == 10
+        this.searchResults = []
       }
-     
     },
-    watch: {
-      '$data.data.addressHintsOpened'(hints) {
-        if (hints) {
-          this.$refs.hints[0].classList.add('active')
-        } else {
-          this.$refs.hints[0].classList.remove('active')
+    string(object){
+      let result = ''
+      result += `${object.streetName}, `
+      if (object.streetNumber){
+        result += `${object.streetNumber}, `
+      }
+      if (object.municipality){
+        result += `${object.municipality}, `
+      }
+      if (object.countrySecondarySubdivision){
+        result += `${object.countrySecondarySubdivision}, `
+      }
+      if (object.countrySubdivision){
+        result += `${object.countrySubdivision}, `
+      }
+      result += object.countryCode
+      return result
+    },
+    addPosition(object) {
+      this.searchKeyword = this.string(object.address)
+      data.addressHintsOpened = false
+      if (!object.address.streetName) {
+        this.preciseAddress = false
+      } else {
+        this.preciseAddress = true
+        this.apartment.latitude = object.position.lat
+        this.apartment.longitude = object.position.lon
+        this.apartment.city = object.address.municipality
+        this.apartment.province_state = object.address.countrySubdivision
+        this.apartment.country = object.address.country
+        this.apartment.zip_code = object.address.postalCode
+        this.apartment.street_address = this.searchKeyword
+      }
+    },
+    validateAddress() {
+      if (this.searchResults.length > 0) {
+        this.addPosition(this.searchResults[0])
+      }
+    },
+    create() {
+      if (this.validations()) {
+        let formData = new FormData();
+        for (let element in this.apartment) {
+          formData.append(String(element),this.apartment[element])
         }
+        axios.post("stays", formData).then((response) => {
+          this.$router.push( {name: 'stays'})
+          })
+          .catch(error => {
+            this.errors = error.response.data.errors;
+          });
+      }
+    },
+    validations() {
+      let validated = 0
+      // title
+      const title = this.apartment.title
+      if (title == '' || title.length > 50) {
+        validated = 0
+        title == '' ? this.$refs.title[0].innerHTML = 'Title is required.' : this.$refs.title[0].innerHTML = 'Insert a valid title.'
+        this.$refs.title[0].classList.add('visible')
+      } else {
+        validated++
+        this.$refs.title[0].classList.remove('visible')
+      }
+      // description
+      const description = this.apartment.description
+      if (description == '' || description.length > 500) {
+        validated = 0
+        description == '' ? this.$refs.description[0].innerHTML = 'Description is required.' : this.$refs.description[0].innerHTML = 'Insert a valid description.'
+        this.$refs.description[0].classList.add('visible')
+      } else {
+        validated++
+        this.$refs.description[0].classList.remove('visible')
+      }
+      // image
+      const image = this.apartment.image_path
+      if (!image.size || image.size > 5120000) {
+        validated = 0
+        !image.size ? this.$refs.image[0].innerHTML = 'Image is required.' : this.$refs.image[0].innerHTML = 'Image max size is 5MB.'
+        this.$refs.image[0].classList.add('visible')
+      } else {
+        validated++
+        this.$refs.image[0].classList.remove('visible')
+      }
+      // address
+      const address = this.searchKeyword
+      if (address == '' || !this.preciseAddress) {
+        validated = 0
+        address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : this.$refs.street_address[0].innerHTML = 'Specify a street number.'
+        this.$refs.street_address[0].classList.add('visible')
+      } else {
+        validated++
+        this.$refs.street_address[0].classList.remove('visible')
+      }
+      // hidden validations
+      const guests = this.apartment.guests
+      if (guests < 0 || guests > 16) {
+        validated = 0
+      } else validated++
+      const beds = this.apartment.beds
+      if (beds < 0 || beds > 16) {
+        validated = 0
+      } else validated++
+      const rooms = this.apartment.rooms
+      if (rooms < 0 || rooms > 16) {
+        validated = 0
+      } else validated++
+      const bathrooms = this.apartment.bathrooms
+      if (bathrooms < 0 || bathrooms > 16) {
+        validated = 0
+      } else validated++
+      const square_meters = this.apartment.square_meters
+      if (square_meters < 10 || square_meters > 990) {
+        validated = 0
+      } else validated++
+      const price = this.apartment.price
+      if (price < 10 || price > 990) {
+        validated = 0
+      } else validated++
+
+      return validated == 10
+    }
+    
+  },
+  watch: {
+    '$data.data.addressHintsOpened'(hints) {
+      if (hints) {
+        this.$refs.hints[0].classList.add('active')
+      } else {
+        this.$refs.hints[0].classList.remove('active')
       }
     }
+  }
 }
 </script>
-
 
 <style lang="scss" scoped>
 @import '../../../../../sass/_variables.scss';

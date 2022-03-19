@@ -2,6 +2,7 @@
 /public/js
 /public/css
 /public/storage
+.DS_Store
 /storage/*.key
 /vendor
 .env
