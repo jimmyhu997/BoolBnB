@@ -52,9 +52,6 @@
                 <div class="menu__item" v-if="window.loggedIn">
                   <a class="menu__link" @click.prevent="logout()" title="Log out">Log out</a>
                 </div>
-                <!-- <div class="menu__item" v-if="window.loggedIn && this.$route.path.includes('user')">
-                  <a class="menu__link delete" @click.prevent="deleteUser()" title="Delete account">Delete account</a>
-                </div> -->
                 <div class="menu__item" v-if="window.loggedIn && !this.$route.path.includes('user')">
                   <a class="menu__link" href="/user" title="Dashboard">Dashboard</a>
                 </div>
@@ -101,7 +98,6 @@ export default {
             route: 'sponsor'
           }
         ],
-        userInfo: {}
       }
     },
     mounted() {
@@ -109,12 +105,6 @@ export default {
         window.addEventListener( 'scroll', () => this.scrollHeader())
       } else {
         this.$refs.header.classList.add('scrolled')
-        // get user info
-        if (window.loggedIn) {
-          axios.get('user/manage').then( (response) => {
-            this.userInfo = response.data[0];
-          })
-        }
       }
     },
     methods: {
@@ -144,11 +134,7 @@ export default {
         data.authOpened = true
         this.closeMenu()
       },
-      deleteUser() {
-        axios.delete(`/user/manage/${this.userInfo.id}`).then( (response) => {
-          location.reload();
-        });
-      } 
+       
     },
     computed: {
       window() {
@@ -163,10 +149,6 @@ export default {
         } else {
           window.removeEventListener( 'scroll', () => this.scrollHeader())
           this.$refs.header.classList.add('scrolled')
-          // get user info
-          // axios.get('user/manage').then( (response) => {
-          //   this.userInfo = response.data[0];
-          // })
         }
       }
     }
