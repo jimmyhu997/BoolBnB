@@ -87,11 +87,27 @@ export default {
     },
     created() {
       axios.get(`/api/stays/${this.$route.params.stay}`).then( (response) => {
-        this.stay = response.data
-        this.message.stay_id = this.stay.id
-        if(data.loggedUserId == this.stay.user_id) {
-          this.staysOwner = true
+        if (response.data.visible == false ) {
+          if (response.data.user_id == this.data.loggedUserId) {
+            this.stay = response.data
+            this.message.stay_id = this.stay.id
+              if(data.loggedUserId == this.stay.user_id) {
+                this.staysOwner = true
+              }
+          }
+          else {
+            // da rimandare ad una pagina 404 
+            this.$router.push({ name: 'home'})
+          }
+        } 
+        else {
+          this.stay = response.data
+          this.message.stay_id = this.stay.id
+          if(data.loggedUserId == this.stay.user_id) {
+            this.staysOwner = true
+          }
         }
+        
       })
     },
     methods: {
