@@ -2,19 +2,21 @@
     <div class="home">
         <div class="hero">
             <div class="black-background"></div>
-            <div class="hero__wrapper-text container">
-                <div class="hero__content">
-                    <h2 class="title">Find your next stay</h2>
-                    <p class="text">Search deals on apartments and plan your next trip...</p>
+            <div class="container">
+                <div class="hero__wrapper-text">
+                    <div class="hero__content">
+                        <h2 class="title">Find your next stay</h2>
+                        <p class="text">Search deals on apartments and plan your next trip...</p>
+                    </div>
                 </div>
-            </div>
-            <div class="hero__wrapper-explore container">
-                <div class="background">
-                    <img class="img" src="img/casa-bosco.jpeg" alt="">
-                </div>
-                <div class="hero__content">
-                    <h2 class="title">Let your curiosity do the booking</h2>
-                    <router-link class="lucky-btn" :to="{ name: 'apartment', params: { stay: randomApartment } }">I'm feeling lucky</router-link>
+                <div class="hero__wrapper-explore">
+                    <div class="background">
+                        <img class="img" src="img/casa-bosco.jpeg" alt="">
+                    </div>
+                    <div class="hero__content">
+                        <h2 class="title">Let your curiosity do the booking</h2>
+                        <router-link class="lucky-btn" :to="{ name: 'apartment', params: { stay: randomApartment } }">I'm feeling lucky</router-link>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +47,7 @@ export default {
     }
     &__wrapper-text, &__wrapper-explore {
         margin: 1rem auto;
-        width: 90%;
+        width: 100%;
         min-height: 40vh;
         border-radius: 1rem;
         display: flex;
@@ -114,6 +116,7 @@ export default {
             color: $darkPink;
             font-weight: 500;
             transition: opacity .3s;
+            text-decoration: none;
             &:hover {
                 opacity: .9;
             }
