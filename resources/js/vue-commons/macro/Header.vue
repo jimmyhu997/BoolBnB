@@ -98,19 +98,21 @@ export default {
             route: 'sponsor'
           }
         ],
+        userInfo: {},
+        route: ''
       }
     },
     mounted() {
-      if (this.$route.name == 'home') {
-        window.addEventListener( 'scroll', () => this.scrollHeader())
-      } else {
-        this.$refs.header.classList.add('scrolled')
-      }
+      this.route = this.$route.name
+      if (this.route != 'home') {this.$refs.header.classList.add('scrolled')}
+      window.addEventListener( 'scroll', () => this.scrollHeader())
     },
     methods: {
       scrollHeader() {
-        if (window.scrollY <= 0) {
-          this.$refs.header.classList.remove('scrolled')
+        if (this.route == 'home') {
+          if (window.scrollY <= 0) {
+            this.$refs.header.classList.remove('scrolled')
+          } else this.$refs.header.classList.add('scrolled')
         } else this.$refs.header.classList.add('scrolled')
       },
       openMenu() {
@@ -143,12 +145,9 @@ export default {
     },
     watch: {
       '$route'(route) {
-        if (route.name == 'home') {
-          window.addEventListener( 'scroll', () => this.scrollHeader())
-        } else {
-          window.removeEventListener( 'scroll', () => this.scrollHeader())
-          this.$refs.header.classList.add('scrolled')
-        }
+        this.route = route.name
+        if (this.route != 'home') this.$refs.header.classList.add('scrolled')
+        else this.$refs.header.classList.remove('scrolled')
       }
     }
 }
