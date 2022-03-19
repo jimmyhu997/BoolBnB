@@ -143,7 +143,6 @@ export default {
     },
     watch: {
       '$route'(route) {
-        console.log(route);
         if (route.name == 'home') {
           window.addEventListener( 'scroll', () => this.scrollHeader())
         } else {
