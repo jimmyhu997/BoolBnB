@@ -93,7 +93,7 @@ export default {
     methods: {
       changeStay: function(index){
         this.currentStay = index
-        if(this.showMenu == true){
+        if(this.showMenu && window.innerWidth < 744){
           this.showMenu = false;
         }
 
