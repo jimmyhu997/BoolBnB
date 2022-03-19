@@ -40,11 +40,10 @@
     <div class="messages" ref="activeMessages"  v-if="stays.length > 0  && visual" >
       <div class="title">
         <div>
-          <h2>Titolo annuncio</h2>
+          <h2>{{stays[currentStay].title}}</h2>
         </div>
       </div>
-      <div class="message" >
-         
+       <div class="message">
         <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
           <div class="date">
             <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
@@ -240,7 +239,10 @@ export default {
 
     .messages{
       width: 100%;
-      border: .8px solid $lightGrey; 
+
+      // HO MODIFICATO UN PO PER AGGIUSTARE LA GRAFICA
+      border: .5px solid $lightGrey; 
+      border-left:none;
       overflow-y: auto;
       padding: 0 6rem;
 
@@ -256,14 +258,19 @@ export default {
         padding-top: 25px;
         width: 80%;
       }
-      .messages-box{
-        width: 100%;
-        margin: 1rem auto;
-        border-bottom: .5px solid $lightGrey;
-        padding-bottom: 1rem 0;
-      }
+      
       .message{
-        padding: 25px 0; 
+
+        .messages-box{
+        width: 75%;
+        margin: 0 auto;
+        padding: 25px 0;
+        &:not(:last-of-type){
+        border-bottom: 0.5px solid rgba(0,0,0,0.1);
+      }
+      }
+      
+        
         .date{
           display: flex;
           justify-content: center;
@@ -286,6 +293,9 @@ export default {
           .name{
             font-weight: 600;
             // background-color: beige;
+          }
+          .mail{
+            margin: 10px 0;
           }
         }
         .main-message{
