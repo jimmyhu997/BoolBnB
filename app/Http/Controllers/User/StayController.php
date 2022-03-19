@@ -174,6 +174,7 @@ class StayController extends Controller
             $path = Storage::put("uploads", $data["image_path"]);
             $stay->image_path = $path;
         }
+        $stay->visible = isset($data['visible']);
         $stay->price = $data['price'];
         $stay->save();
 
