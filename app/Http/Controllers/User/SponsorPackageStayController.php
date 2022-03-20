@@ -20,15 +20,14 @@ class SponsorPackageStayController extends Controller
     {
         $stays = Stay::all()->where('user_id', Auth::user()->id);
         $sponsorPackages = SponsorPackage::all();
-        // $sponsorHistory = SponsorPackageStay::all();
-        $sponsorHistory = SponsorPackageStay::select('sponsor_package_stay.*','stays.title as stays_title')
-                                            ->leftjoin('stays','stays.id','=','sponsor_package_stay.stay_id')
-                                            ->where('user_id', Auth::user()->id)
-                                            ->get();
+        $sponsorHistory = SponsorPackageStay::select('sponsor_package_stay.*','stays.title as stays_title')->leftjoin('stays','stays.id','=','sponsor_package_stay.stay_id')->where('user_id', Auth::user()->id)->get();
         return response()->json([$stays, $sponsorPackages,$sponsorHistory]); 
-        // return response()->json($sponsorPackages);
     }
 
+    public function getSponsoredList($stay_id) {
+        $resultList = SponsorPackageStay::where('stay_id',$stay_id)->get();
+        return response()->json($resultList);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -38,14 +37,11 @@ class SponsorPackageStayController extends Controller
     public function store(Request $request)
     {   
         $data = $request->all();
-        // dd($data);
-        // dd($sponsorHistory);
         $newSponsor = new SponsorPackageStay();
         $newSponsor->stay_id = $data['stay_id'];
         $newSponsor->sponsor_package_id = $data['sponsorPackage_id'];
         $newSponsor->start_date = $data['start_date'];
         $newSponsor->end_date = $data['end_date'];
-
         $newSponsor->save();
         return response()->json('forza roma');
     }
