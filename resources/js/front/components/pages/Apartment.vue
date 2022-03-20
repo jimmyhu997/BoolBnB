@@ -21,8 +21,13 @@
       <div class="content-top">
         <div class="content">
           <section class="content-heading">
-            <h3 class="hosted-by" v-if="apartment.user">Entire apartment hosted by {{apartment.user.name}}</h3>
-            <span class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths</span>
+            <div class="left">
+              <h3 class="hosted-by" v-if="apartment.user">Entire apartment hosted by {{apartment.user.name}}</h3>
+              <span class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths • {{apartment.square_meters}} sqm</span>
+            </div>
+            <div class="right">
+              <p class="price"><span class="num">€{{apartment.price}}</span> <span class="night">/ night</span></p>
+            </div>
           </section>
           <section class="content-description section">
             <h4 class="title">Overview</h4>
@@ -323,15 +328,33 @@ export default {
         &-heading {
           border-bottom: .5px solid rgba(0, 0, 0, 0.3);
           padding-bottom: 2rem;
-          .hosted-by {
-            font-weight: 500;
-            font-size: 1.5rem;
-            margin-bottom: .5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          .left {
+            .hosted-by {
+              font-weight: 500;
+              font-size: 1.5rem;
+              margin-bottom: .5rem;
+            }
+            .basic-options {
+              font-weight: 400;
+              font-size: 1rem;
+              color: #888;
+            }
           }
-          .basic-options {
-            font-weight: 400;
-            font-size: 1rem;
-            color: #888;
+          .right {
+            flex-shrink: 0;
+            .price {
+              .num {
+                font-size: 1.5rem;
+                font-weight: 600;
+              }
+              .night {
+                font-size: 1.1rem;
+                font-weight: 400;
+              }
+            }
           }
         }
         .section {
