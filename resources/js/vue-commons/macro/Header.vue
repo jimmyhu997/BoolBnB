@@ -145,6 +145,7 @@ export default {
     },
     watch: {
       '$route'(route) {
+        window.scrollTo(0, 0)
         this.route = route.name
         if (this.route != 'home') this.$refs.header.classList.add('scrolled')
         else this.$refs.header.classList.remove('scrolled')
