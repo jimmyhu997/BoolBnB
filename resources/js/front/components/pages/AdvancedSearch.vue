@@ -282,7 +282,7 @@ $top: 230px;
             padding: 1rem 1rem 0;
             @media screen and (min-width: $medium) {
                 padding: 1rem 2rem 0;
-                width: 60%;
+                width: 50%;
             }
             &__heading {
                 padding-bottom: 2rem;
@@ -367,8 +367,8 @@ $top: 230px;
                 position: sticky;
                 top: $top;
                 left: 0;
-                width: 40%;
-                height: calc(100vh - 80px);
+                width: 50%;
+                height: calc(100vh - $top);
                 display: block;
             }
         }
