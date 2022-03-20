@@ -166,6 +166,7 @@ export default {
   z-index: 2;
   display: flex;
   align-items: center;
+  box-shadow: 0 .1rem .3rem .3rem rgba(0, 0, 0, .05);
   &.scrolled {
     background: #fff;
     .logo {
