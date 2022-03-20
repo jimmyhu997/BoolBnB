@@ -18,6 +18,10 @@
                     <label for="rooms">N. rooms</label>
                     <input class="fillable" type="number" v-model="filters.rooms" id="rooms"  >
                 </div>
+                <div class="box">
+                    <label for="radius">Research Radius (Km)</label>
+                    <input class="fillable" type="number" v-model="radius" id="radius"  >
+                </div>
                 <button type="submit">Apply Fileters</button>
             </div>
                 <div class="perksDiv">
@@ -60,6 +64,7 @@ export default {
                 bathrooms: this.$route.query.bathrooms,
                 rooms: this.$route.query.rooms,
             } ,
+            radius: this.$route.query.radius / 1000,
             stays: []
         }
     },
@@ -69,8 +74,8 @@ export default {
                 queryKey: this.$route.query.queryKey, 
                 latitude:  this.$route.query.latitude,
                 longitude: this.$route.query.longitude,
-                radius: 20000,
-                perks: this.filters.perks.join(','),  
+                radius: this.radius * 1000,
+                perks:this.filters.perks.length > 0 ? this.filters.perks.join(',')  : undefined,  
                 beds: this.filters.beds,
                 guests: this.filters.guests,
                 bathrooms: this.filters.bathrooms,
@@ -98,29 +103,27 @@ export default {
                 this.stays = response.data;
             }
             else{
-                axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
-                    for (let stay in response.data){
-                        let isIncluded = true
-                        for (const [filterKey, filterValue] of Object.entries(this.filters)) {
-                            if (Array.isArray(filterValue)){
-                                for (let elem in filterValue){
-                                    if(!response.data[stay][filterKey].includes(elem)){
-                                        isIncluded = false
-                                        break
-                                    }
-                                }
-                            } else {
-                                if (!isNaN(filterValue) && parseInt(filterValue) > response.data[stay][filterKey] ){
+                for (let stay in response.data){
+                    let isIncluded = true
+                    for (const [filterKey, filterValue] of Object.entries(this.filters)) {
+                        if (Array.isArray(filterValue)){
+                            let stayPerks = response.data[stay][filterKey].map((data) => data = data.name)
+                            for (let elem of filterValue){
+                                if(!stayPerks.includes(elem)){
                                     isIncluded = false
-                                } 
+                                    break
+                                }
                             }
-                        }
-                        if (isIncluded == true){
-                            this.stays.push(response.data[stay])
+                        } else {
+                            if (!isNaN(filterValue) && parseInt(filterValue) > response.data[stay][filterKey] ){
+                                isIncluded = false
+                            } 
                         }
                     }
-                });
-                console.log(this.stays)
+                    if (isIncluded == true){
+                        this.stays.push(response.data[stay])
+                    }
+                }
             }
         });
     }
