@@ -35,18 +35,22 @@ export default {
 <style lang="scss" scoped>
 @import '../../../../../../sass/_variables.scss';
 .hero {
+    position: relative;
     .black-background {
         position: absolute;
-        top: 0;
-        bottom: 0;
+        top: -150px;
+        left: 0;
         z-index: -1;
         width: 100%;
-        height: 110vh;
-        max-height: 140vw;
+        height: 110%;
         background-color: #000;
+        @media screen and (min-width: $medium) {
+            height: 90%;
+        }
     }
     &__wrapper-text, &__wrapper-explore {
-        margin: 1rem auto;
+        margin: 2rem auto;
+        padding: 2rem;
         width: 100%;
         min-height: 40vh;
         border-radius: 1rem;
