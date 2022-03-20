@@ -5,20 +5,12 @@
         <div class="table" v-if="stays.length > 0">
             <form @submit.prevent="buy()">
                 <ul>
-                    <li v-for="(stay,i) in stays" :key="i" @click="setData(24,stay.id)">
+                    <li v-for="(stay,i) in stays" :key="i">
                         <h4>{{stay.title}}</h4>
                         <select v-model="result.sponsorPackage_id">
-                            <!-- <option disabled value="">Please select one</option> -->
-                            <option v-for="(sponsor,index) in sponsorPackages" :key="index" :value="sponsor.id">{{sponsor.name}}</option>
-                                            <!-- <span>Selected: {{sponsor.name}}</span> -->
+                            <option v-for="(sponsor,index) in sponsorPackages" :key="index" :value="sponsor.id" @click="setData(sponsor.duration,stay.id)">{{sponsor.name}}</option>
                         </select>
-
-                        <!-- <div v-for="(sponsor,index) in sponsorPackages" :key="index">
-                            <a @click="assaign(stay.id,sponsor.id)">{{sponsor.name}}</a>
-                        </div> -->
-                        <!-- <a @click="assaign()"></a> -->
                     </li>
-
                 </ul>
                 <button type="submit">Compra Sponsorizzazione</button>
             </form>
@@ -26,7 +18,6 @@
         <div v-else>
             <h3>Non hai nessun annuncio</h3>
         </div>
-
         <div>
             <h2>Storico Sponsorizzazioni</h2>
             <div v-if="sponsorHistory.length > 0">
@@ -40,19 +31,9 @@
                 </div>
             </div>
             <div v-else>
-                <h3>
-                    Non ci sono Sponsorizzazioni
-                </h3>
+                <h3>Non ci sono Sponsorizzazioni</h3>
             </div>
         </div>
-
-        <!-- <div class="table">
-
-        </div>
-
-        <div class="table">
-
-        </div> -->
 
     </div>
 </template>
@@ -66,8 +47,8 @@ export default {
             sponsorPackages: [],
             sponsorHistory: [],
             result: {
-                stay_id:1,
-                sponsorPackage_id:1,
+                stay_id: 1,
+                sponsorPackage_id: 1,
                 start_date: '',
                 end_date: '',
             }
@@ -79,68 +60,53 @@ export default {
             this.stays = response.data[0];
             this.sponsorPackages = response.data[1];
             this.sponsorHistory = response.data[2];
-            console.log(response.data[2]);
         })
         .catch((error) => {
             // console.log(error)
         });
     },
     methods: {
-        assign(stayId) {
+        setData(n_Hours,stayId) {
             this.result.stay_id = stayId
-            let actualDate = dayJs()
-            this.result.start_date = actualDate.format('YYYY-MM-DDTHH:mm:ss')
-            this.result.end_date = actualDate.add(24, 'hour').format('YYYY-MM-DDTHH:mm:ss')
-            console.log(dayJs( this.result.start_date) < (dayJs(this.result.end_date)))
-            // this.result.start_date = .today
-            // console.log(dayJs().format('YYYY-MM-DDTHH:mm:ss'))
-            // let a = dayJs()
-            // console.log(a.add(24,'hour').format('YYYY-MM-DDTHH:mm:ss'))
-            // console.log(a.hour());
-            // this.end_date = this.start_date.addHours(6)
-            },
-        setData(nHours,stayId) {
-            this.result.stay_id = stayId
-            let s_date = ''
-            let e_date = ''
-            // s_date = dayJs().format('YYYY-MM-DDTHH:mm:ss')
-            // e_date = dayJs().add(nHours, 'hour').format('YYYY-MM-DDTHH:mm:ss')
-            if ( this.sponsorHistory.length > 0 ) {
-                for (let i=0; i < this.sponsorHistory.length; i++) {
-                    let lastDate = dayJs()
-                    if (this.sponsorHistory[i].stay_id == stayId) { 
-                        console.log('forza roma');
-                        if (dayJs(this.sponsorHistory[i].end_date) > lastDate) {
-                            lastDate = dayJs(this.sponsorHistory[i].end_date)
+            axios.get('/user/sponsor-packages-stay/' + stayId).then((response) => {
+                let sponsoredList = response.data
+                let result_start = ''
+                let result_end = ''
+                if (sponsoredList.length > 0 ) {    
+                    let lastDate = dayJs(sponsoredList[0].end_date)
+                    for(let i=0; i < sponsoredList.length; i++) {
+                        if (dayJs(sponsoredList[i].end_date) > lastDate) {
+                            lastDate = dayJs(sponsoredList[i].end_date)
                         }
-                        else {
-                            s_date = lastDate.format('YYYY-MM-DDTHH:mm:ss')
-                            e_date = lastDate.add(nHours, 'hour').format('YYYY-MM-DDTHH:mm:ss')
-                        }
+                        result_start = lastDate.format('YYYY-MM-DDTHH:mm')
+                        result_end = lastDate.add(n_Hours, 'hour').format('YYYY-MM-DDTHH:mm')  
                     }
-                    // else {
-                    //     s_date = dayJs().format('YYYY-MM-DDTHH:mm:ss')
-                    //     e_date = dayJs().add(nHours, 'hour').format('YYYY-MM-DDTHH:mm:ss')
-                    // }               
                 }
-            }
-            else {
-                s_date = dayJs().format('YYYY-MM-DDTHH:mm:ss')
-                e_date = dayJs().add(nHours, 'hour').format('YYYY-MM-DDTHH:mm:ss')            }
-            this.result.start_date = s_date
-            this.result.end_date = e_date
-            
+                else {
+                    result_start = dayJs().format('YYYY-MM-DDTHH:mm')
+                    result_end = dayJs().add(n_Hours, 'hour').format('YYYY-MM-DDTHH:mm')  
+                }            
+                this.result.start_date = result_start
+                this.result.end_date = result_end
+            })
 
         },
         buy() {
             axios.post('/user/add-sponsor',this.result).then((response) => {
-            // console.log(response.data);
-            // this.$router.push({name: 'sponsor'})
+                axios.get('/user/sponsor-packages').then((response) => {
+                    this.stays = response.data[0];
+                    this.sponsorPackages = response.data[1];
+                    this.sponsorHistory = response.data[2];
+                })
+                .catch((error) => {
+                    // console.log(error)
+                });            
             })
-        .catch((error) => {
-            // console.log(error)
-        });
-        },
+            .catch((error) => {
+                // console.log(error)
+            });
+        
+        }
 
 
     }
