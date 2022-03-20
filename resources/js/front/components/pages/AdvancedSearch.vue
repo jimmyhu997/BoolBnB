@@ -97,7 +97,7 @@
                 </ul>
             </div>
             <div class="map">
-                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)"/>
+                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :key="this.mapRefresher"/>
             </div>
         </div>
     </div>
@@ -112,6 +112,7 @@ export default {
     },
     data() {
         return {
+            mapRefresher: 0,
             indexPerks: [],
             filters:{
                 perks: this.$route.query.perks == undefined ? []  : this.$route.query.perks.split(','),
@@ -151,7 +152,6 @@ export default {
                 let index = this.filters.perks.indexOf(name)
                 this.filters.perks.splice(index,1)
             }
-            console.log(this.filters.perks)
         },
         increment(input) {
             if (this.filters[input] < this.inputs.max) {
@@ -167,7 +167,6 @@ export default {
     created() {
         axios.get('api/perks').then((response) => {
             this.indexPerks = response.data
-            console.log(this.indexPerks)
         })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
             if(Object.keys(this.$route.query).length <= 4) {
@@ -196,8 +195,9 @@ export default {
                     }
                 }
             }
+        this.mapRefresher += 1
         });
-    }
+    },
 }
 </script>
 
