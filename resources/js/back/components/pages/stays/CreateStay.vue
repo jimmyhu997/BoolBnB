@@ -444,7 +444,7 @@ export default {
       const address = this.searchKeyword
       if (address == '' || !this.preciseAddress) {
         validated = 0
-        address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : this.$refs.street_address[0].innerHTML = 'Specify a street number.'
+        address == '' ? this.$refs.street_address[0].innerHTML = 'Address is required.' : this.$refs.street_address[0].innerHTML = 'Specify a street name.'
         this.$refs.street_address[0].classList.add('visible')
       } else {
         validated++
