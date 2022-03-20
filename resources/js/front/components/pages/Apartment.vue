@@ -21,8 +21,13 @@
       <div class="content-top">
         <div class="content">
           <section class="content-heading">
-            <h3 class="hosted-by" v-if="apartment.user">Entire apartment hosted by {{apartment.user.name}}</h3>
-            <span class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths</span>
+            <div class="left">
+              <h3 class="hosted-by" v-if="apartment.user">Entire apartment hosted by {{apartment.user.name}}</h3>
+              <span class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths • {{apartment.square_meters}} sqm</span>
+            </div>
+            <div class="right">
+              <p class="price"><span class="num">€{{apartment.price}}</span> <span class="night">/ night</span></p>
+            </div>
           </section>
           <section class="content-description section">
             <h4 class="title">Overview</h4>
@@ -98,32 +103,7 @@
         </div>
       </div>
     </div>
-
-    <!-- div per mostrare le informazioni dell'appartamento -->
-    <!-- <div>
-      <h2>{{this.apartment.title}}</h2>
-      <img :src="'/storage/' + this.apartment.image_path" :alt="this.apartment.title + ' preview'">
-      
-      <h2>informazioni generali:</h2>
-      <h3>Metri quadrati: {{this.apartment.square_meters}}</h3>
-      <h3>Numero ospiti: {{this.apartment.guests}}</h3>
-      <h3>Numero stanze: {{this.apartment.rooms}}</h3>
-      <h3>Numero letti: {{this.apartment.beds}}</h3>
-      <h3>Numero bagni: {{this.apartment.bathrooms}}</h3>
-
-      <h2>informazioni stradali</h2>
-      <h3>Indirizzo: {{this.apartment.street_address}}</h3>
-      <h3>Città: {{this.apartment.city}}</h3>
-      <h3>Provincia: {{this.apartment.province_state}}</h3>
-      <h3>Paese: {{this.apartment.country}}</h3>
-
-      <h3>Prezzo per notte: {{this.apartment.price}}</h3>
-
-      <h2>Descrizione:</h2>
-      <p>{{this.apartment.overview}}</p>
-    </div> -->
-
-  </div>
+</div>
 </template>
 
 <script>
@@ -153,7 +133,6 @@ export default {
         if (response.data.visible == false ) {
           if (response.data.user_id == data.loggedUserId) {
             this.apartment = response.data
-            console.log(this.apartment.user);
             this.message.stay_id = this.apartment.id
               if(data.loggedUserId == this.apartment.user_id) {
                 this.apartmentOwner = true
@@ -323,15 +302,33 @@ export default {
         &-heading {
           border-bottom: .5px solid rgba(0, 0, 0, 0.3);
           padding-bottom: 2rem;
-          .hosted-by {
-            font-weight: 500;
-            font-size: 1.5rem;
-            margin-bottom: .5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          .left {
+            .hosted-by {
+              font-weight: 500;
+              font-size: 1.5rem;
+              margin-bottom: .5rem;
+            }
+            .basic-options {
+              font-weight: 400;
+              font-size: 1rem;
+              color: #888;
+            }
           }
-          .basic-options {
-            font-weight: 400;
-            font-size: 1rem;
-            color: #888;
+          .right {
+            flex-shrink: 0;
+            .price {
+              .num {
+                font-size: 1.5rem;
+                font-weight: 600;
+              }
+              .night {
+                font-size: 1.1rem;
+                font-weight: 400;
+              }
+            }
           }
         }
         .section {
