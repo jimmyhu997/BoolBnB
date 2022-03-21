@@ -57,7 +57,11 @@ export default {
     created() {
         axios.get('/user/sponsor-packages')
         .then((response) => {
-            this.stays = response.data[0];
+            console.log(response.data);
+            for (const key in response.data[0]) {
+                this.stays.push(response.data[0][key])
+            }
+            // this.stays = response.data[0];
             this.sponsorPackages = response.data[1];
             this.sponsorHistory = response.data[2];
         })
