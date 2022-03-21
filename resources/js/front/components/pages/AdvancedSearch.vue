@@ -165,6 +165,32 @@ export default {
                 this.filters[input]--
             }
         },
+        getSponsored(stays) {
+            let result = []
+            for(let i=0; i<stays.length; i++) {
+                axios.get('/api/get-sponsors/' + stays[i].id).then((response) => {
+                    let sponsorList = response.data
+                    let result_end = null
+                    if(sponsorList.length > 0) {
+                        let lastDate = dayJs(sponsorList[0].end_date)
+                        for(let i=0; i < sponsorList.length; i++) {
+                            if (dayJs(sponsorList[i].end_date) > lastDate) {
+                                lastDate = dayJs(sponsorList[i].end_date)
+                            }
+                            result_end = lastDate  
+                        }
+                        let today = dayJs()
+                        if (today < result_end) {
+                            result.unshift(stays[i])
+                        }
+                        else {
+                            result.push(stays[i])
+                        }
+                    }
+                })
+            }
+            return result
+        }
     },
     created() {
         axios.get('api/perks').then((response) => {
@@ -172,9 +198,10 @@ export default {
         })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
             if(Object.keys(this.$route.query).length <= 4) {
-                this.stays = response.data;
+                this.stays = this.getSponsored(response.data);
             }
             else{
+                let apartment = []
                 for (let stay in response.data){
                     let isIncluded = true
                     for (const [filterKey, filterValue] of Object.entries(this.filters)) {
@@ -193,9 +220,11 @@ export default {
                         }
                     }
                     if (isIncluded == true){
-                        this.stays.push(response.data[stay])
+                        apartment.push(response.data[stay])
                     }
                 }
+                this.stays = this.getSponsored(apartment)
+                console.log(this.stays);
             }
         });
     },
