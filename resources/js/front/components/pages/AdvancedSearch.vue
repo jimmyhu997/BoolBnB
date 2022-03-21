@@ -99,8 +99,8 @@
                     </li>
                 </ul>
             </div>
-            <div class="map" v-if="this.stays.length > 0">
-                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :zoom="12"/>
+            <div class="map">
+                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :zoom="12" :key="this.mapKey"/>
             </div>
         </div>
     </div>
@@ -130,6 +130,7 @@ export default {
                 max: 16,
                 default: 1
             },
+            mapKey:0
         }
     },
     methods: {
@@ -195,6 +196,7 @@ export default {
     created() {
         axios.get('api/perks').then((response) => {
             this.indexPerks = response.data
+            this.mapKey += 1;
         })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
             if(Object.keys(this.$route.query).length <= 4) {
@@ -226,6 +228,7 @@ export default {
                 this.stays = this.getSponsored(apartment)
                 console.log(this.stays);
             }
+        this.mapKey += 1;
         });
     },
 }
