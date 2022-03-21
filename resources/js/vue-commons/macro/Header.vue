@@ -52,9 +52,6 @@
                 <div class="menu__item" v-if="window.loggedIn">
                   <a class="menu__link" @click.prevent="logout()" title="Log out">Log out</a>
                 </div>
-                <!-- <div class="menu__item" v-if="window.loggedIn && this.$route.path.includes('user')">
-                  <a class="menu__link delete" @click.prevent="deleteUser()" title="Delete account">Delete account</a>
-                </div> -->
                 <div class="menu__item" v-if="window.loggedIn && !this.$route.path.includes('user')">
                   <a class="menu__link" href="/user" title="Dashboard">Dashboard</a>
                 </div>
@@ -101,26 +98,21 @@ export default {
             route: 'sponsor'
           }
         ],
-        userInfo: {}
+        userInfo: {},
+        route: ''
       }
     },
     mounted() {
-      if (this.$route.name == 'home') {
-        window.addEventListener( 'scroll', () => this.scrollHeader())
-      } else {
-        this.$refs.header.classList.add('scrolled')
-        // get user info
-        if (window.loggedIn) {
-          axios.get('user/manage').then( (response) => {
-            this.userInfo = response.data[0];
-          })
-        }
-      }
+      this.route = this.$route.name
+      if (this.route != 'home') {this.$refs.header.classList.add('scrolled')}
+      window.addEventListener( 'scroll', () => this.scrollHeader())
     },
     methods: {
       scrollHeader() {
-        if (window.scrollY <= 0) {
-          this.$refs.header.classList.remove('scrolled')
+        if (this.route == 'home') {
+          if (window.scrollY <= 0) {
+            this.$refs.header.classList.remove('scrolled')
+          } else this.$refs.header.classList.add('scrolled')
         } else this.$refs.header.classList.add('scrolled')
       },
       openMenu() {
@@ -144,11 +136,7 @@ export default {
         data.authOpened = true
         this.closeMenu()
       },
-      deleteUser() {
-        axios.delete(`/user/manage/${this.userInfo.id}`).then( (response) => {
-          location.reload();
-        });
-      } 
+       
     },
     computed: {
       window() {
@@ -157,17 +145,9 @@ export default {
     },
     watch: {
       '$route'(route) {
-        console.log(route);
-        if (route.name == 'home') {
-          window.addEventListener( 'scroll', () => this.scrollHeader())
-        } else {
-          window.removeEventListener( 'scroll', () => this.scrollHeader())
-          this.$refs.header.classList.add('scrolled')
-          // get user info
-          // axios.get('user/manage').then( (response) => {
-          //   this.userInfo = response.data[0];
-          // })
-        }
+        this.route = route.name
+        if (this.route != 'home') this.$refs.header.classList.add('scrolled')
+        else this.$refs.header.classList.remove('scrolled')
       }
     }
 }

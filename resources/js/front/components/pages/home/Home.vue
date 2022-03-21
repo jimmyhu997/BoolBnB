@@ -19,7 +19,6 @@ export default {
     created() {
       axios.get('/api/stays')
         .then(response => {
-          console.log(response.data)
           this.apartments = response.data
           const slugs = this.apartments.map(apartment => apartment.slug)
           this.randomApartment = slugs[ Math.floor( Math.random() * slugs.length ) ]

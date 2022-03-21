@@ -8,13 +8,14 @@ use App\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class StayController extends Controller
 {
     protected $validationRule = [
-        "title" => "required|string|max:100",
-        "description" => "required|string",
+        "title" => "required|string|max:50",
+        "description" => "required|string|max:500",
         "square_meters" => "required|numeric|max:999",
         "guests" => "required|numeric|max:99",
         "rooms" => "required|numeric|max:99",
@@ -25,8 +26,6 @@ class StayController extends Controller
         "city" => "required|string|max:50",
         "province_state" => "required|string|max:50",
         "country" => "required|string|max:50",
-        "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120",
-
         "price" => "required",
     ];
     /**
@@ -75,7 +74,6 @@ class StayController extends Controller
         $newStay->square_meters = $data['square_meters'];
         $newStay->guests = $data['guests'];
         
-        // da sistemare con TomTom
         $newStay->longitude = $data['longitude'];
         $newStay->latitude = $data['latitude'];
         
@@ -87,6 +85,15 @@ class StayController extends Controller
         $newStay->city = $data['city'];
         $newStay->province_state = $data['province_state'];
         $newStay->country = $data['country'];
+        $validator = Validator::make($data, [
+            "image_path" => "required|mimes:jpeg,jpg,bmp,png|max:5120"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 400);
+        }
         $path = Storage::put("uploads", $data["image_path"]);
         $newStay->image_path = $path;
         $newStay->price = $data['price'];
@@ -151,10 +158,8 @@ class StayController extends Controller
         $stay->square_meters = $data['square_meters'];
         $stay->guests = $data['guests'];
 
-
-        // da sistemare con TomTom
-        $stay->longitude = 10.10;
-        $stay->latitude = 10.10;
+        $stay->longitude = $data['longitude'];
+        $stay->latitude = $data['latitude'];
 
         $stay->rooms = $data['rooms'];
         $stay->beds = $data['beds'];
@@ -164,12 +169,17 @@ class StayController extends Controller
         $stay->city = $data['city'];
         $stay->province_state = $data['province_state'];
         $stay->country = $data['country'];
-        $stay->image_path = '//';
+        if (gettype($data["image_path"]) != 'string') {
+            Storage::delete($stay->image_path);
+            $path = Storage::put("uploads", $data["image_path"]);
+            $stay->image_path = $path;
+        }
         $stay->price = $data['price'];
         $stay->save();
 
         if (isset($data["perks"]) ) {
-            $stay->perks()->sync($data["perks"]);
+            $perks = explode(',', $data['perks']);
+            $stay->perks()->sync($perks);
         }
 
         return response()->json([
@@ -185,8 +195,9 @@ class StayController extends Controller
      */
     public function destroy(Stay $stay)
     {
+        Storage::delete($stay->image_path);
         $stay->delete();
-
+        
         return response()->json([
             "stayId" => $stay->id
         ]);

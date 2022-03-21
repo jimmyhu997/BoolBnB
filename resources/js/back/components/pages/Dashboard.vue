@@ -1,6 +1,6 @@
 <template>
     <div class="dashboard-content container">
-      <PageHeading :title="'Welcome ' + userInfo.name" :button="{ route: 'create-stay', desktop: 'Create a new listing', mobile: '+' }"/>
+      <PageHeading :title="'Welcome ' + data.loggedUserName" :button="{ route: 'create-stay', desktop: 'Create a new listing', mobile: '+' }"/>
 
       <!-- <div class="card">
         <div class="margine">
@@ -80,11 +80,13 @@
 
 <script>
 import PageHeading from '../commons/PageHeading.vue'
+import data from '../../../vue-commons/vueGlobal.js'
 export default {
     name: 'Dashboard',
     components: { PageHeading },
     data() {
       return {
+        data,
         userInfo: {},
         messaggi: [
           {
@@ -188,12 +190,7 @@ export default {
         ]
       }
     },
-    created() {
-      axios.get('user/manage').then( (response) => {
-        this.userInfo = response.data;
-        console.log(this.userInfo);
-      })
-    },
+    
     
 }
 </script>

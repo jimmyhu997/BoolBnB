@@ -5,10 +5,11 @@ window.axios.defaults.headers.common = {
     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
     'X-Requested-With': 'XMLHttpRequest'
 };
+window.dayJs = require('dayjs')
+
 window.externalAxios = axios.create()
 delete externalAxios.defaults.headers.common['X-CSRF-TOKEN']
 delete externalAxios.defaults.headers.common['X-Requested-With']
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -19,12 +20,9 @@ import App from './App.vue';
 import router from './router';
 import data from '../vue-commons/vueGlobal';
 
-axios.get("/user/perks").then( (response) => {
-    // this.stays = response.data[0];
-    data.perks = response.data;
-    // console.log(data.perks);
-    data.perks.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
-});
+data.loggedUserId = document.querySelector('meta[name="userID"]').getAttribute('content');
+data.loggedUserName = document.querySelector('meta[name="userName"]').getAttribute('content');
+data.loggedUserEmail = document.querySelector('meta[name="userEmail"]').getAttribute('content');
 
 const reservedArea = new Vue({
     el: '#reserved-area',

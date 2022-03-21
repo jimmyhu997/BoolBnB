@@ -1,67 +1,49 @@
 <template>
   <div class="contenitore">
 
-    <div class="left">
-      
-      <div class="menu">
+    <div class="colonna" ref="menuHamb">
+      <div class="wrapper" @click="changeMenu()">
+          <div class="hamburger">
+            <div class="menulogo"></div>
+            <div class="menulogo"></div>
+            <div class="menulogo"></div>
+          </div>
 
-        <!-- IN LAVORAZIONE (MANCANO DELLE MODIFICHE) -->
-        <div class="hamburger-menu">
-              <ul class="listato">
-                <li v-for="(stay , index) in stays" :key="index" >
-
-                  <div class="mini-card" @click="changeStay(index)">
-                    
-                    <div class="content">
-
-                      <span class="title ">{{stay.title}}</span>
-                      <span class="time ">data last message</span>
-
-                    </div>
-
-                  </div>
-
-                </li>
-              </ul>
-
-            <div class="close">
-              <span>chiudi</span>
-            </div>
-
-        </div>
-        <!-- IN LAVORAZIONE (MANCANO DELLE MODIFICHE) -->
-
-        <span class="build-ads">Annunci</span>
       </div>
 
-      <div class="stays">
-        <ul class="hambg-list">
-          <li class="list" v-for="(stay , index) in stays" :key="index" >
+      
 
-            <div class="mini-card" @click="changeStay(index)">
-              
-              <div class="content">
-                <img src="" alt="Icona">
-                 <span class="title">{{stay.title}}</span>
-                <span class="time">data last message</span>
+        <div class="menu" ref="menu" :v-if="!showMenu"> 
+          <span class="ads">Annunci</span>     
+          <ul class="listato">
+            <li class="list" v-for="(stay , index) in stays" :key="index">
 
+              <div class="mini-card" @click="changeStay(index)">                
+                <div class="content">
+
+                  <span class="title">{{stay.title}}</span>
+                  <span class="data"></span>
+
+                </div>
               </div>
 
-            </div>
-
-          </li>
-        </ul>
-      </div>
-
+            </li>
+          </ul>
+        </div>
     </div>
 
-    <div class="messages">
+    <!-- spazio -->
+    <!-- spazio -->
+    <!-- spazio -->
+    <!-- spazio -->
+
+    <div class="messages" ref="activeMessages"  v-if="stays.length > 0  && visual" >
       <div class="title">
         <div>
-          <h2>Titolo annuncio</h2>
+          <h2>{{stays[currentStay].title}}</h2>
         </div>
       </div>
-       <div class="message" v-if="stays.length > 0">
+       <div class="message">
         <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
           <div class="date">
             <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
@@ -82,6 +64,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
 </template>
@@ -91,6 +74,8 @@ export default {
     name: 'Messages',
     data() {
       return {
+        visual: true,
+        showMenu: false,
         currentStay : 0,
         stays : []
       }
@@ -98,27 +83,60 @@ export default {
     created() {
         axios.get("/user/messages").then( (response) => {
           this.stays = response.data;
+          if(window.innerWidth >= 744){
+            this.showMenu = true;
+          }else {
+            this.showMenu = false;
+          }
         })
     },
     methods: {
       changeStay: function(index){
-        this.currentStay = index;
+        this.currentStay = index
+        if(this.showMenu && window.innerWidth < 744){
+          this.showMenu = false;
+        }
+
+      },
+      changeMenu: function(){
+        if(this.showMenu == false){
+          this.showMenu = true; 
+        }
+        else{
+          this.showMenu = false
+        }
+      },
+      // stringa: function(){
+      //   let data = this.stays.created_at.substring(0,9);
+      // }
+
+    },
+    mounted() {
+      window.addEventListener('resize' , () => {
+        if(window.innerWidth >= 744) {
+          this.visual = true;
+          this.showMenu = true;
+        }else if(this.showMenu){
+          this.showMenu = false;
+          this.visual = true;
+        }
+      });
+    },
+    watch: {
+      '$data.showMenu'(menu) {
+        if(menu) {
+          this.$refs.menu.classList.add('active');
+          this.$refs.menuHamb.classList.add('active');
+          if(window.innerWidth < 744) {
+            this.visual = false;
+          }
+        }else{
+          this.visual = true;
+          this.$refs.menu.classList.remove('active');
+          this.$refs.menuHamb.classList.remove('active');
+        }
       }
-    },   
-    menu : function (){
-      const openMenu = document.querySelector(".header-right > .icone");
-      const closeMenu = document.querySelector(".close");
-
-    // ***creo le funzioni
-
-    openMenu.addEventListener("click", function(){
-        document.querySelector(".hamburger-menu").classList.add("active")
-    });
-
-    closeMenu.addEventListener("click", function(){
-        document.querySelector(".hamburger-menu").classList.remove("active")
-    });
-    }   
+    }
 }
 
 
@@ -129,83 +147,92 @@ export default {
   
   .contenitore { 
     height: 70vh;
-    max-width: 1750px;
-    margin:1rem auto;
-    padding: 0 4.8rem;
+    min-width: 380px;
+    // margin:1rem auto;
+    border: .2px solid $lightGrey;
+    border-radius: .4rem;
+    // background-color: aquamarine;
     display: flex;
 
-    .left {
-      width: 450px;
-      border: .8px solid $lightGrey;
-
-      .menu {
-        padding: .5rem .5rem;
-
-        .hamburger-menu {
-            .listato {
-              list-style: none;
-              height: 100%;
-              text-align: right;
-            }
-        }
-
-        .build-ads {
-          padding-left: 1rem;
-          font-size: 1.6rem;
-          font-weight: bold;
-        }
-      }
-
-      .stays {
-        width: 300px;
-        margin: 1rem 1rem;
-        overflow-y: auto;
-
-        .mini-card{
-          padding: 2rem 1rem;
-        }
-      }
-
-      .stays li {
-        border-bottom: 1px solid $lightGrey;
-        display: none;
-      }
-
-      .stays ul{
-        list-style: none;
-      }
-
-      .stays ul li {
-        display: inline-block;     
-      }
-
-      .hamburger-menu {
-        display: none;
-        width: 100%;
-        height: 100%;
-        min-width: 100vw;
-        min-height: 100vh;
-        background-color: $cyan;
-      }
-
-      .hamburger-menu ul{
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: flex-start;
-        list-style: none;
-      }
-
-      .hamburger-menu ul li .mini-card {
-        color: white;
-      }
-
-      .content{
-        display: flex;
-        justify-content: space-between; 
-      }
+    .colonna{
+      width: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: $lightGrey;
     }
+
+    .wrapper {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .hamburger {
+      position: fixed;
+      z-index: 999;
+      height: 1rem;
+      width: 30px;
+      margin: 1.4rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .menulogo{
+      height: 2px;
+      width: 1.3rem;
+      background-color: black;
+    }
+    .menu {
+      width: 100%;
+      height: 70vh;
+      padding: 5rem 2rem;
+      transform: translateX(-2000px);
+      transition: 0s;
+    }
+
+    .menu li {
+      list-style-type: none;
+      border-bottom: .5px solid $lightGrey;
+    }
+
+    .active {
+      width: 100%;
+      transform: translateX(0);
+    }
+
+    .menu li:last-child {
+      border-bottom: none;
+    } 
+
+    .menu li:last-first .mini-card {
+      font-weight: bold;
+    } 
+
+    .menu li .mini-card {
+      color: rgb(150, 150, 150);
+      text-decoration: none;
+      font-size: 20px;
+      transition: font-weight 0.2s;
+      cursor: pointer;
+      padding: 20px 0;
+    }   
+    
+    .menu li .mini-card:hover {
+      font-weight: bold;
+    }   
+
+    .content{
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .ads{
+      font-weight: bold;
+      color: grey;
+    }
+
 
     // DIVISIONE
 
@@ -217,11 +244,15 @@ export default {
       border: .5px solid $lightGrey; 
       border-left:none;
       overflow-y: auto;
-      // HO MODIFICATO UN PO PER AGGIUSTARE LA GRAFICA
+      padding: 0 6rem;
+
+      // .activeMessages{
+      //   display: hidden;
+      // }
 
       .title{
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         margin: 0 auto;
         padding-top: 10px;
         width: 80%;
@@ -263,6 +294,7 @@ export default {
           }
           .name{
             font-weight: 600;
+            // background-color: beige;
           }
           .mail{
             margin: 10px 0;
@@ -273,9 +305,44 @@ export default {
         }
         .main-message{
           font-weight: 300;
+          padding-bottom: 1rem;
         }
       }
     }
   }
+
+  @media screen and (min-width: $medium) {
+
+      .contenitore{
+
+        .active {
+          width: 300px;
+        }
+
+        .messages {
+
+          .message {
+          .head-message {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+          // background-color: aquamarine;
+
+          // // .name {
+          // //   // width: 80%;
+          // // }
+
+          .mail{
+            // width: 20%;
+            margin: 0 1rem;
+            // background-color: red;
+          }
+          }
+        }
+        }
+      }       
+  }
+
+
 
 </style>
