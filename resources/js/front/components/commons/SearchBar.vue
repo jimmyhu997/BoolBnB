@@ -40,6 +40,11 @@ export default {
         searchResults: []
       }
     },
+    mounted() {
+      if (this.$route.name == 'advancedSearch') {
+        this.searchKeyword = this.$route.query.queryKey
+      }
+    },
     methods: {
       search(keyword) {
         if (keyword == null){
@@ -167,6 +172,11 @@ export default {
           this.$refs.hints.classList.add('active')
         } else {
           this.$refs.hints.classList.remove('active')
+        }
+      },
+      '$route.name'(name) {
+        if (name == 'advancedSearch') {
+          this.searchKeyword = this.$route.query.queryKey
         }
       }
     }

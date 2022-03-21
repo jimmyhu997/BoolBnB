@@ -57,15 +57,18 @@
                     <span class="km">{{radius}} km</span>
                 </div>
             </div>
-            <div class="perks">
-                <ul class="perksul">
-                    <li v-for="(perk, index) in indexPerks" :key="index">
-                        <label :for="perk.name">{{perk.name}}</label>
-                        <input :ref="perk.name" type="checkbox" :id="perk.name" :checked="filters.perks.includes(perk.name)" :value="perk.name" @change="togglePerk(perk.name)">
-                    </li>
-                </ul>
+            <div class="bottom-filters">
+                <div class="option-filters">
+                    <ul class="list">
+                        <li class="item" v-for="perk in indexPerks" :key="perk.id">
+                            <button class="option-btn" :class="{'unchecked' : !filters.perks.includes(perk.name)}" @click.prevent="togglePerk(perk.name)">{{perk.name}}</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="save">
+                    <button type="submit" class="btn">Save</button>
+                </div>
             </div>
-            <button type="submit">Apply Filters</button>
         </form>
 
         <div class="results-section">
@@ -97,7 +100,7 @@
                 </ul>
             </div>
             <div class="map">
-                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)"/>
+                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :zoom="12" :key="this.mapKey"/>
             </div>
         </div>
     </div>
@@ -127,6 +130,7 @@ export default {
                 max: 16,
                 default: 1
             },
+            mapKey:0
         }
     },
     methods: {
@@ -145,13 +149,12 @@ export default {
             })
         },
         togglePerk(name){
-            if (this.$refs[name][0].checked && !this.filters.perks.includes(name)){
+            if (!this.filters.perks.includes(name)){
                 this.filters.perks.push(name)
-            } else if (!this.$refs[name][0].checked){
+            } else {
                 let index = this.filters.perks.indexOf(name)
                 this.filters.perks.splice(index,1)
             }
-            console.log(this.filters.perks)
         },
         increment(input) {
             if (this.filters[input] < this.inputs.max) {
@@ -163,17 +166,44 @@ export default {
                 this.filters[input]--
             }
         },
+        getSponsored(stays) {
+            let result = []
+            for(let i=0; i<stays.length; i++) {
+                axios.get('/api/get-sponsors/' + stays[i].id).then((response) => {
+                    let sponsorList = response.data
+                    let result_end = null
+                    if(sponsorList.length > 0) {
+                        let lastDate = dayJs(sponsorList[0].end_date)
+                        for(let i=0; i < sponsorList.length; i++) {
+                            if (dayJs(sponsorList[i].end_date) > lastDate) {
+                                lastDate = dayJs(sponsorList[i].end_date)
+                            }
+                            result_end = lastDate  
+                        }
+                        let today = dayJs()
+                        if (today < result_end) {
+                            result.unshift(stays[i])
+                        }
+                        else {
+                            result.push(stays[i])
+                        }
+                    }
+                })
+            }
+            return result
+        }
     },
     created() {
         axios.get('api/perks').then((response) => {
             this.indexPerks = response.data
-            console.log(this.indexPerks)
+            this.mapKey += 1;
         })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
             if(Object.keys(this.$route.query).length <= 4) {
-                this.stays = response.data;
+                this.stays = this.getSponsored(response.data);
             }
             else{
+                let apartment = []
                 for (let stay in response.data){
                     let isIncluded = true
                     for (const [filterKey, filterValue] of Object.entries(this.filters)) {
@@ -192,12 +222,15 @@ export default {
                         }
                     }
                     if (isIncluded == true){
-                        this.stays.push(response.data[stay])
+                        apartment.push(response.data[stay])
                     }
                 }
+                this.stays = this.getSponsored(apartment)
+                console.log(this.stays);
             }
+        this.mapKey += 1;
         });
-    }
+    },
 }
 </script>
 
@@ -263,12 +296,71 @@ $top: 230px;
                 }
             }
         }
-        .box{
-            margin: 0 1rem;
-        }
-        .fillable{
-            border: 2px solid black;
-            
+        .bottom-filters {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            .option-filters {
+                width: 70%;
+                padding-right: 1rem;
+                border-right: .5px solid rgba(0, 0, 0, 0.3);
+                @media screen and (min-width: $medium) {
+                    width: 80%;
+                }
+                @media screen and (min-width: $large) {
+                    width: 90%;
+                }
+                .list {
+                    list-style: none;
+                    display: flex;
+                    padding: 1rem;
+                    flex-wrap: nowrap;
+                    overflow-x: scroll;
+                    .item {
+                        margin-right: 1rem;
+                        flex-shrink: 0;
+                        .option-btn {
+                            border-radius: 1rem;
+                            height: 2rem;
+                            padding: 0 1rem;
+                            border: 1px solid black;
+                            font-size: 1.4rem;
+                            line-height: 2rem;
+                            font-weight: 100;
+                            background-color: transparent;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            &.unchecked {
+                                color: grey;
+                                border: 1px solid lightgrey;
+                            }
+                            &:hover {
+                                border: 1px solid black;
+                                background-color: rgba(0, 0, 0, .02);
+                            }
+                        }
+                    }
+                }
+            }
+            .save {
+                margin-left: 1rem;
+                .btn {
+                    padding: .7rem .9rem;
+                    text-align: center;
+                    background-color: black;
+                    border: none;
+                    box-shadow: none;
+                    color: white;
+                    border-radius: .4rem;
+                    font-weight: 400;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                }
+            }
         }
     }
     .results-section {
@@ -282,7 +374,7 @@ $top: 230px;
             padding: 1rem 1rem 0;
             @media screen and (min-width: $medium) {
                 padding: 1rem 2rem 0;
-                width: 60%;
+                width: 50%;
             }
             &__heading {
                 padding-bottom: 2rem;
@@ -367,8 +459,8 @@ $top: 230px;
                 position: sticky;
                 top: $top;
                 left: 0;
-                width: 40%;
-                height: calc(100vh - 80px);
+                width: 50%;
+                height: calc(100vh - $top);
                 display: block;
             }
         }

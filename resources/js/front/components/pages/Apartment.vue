@@ -85,8 +85,8 @@
         <div class="content">
           <section class="content-location section">
             <h4 class="title">Where you'll be</h4>
-            <div class="map">
-              Mappa tomtom
+            <div class="map" v-if="this.apartment.longitude">
+              <Map :lat="parseFloat(this.apartment.latitude)"  :lon="parseFloat(this.apartment.longitude)" :houses="[this.apartment]" :zoom="14"/>
             </div>
             <div class="location-info">
               <p>{{apartment.street_address}}</p>
@@ -108,8 +108,12 @@
 
 <script>
 import data from '../../../vue-commons/vueGlobal'
+import Map from '../commons/InteractiveMap.vue'
 export default {
     name: 'Apartment',
+    components: {
+      Map
+    },
     data() {
       return {
         data,
@@ -151,8 +155,9 @@ export default {
             this.apartmentOwner = true
           }
         }
-        
+        this.mapKey += 1
       })
+        
     },
     methods: {
       userName() {
