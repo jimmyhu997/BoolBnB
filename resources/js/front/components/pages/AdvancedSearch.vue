@@ -96,8 +96,8 @@
                     </li>
                 </ul>
             </div>
-            <div class="map">
-                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :key="this.mapRefresher"/>
+            <div class="map" v-if="this.stays.length > 0">
+                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :zoom="12"/>
             </div>
         </div>
     </div>
@@ -112,7 +112,6 @@ export default {
     },
     data() {
         return {
-            mapRefresher: 0,
             indexPerks: [],
             filters:{
                 perks: this.$route.query.perks == undefined ? []  : this.$route.query.perks.split(','),
@@ -195,7 +194,6 @@ export default {
                     }
                 }
             }
-        this.mapRefresher += 1
         });
     },
 }
