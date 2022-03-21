@@ -99,6 +99,7 @@ export default {
         buy() {
             axios.post('/user/add-sponsor',this.result).then((response) => {
                 axios.get('/user/sponsor-packages').then((response) => {
+                    this.stays = []
                     for (const key in response.data[0]) {
                         this.stays.push(response.data[0][key])
                     }
