@@ -18,6 +18,7 @@ export default {
         lat: Number,
         lon: Number,
         houses: Array,
+        zoom: Number
     },
     mounted(){
         function addMarker(map,lon,lat){
@@ -29,7 +30,8 @@ export default {
             key: '7zrguVO9WJPTeQrtoQpjRTiYmA8UOI4E',
             container: this.$refs.mapRef,
             style: 'tomtom://vector/1/basic-main',
-            zoom: 1
+            center: [this.lon,this.lat],
+            zoom: this.zoom,
         });
         map.addControl(new tt.FullscreenControl());
         map.addControl(new tt.NavigationControl());

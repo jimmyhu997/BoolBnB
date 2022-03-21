@@ -57,15 +57,18 @@
                     <span class="km">{{radius}} km</span>
                 </div>
             </div>
-            <div class="perks">
-                <ul class="perksul">
-                    <li v-for="(perk, index) in indexPerks" :key="index">
-                        <label :for="perk.name">{{perk.name}}</label>
-                        <input :ref="perk.name" type="checkbox" :id="perk.name" :checked="filters.perks.includes(perk.name)" :value="perk.name" @change="togglePerk(perk.name)">
-                    </li>
-                </ul>
+            <div class="bottom-filters">
+                <div class="option-filters">
+                    <ul class="list">
+                        <li class="item" v-for="perk in indexPerks" :key="perk.id">
+                            <button class="option-btn" :class="{'unchecked' : !filters.perks.includes(perk.name)}" @click.prevent="togglePerk(perk.name)">{{perk.name}}</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="save">
+                    <button type="submit" class="btn">Save</button>
+                </div>
             </div>
-            <button type="submit">Apply Filters</button>
         </form>
 
         <div class="results-section">
@@ -96,8 +99,8 @@
                     </li>
                 </ul>
             </div>
-            <div class="map">
-                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :key="this.mapRefresher"/>
+            <div class="map" v-if="this.stays.length > 0">
+                <Map :lat="parseFloat(this.$route.query.latitude)" :lon="parseFloat(this.$route.query.longitude)" :houses="this.stays" :zoom="12"/>
             </div>
         </div>
     </div>
@@ -112,7 +115,6 @@ export default {
     },
     data() {
         return {
-            mapRefresher: 0,
             indexPerks: [],
             filters:{
                 perks: this.$route.query.perks == undefined ? []  : this.$route.query.perks.split(','),
@@ -146,9 +148,9 @@ export default {
             })
         },
         togglePerk(name){
-            if (this.$refs[name][0].checked && !this.filters.perks.includes(name)){
+            if (!this.filters.perks.includes(name)){
                 this.filters.perks.push(name)
-            } else if (!this.$refs[name][0].checked){
+            } else {
                 let index = this.filters.perks.indexOf(name)
                 this.filters.perks.splice(index,1)
             }
@@ -195,7 +197,6 @@ export default {
                     }
                 }
             }
-        this.mapRefresher += 1
         });
     },
 }
@@ -263,12 +264,71 @@ $top: 230px;
                 }
             }
         }
-        .box{
-            margin: 0 1rem;
-        }
-        .fillable{
-            border: 2px solid black;
-            
+        .bottom-filters {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            .option-filters {
+                width: 70%;
+                padding-right: 1rem;
+                border-right: .5px solid rgba(0, 0, 0, 0.3);
+                @media screen and (min-width: $medium) {
+                    width: 80%;
+                }
+                @media screen and (min-width: $large) {
+                    width: 90%;
+                }
+                .list {
+                    list-style: none;
+                    display: flex;
+                    padding: 1rem;
+                    flex-wrap: nowrap;
+                    overflow-x: scroll;
+                    .item {
+                        margin-right: 1rem;
+                        flex-shrink: 0;
+                        .option-btn {
+                            border-radius: 1rem;
+                            height: 2rem;
+                            padding: 0 1rem;
+                            border: 1px solid black;
+                            font-size: 1.4rem;
+                            line-height: 2rem;
+                            font-weight: 100;
+                            background-color: transparent;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            &.unchecked {
+                                color: grey;
+                                border: 1px solid lightgrey;
+                            }
+                            &:hover {
+                                border: 1px solid black;
+                                background-color: rgba(0, 0, 0, .02);
+                            }
+                        }
+                    }
+                }
+            }
+            .save {
+                margin-left: 1rem;
+                .btn {
+                    padding: .7rem .9rem;
+                    text-align: center;
+                    background-color: black;
+                    border: none;
+                    box-shadow: none;
+                    color: white;
+                    border-radius: .4rem;
+                    font-weight: 400;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                }
+            }
         }
     }
     .results-section {

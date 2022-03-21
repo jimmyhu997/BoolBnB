@@ -15,7 +15,7 @@
           </div>
         </div>
         <ul class="featured__list" ref="featuredList">
-          <li class="featured__card" v-for="apartment in apartments" :key="apartment.id" @click="showApartment(apartment.slug)">
+          <li class="featured__card" v-for="apartment in sponsoredStays" :key="apartment.id" @click="showApartment(apartment.slug)">
             <div class="featured__card-preview">
               <img :src="'storage/' + apartment.image_path" :alt="apartment.title" class="img">
             </div>
@@ -35,7 +35,6 @@
 
 <script>
 import Hero from './partials/Hero.vue'
-
 export default {
     name: 'Home',
     components: { Hero },
@@ -45,16 +44,35 @@ export default {
         randomApartment: '',
         scrollLimit: 'min',
         cardListWidth: 0,
-        cardScrollWidth: 0
+        cardScrollWidth: 0,
+        sponsoredStays:[]
       }
     },
     created() {
-      axios.get('/api/stays')
-        .then(response => {
-          this.apartments = response.data
-          const slugs = this.apartments.map(apartment => apartment.slug)
-          this.randomApartment = slugs[ Math.floor( Math.random() * slugs.length ) ]
-        })
+      axios.get('/api/stays').then(response => {
+        this.apartments = response.data
+        const slugs = this.apartments.map(apartment => apartment.slug)
+        this.randomApartment = slugs[ Math.floor( Math.random() * slugs.length ) ]
+        for(let i=0; i<this.apartments.length; i++) {
+          axios.get('/api/get-sponsors/' + this.apartments[i].id).then((response) => {
+            let sponsorList = response.data
+            let result_end = null
+            if(sponsorList.length > 0) {
+                let lastDate = dayJs(sponsorList[0].end_date)
+                for(let i=0; i < sponsorList.length; i++) {
+                    if (dayJs(sponsorList[i].end_date) > lastDate) {
+                        lastDate = dayJs(sponsorList[i].end_date)
+                    }
+                    result_end = lastDate  
+                }
+                let today = dayJs()
+                if (today < result_end) {
+                    this.sponsoredStays.push(this.apartments[i])
+                }
+            }
+          })
+        }
+      })
     },
     mounted() {
       this.cardListWidth = this.$refs.featuredList.getBoundingClientRect().width
