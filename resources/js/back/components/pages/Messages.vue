@@ -41,8 +41,8 @@
             <div class="mini-card" @click="changeStay(index)">
               
               <div class="content">
-                <!-- <img src="" alt="Icona"> -->
-                <span class="title">{{stay.title}}</span>
+                <img src="" alt="Icona">
+                 <span class="title">{{stay.title}}</span>
                 <span class="time">data last message</span>
 
               </div>
@@ -223,7 +223,6 @@ export default {
         display: flex;
         justify-content: space-between;
         margin: 0 auto;
-        margin-bottom: 50px;
         padding-top: 10px;
         width: 80%;
       }
@@ -257,11 +256,19 @@ export default {
           display: flex;
           flex-direction: column;
           font-weight: 500;
+          @media screen and (min-width: $medium) {
+            flex-direction: row; 
+            justify-content: space-between;
+            margin-bottom: 10px;
+          }
           .name{
             font-weight: 600;
           }
           .mail{
             margin: 10px 0;
+            @media screen and (min-width: $medium) {
+              margin: 0;
+            }
           }
         }
         .main-message{
