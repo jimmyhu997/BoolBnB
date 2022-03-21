@@ -23,7 +23,7 @@ Route::get('/stays', "Api\StayController@index");
 Route::get("/stays/{slug}", "Api\StayController@show");
 Route::post('/send-message',"Api\MessageController@store" );
 Route::get('/perks', "Api\PerkController@index");
-
+Route::get('/get-sponsors/{stay_id}','Api\SponsorPackageStayController@getSponsoredList');
 
 Route::prefix('search')->namespace('Api')->group(function () {
     Route::get('/basic', 'SearchController@basic')->name('basic');
