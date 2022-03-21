@@ -4,7 +4,7 @@
     <div class="apartments__wrapper" v-if="stays.length > 0">
       <ul class="apartments__list">
         <li class="apartment" v-for="stay in stays" :key="stay.id">
-          <a class="apartment__link" :href="'/apartment/' + stay.id" :title="stay.title">
+          <a class="apartment__link" :href="'/apartment/' + stay.slug" :title="stay.title">
           <div class="apartment__preview">
             <img class="img" :src="'/storage/' + stay.image_path" :alt="stay.title + ' preview'">
           </div>
@@ -50,7 +50,9 @@ export default {
 
     created() {
       axios.get("/user/stays").then( (response) => {
-          this.stays = response.data;
+        for (const key in response.data) {
+          this.stays.push(response.data[key])
+        }
       });
     },
 
@@ -61,7 +63,10 @@ export default {
       },
       refresh() {
         axios.get("/user/stays").then( (response) => {
-            this.stays = response.data[0];
+          this.stays = []
+          for (const key in response.data) {
+            this.stays.push(response.data[key])
+          }
         });
       }
     }

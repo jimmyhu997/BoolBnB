@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Stay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StayController extends Controller
 {
@@ -15,8 +16,7 @@ class StayController extends Controller
      */
     public function index()
     {
-        $stays = Stay::with('perks')->get();
-        // dd($stays);
+        $stays = Stay::with('perks')->where('visible', 1 )->get();
         return response()->json($stays);
     }
 
@@ -27,10 +27,18 @@ class StayController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($slug)
-    {
-        $stays = Stay::with('perks')->where("slug", $slug)->first();
-        return response()->json($stays);    
+    {   
+        
+        $stay = Stay::with('perks')->where("slug", $slug)->with('user')->first();
+
+        // $newVisit = new Visit();
+
+        // $newVisit->session = explode(';', $_SERVER['HTTP_COOKIE'])[0];
+
+        // $newVisit->save();
+        
+
+        return response()->json($stay) ; 
     }
 
-    
 }   

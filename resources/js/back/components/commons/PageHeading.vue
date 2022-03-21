@@ -31,13 +31,13 @@ export default {
     }
     .heading {
         &-title {
-        font-weight: 500;
+            font-weight: 500;
         }
         &-btn {
-        border: 1px solid black;
-        color: black;
-        text-decoration: none;
-        transition: background-color .2s;
+            border: 1px solid black;
+            color: black;
+            text-decoration: none;
+            transition: background-color .2s;
         &.small {
             flex-shrink: 0;
             border-radius: 50%;
@@ -56,10 +56,10 @@ export default {
         }
         @media screen and (min-width: $medium) {
             &.large {
-            display: inline-block;
+                display: inline-block;
             }
             &.small {
-            display: none;
+                display: none;
             }
         }
         &:hover {
