@@ -30,7 +30,7 @@ export default {
             container: this.$refs.mapRef,
             style: 'tomtom://vector/1/basic-main',
             center: [this.lon,this.lat],
-            zoom: 10,
+            zoom: 13,
         });
         map.addControl(new tt.FullscreenControl());
         map.addControl(new tt.NavigationControl());
