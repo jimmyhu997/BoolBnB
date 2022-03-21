@@ -53,27 +53,14 @@ export default {
         this.apartments = response.data
         const slugs = this.apartments.map(apartment => apartment.slug)
         this.randomApartment = slugs[ Math.floor( Math.random() * slugs.length ) ]
-        for(let i=0; i<this.apartments.length; i++) {
-          axios.get('/api/get-sponsors/' + this.apartments[i].id).then((response) => {
-            let sponsorList = response.data
-            let result_end = null
-            if(sponsorList.length > 0) {
-                let lastDate = dayJs(sponsorList[0].end_date)
-                for(let i=0; i < sponsorList.length; i++) {
-                    if (dayJs(sponsorList[i].end_date) > lastDate) {
-                        lastDate = dayJs(sponsorList[i].end_date)
-                    }
-                    result_end = lastDate  
-                }
-                let today = dayJs()
-                if (today < result_end) {
-                    this.sponsoredStays.push(this.apartments[i])
-                }
-            }
-          })
-        }
       })
+          
+      axios.get('/api/get-sponsored').then((response) => {
+        this.sponsoredStays = response.data
+      })
+
     },
+     
     mounted() {
       this.cardListWidth = this.$refs.featuredList.getBoundingClientRect().width
       this.cardScrollWidth = this.$refs.featuredList.scrollWidth
