@@ -44,9 +44,9 @@
         </div>
       </div>
        <div class="message">
-        <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
+        <div class="messages-box" v-for="message in stays[currentStay].messages.slice().reverse()" :key="message.id">
           <div class="date">
-            <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
+            <span class="day">{{formatDate(message.created_at)[0]}}</span> <span class="dot">•</span> <span>{{formatDate(message.created_at)[1]}}</span>
           </div>
           <div class="head-message">
             <div class="name">
@@ -106,6 +106,16 @@ export default {
           this.showMenu = false
         }
       },
+      formatDate: function(date){
+        let formatDate = dayJs(date).format('DD/MM/YYYYTHH:mm')
+        let arrayDate = formatDate.split("T")
+        let resultDate = arrayDate[0]
+        if(resultDate == dayJs().format('DD/MM/YYYY')){
+          resultDate = 'Today'
+        }
+        let resultTime = arrayDate[1]
+        return [resultDate,resultTime]
+      }
       // stringa: function(){
       //   let data = this.stays.created_at.substring(0,9);
       // }
@@ -137,6 +147,7 @@ export default {
         }
       }
     }
+
 }
 
 
