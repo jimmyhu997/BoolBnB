@@ -166,32 +166,7 @@ export default {
                 this.filters[input]--
             }
         },
-        getSponsored(stays) {
-            let result = []
-            for(let i=0; i<stays.length; i++) {
-                axios.get('/api/get-sponsors/' + stays[i].id).then((response) => {
-                    let sponsorList = response.data
-                    let result_end = null
-                    if(sponsorList.length > 0) {
-                        let lastDate = dayJs(sponsorList[0].end_date)
-                        for(let i=0; i < sponsorList.length; i++) {
-                            if (dayJs(sponsorList[i].end_date) > lastDate) {
-                                lastDate = dayJs(sponsorList[i].end_date)
-                            }
-                            result_end = lastDate  
-                        }
-                        let today = dayJs()
-                        if (today < result_end) {
-                            result.unshift(stays[i])
-                        }
-                        else {
-                            result.push(stays[i])
-                        }
-                    }
-                })
-            }
-            return result
-        }
+        
     },
     created() {
         axios.get('api/perks').then((response) => {
@@ -199,11 +174,13 @@ export default {
             this.mapKey += 1;
         })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
+            console.log(response.data[1]);
             if(Object.keys(this.$route.query).length <= 4) {
-                this.stays = this.getSponsored(response.data);
+                // console.log(response.data);
+                this.stays = response.data[0]
+                // this.stays = this.getSponsored(response.data);
             }
             else{
-                let apartment = []
                 for (let stay in response.data){
                     let isIncluded = true
                     for (const [filterKey, filterValue] of Object.entries(this.filters)) {
@@ -222,11 +199,12 @@ export default {
                         }
                     }
                     if (isIncluded == true){
-                        apartment.push(response.data[stay])
+                        // apartment.push(response.data[stay])
+                        this.stays.push(response.data[0][stay])
                     }
                 }
-                this.stays = this.getSponsored(apartment)
-                console.log(this.stays);
+                // this.stays = this.getSponsored(apartment)
+                // console.log(this.stays);
             }
         this.mapKey += 1;
         });
@@ -258,6 +236,10 @@ $top: 230px;
             padding: 1rem;
             flex-wrap: nowrap;
             overflow-x: scroll;
+            scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
             .input-group {
                 flex-shrink: 0;
                 display: flex;
@@ -316,6 +298,10 @@ $top: 230px;
                     padding: 1rem;
                     flex-wrap: nowrap;
                     overflow-x: scroll;
+                    scrollbar-width: none;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
                     .item {
                         margin-right: 1rem;
                         flex-shrink: 0;
