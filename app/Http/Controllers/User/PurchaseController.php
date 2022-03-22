@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\User;
-// require_once './vendor/braintree/braintree_php/lib/Braintree.php';
-use Braintree;
 use App\Http\Controllers\Controller;
 use App\SponsorPackage;
 use App\Purchase;
 use App\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Braintree;
 
 class PurchaseController extends Controller
 {
@@ -88,11 +87,17 @@ class PurchaseController extends Controller
         $newPurchase->end_date = $resultEndDate;
         $newPurchase->save();
 
-        return response()->json('forza roma');
+        return response()->json('forza roma sempre');
     }
 
     public function getToken() {
-        $gateway = new Braintree\Gateway();
-        dd($gateway);
+        $gateway = new Braintree\Gateway([
+            'environment' => 'sandbox',
+            'merchantId' => 'bvvnf4975ffrmh75',
+            'publicKey' => '5q962vyxyrpyg394',
+            'privateKey' => '318d121d94da5170f003674abe10bd1d'
+        ]);
+        $token = $gateway->clientToken()->generate();
+        return response()->json($token);
     }
 }
