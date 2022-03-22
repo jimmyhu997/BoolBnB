@@ -48,46 +48,71 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {   
-        date_default_timezone_set('Europe/Rome');
-        $data = $request->all();
-        $today = date('Y-m-d h:i:s');
-        // for ($i = 0; $i < $data['times']; $i++) {
-        $hours = $data['sponsorPackage_duration'] * $data['times'];
-        // dd($hours);
-        $newPurchase = new Purchase();
-        $newPurchase->stay_id = $data['stay_id'];
-        $newPurchase->sponsor_package_id = $data['sponsorPackage_id'];
+        $payment = $request->payment;
+        $data = $request->data;
 
-        $resultList = Purchase
-            ::where('stay_id',$data['stay_id'])
-            ->where('end_date', '>=', $today)
-            ->get();
+        $gateway = new Braintree\Gateway([
+            'environment' => 'sandbox',
+            'merchantId' => 'bvvnf4975ffrmh75',
+            'publicKey' => '5q962vyxyrpyg394',
+            'privateKey' => '318d121d94da5170f003674abe10bd1d'
+        ]);
 
-        $resultStartDate = '';
-        $resultEndDate = '';
-        if(count($resultList) > 0) {
-            $lastDate = date($resultList[0]->end_date);
+        $price =  $data['sponsorPackage_price'] * $data['times'];
+        
+        $result = $gateway->transaction()->sale([
+            'amount' => $price,
+            'paymentMethodNonce' => $payment['nonce'],
+            'options' => [
+                'submitForSettlement' => True
+            ]
+        ]);
+        
+        if ($result->success) {
+            date_default_timezone_set('Europe/Rome');
+            $today = date('Y-m-d h:i:s');
+            $hours = $data['sponsorPackage_duration'] * $data['times'];
+            $newPurchase = new Purchase();
+            $newPurchase->stay_id = $data['stay_id'];
+            $newPurchase->sponsor_package_id = $data['sponsorPackage_id'];
+            $newPurchase->price = $price;
+            $newPurchase->transaction = $result->transaction->id;
 
-            for ($index = 0; $index < count($resultList); $index++) {
+            $resultList = Purchase
+                ::where('stay_id',$data['stay_id'])
+                ->where('end_date', '>=', $today)
+                ->get();
 
-                if(date($resultList[$index]->end_date) > $lastDate) {
-                    $lastDate = date($resultList[$index]->end_date);
+            $resultStartDate = '';
+            $resultEndDate = '';
+            if(count($resultList) > 0) {
+                $lastDate = date($resultList[0]->end_date);
+
+                for ($index = 0; $index < count($resultList); $index++) {
+
+                    if(date($resultList[$index]->end_date) > $lastDate) {
+                        $lastDate = date($resultList[$index]->end_date);
+                    }
+                    $resultStartDate =  $lastDate;
+                    $datAp = date_add(date_create($lastDate),date_interval_create_from_date_string(strval($hours).'hours'));
+                    $resultEndDate = date_format($datAp,'Y-m-d h:i:s');
                 }
-                $resultStartDate =  $lastDate;
-                $datAp = date_add(date_create($lastDate),date_interval_create_from_date_string(strval($hours).'hours'));
+            }
+            else {
+                $resultStartDate = $today;
+                $datAp = date_add(date_create($today),date_interval_create_from_date_string(strval($hours).'hours'));
                 $resultEndDate = date_format($datAp,'Y-m-d h:i:s');
             }
-        }
-        else {
-            $resultStartDate = $today;
-            $datAp = date_add(date_create($today),date_interval_create_from_date_string(strval($hours).'hours'));
-            $resultEndDate = date_format($datAp,'Y-m-d h:i:s');
-        }
-        $newPurchase->start_date = $resultStartDate;
-        $newPurchase->end_date = $resultEndDate;
-        $newPurchase->save();
+            $newPurchase->start_date = $resultStartDate;
+            $newPurchase->end_date = $resultEndDate;
+            $newPurchase->save();
 
-        return response()->json('forza roma sempre');
+            return response()->json($result->transaction->id);
+        }   
+        else {
+            return response()->json($result->errors);
+        }
+            
     }
 
     public function getToken() {

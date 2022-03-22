@@ -17,8 +17,11 @@ class CreatePurchasesTable extends Migration
             $table->id();
             $table->foreignId('stay_id')->constrained()->onDelete('cascade');
             $table->foreignId('sponsor_package_id')->constrained()->onDelete('cascade');
+            $table->unsignedFloat('price',6,2);
+            $table->string('transaction');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
+
             $table->timestamps();
         });
     }

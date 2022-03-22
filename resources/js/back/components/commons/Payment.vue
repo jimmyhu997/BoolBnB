@@ -38,7 +38,8 @@ export default {
         return {
             choosenPackage: null,
             dropinForm: false,
-            CLIENT_AUTHORIZATION: ''
+            CLIENT_AUTHORIZATION: '',
+            dropinInstance: {}
         }
     },
     mounted() {
@@ -52,7 +53,9 @@ export default {
             this.dropinForm = true
             this.buyInfo.sponsorPackage_id = sponsor.id
             this.buyInfo.sponsorPackage_duration = sponsor.duration
+            this.buyInfo.sponsorPackage_price = parseFloat(sponsor.price)
             this.choosenPackage = sponsor.name
+
         },
         increment() {
             if (this.buyInfo.times < 10) this.buyInfo.times++
@@ -61,18 +64,28 @@ export default {
             if (this.buyInfo.times > 1) this.buyInfo.times--
         },
         buy() {
-            axios.post('/user/add-sponsor',this.buyInfo).then((response) => {
-                this.$emit('update')
+            this.dropinInstance.requestPaymentMethod().then(payload => {
+                axios.post('/user/add-sponsor', {
+                    
+                        payment: {
+                            nonce: payload.nonce                           
+                        },
+                        data: this.buyInfo
+  
+                }).then((response) => {
+                    this.$emit('update')
+                })
+                .catch((error) => {
+                    console.log(error)
+                });
+            }).catch((error) => {
+                console.log(error);
             })
-            .catch((error) => {
-                // console.log(error)
-            });
         
         }
     },
     watch: {
         '$data.dropinForm'(open) {
-            console.log(open);
             if (open) {
                 axios.get('/user/get-token')
                     .then(response => {
@@ -103,7 +116,7 @@ export default {
                                 }
                             }
                         }).then((dropinInstance) => {
-                            console.log('nooo signori di Dropin');
+                            this.dropinInstance = dropinInstance                            
                         }).catch((error) => {
                             console.log(error);
                         });

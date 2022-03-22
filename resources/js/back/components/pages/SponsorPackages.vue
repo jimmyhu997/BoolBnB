@@ -80,6 +80,7 @@ export default {
                 stay_id: null,
                 sponsorPackage_id: null,
                 sponsorPackage_duration :null,
+                sponsorPackage_price: null,
                 times: 1
             },
             stays: [],
