@@ -41,23 +41,10 @@
                 </li>
             </ul>
         </div>
+        
+        <Payment :stay="choosenStay" :packages="sponsorPackages" :buyInfo="buyInfo" @update='refresh()'/>
 
-        <form class="purchase-form" @submit.prevent="buy()">
-            <h4 v-if="!choosenStay">Select an apartment to sponsor.</h4>
-            <div v-else>
-                <h4>{{choosenStay}}</h4>
-                <div class="packages">
-                    <div class="package" v-for="sponsor in sponsorPackages" :key="sponsor.id" @click="choosePackage(sponsor)">{{sponsor.name}}</div>
-                </div>
-                <div class="buttons" v-if="choosenPackage">
-                    {{choosenPackage}}
-                    <button @click.prevent="decrement()">-</button>
-                    <span class="times">{{buyInfo.times}}</span>
-                    <button @click.prevent="increment()">+</button>
-                </div>
-                <button v-if="choosenPackage">BUY</button>
-            </div>
-        </form>
+       
 
     </div>
     <div class="history-sponsor section" v-if="currentSection == 'History'">
@@ -101,9 +88,10 @@
 
 <script>
 import PageHeading from '../commons/PageHeading.vue'
+import Payment from '../commons/Payment.vue'
 export default {
     name:'SponsorPackages',
-    components: {PageHeading},
+    components: {PageHeading,Payment},
     data() {
         return {
             currentSection: 'New',
@@ -142,43 +130,38 @@ export default {
         .catch((error) => {
             // console.log(error)
         });
+        
     },
     methods: {
         chooseStay(stay) {
             this.buyInfo.stay_id = stay.id
             this.choosenStay = stay.title
         },
-        choosePackage(sponsor) {
-            this.buyInfo.sponsorPackage_id = sponsor.id
-            this.buyInfo.sponsorPackage_duration = sponsor.duration
-            this.choosenPackage = sponsor.name
-        },
-        increment() {
-            if (this.buyInfo.times < 10) this.buyInfo.times++
-        },
-        decrement() {
-            if (this.buyInfo.times > 1) this.buyInfo.times--
-        },
+        // choosePackage(sponsor) {
+        //     this.buyInfo.sponsorPackage_id = sponsor.id
+        //     this.buyInfo.sponsorPackage_duration = sponsor.duration
+        //     this.choosenPackage = sponsor.name
+        // },
+        // increment() {
+        //     if (this.buyInfo.times < 10) this.buyInfo.times++
+        // },
+        // decrement() {
+        //     if (this.buyInfo.times > 1) this.buyInfo.times--
+        // },
         
-        buy() {
-            axios.post('/user/add-sponsor',this.buyInfo).then((response) => {
-                axios.get('/user/sponsor-packages').then((response) => {
-                    this.stays = []
-                    for (const key in response.data[0]) {
-                        this.stays.push(response.data[0][key])
-                    }
-                    this.sponsorPackages = response.data[1];
-                    this.sponsorHistory = response.data[2];
-                    this.sponsorActive = response.data[3];
-                })
-                .catch((error) => {
-                    // console.log(error)
-                });            
+        refresh() {
+            axios.get('/user/sponsor-packages').then((response) => {
+                this.stays = []
+                for (const key in response.data[0]) {
+                    this.stays.push(response.data[0][key])
+                }
+                this.sponsorPackages = response.data[1];
+                this.sponsorHistory = response.data[2];
+                this.sponsorActive = response.data[3];
             })
             .catch((error) => {
                 // console.log(error)
-            });
-        
+            });            
         }
     }
 }

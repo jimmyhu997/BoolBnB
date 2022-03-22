@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\User;
-
+// require_once './vendor/braintree/braintree_php/lib/Braintree.php';
+use Braintree;
 use App\Http\Controllers\Controller;
 use App\SponsorPackage;
 use App\Purchase;
@@ -92,11 +93,11 @@ class PurchaseController extends Controller
         $newPurchase->end_date = $resultEndDate;
         $newPurchase->save();
 
-        // }   
-
-        
-        
         return response()->json('forza roma');
     }
 
+    public function getToken() {
+        $gateway = new Braintree\Gateway();
+        dd($gateway);
+    }
 }
