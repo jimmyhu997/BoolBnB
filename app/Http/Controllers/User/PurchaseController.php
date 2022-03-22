@@ -20,15 +20,10 @@ class PurchaseController extends Controller
     {
         $stays = Stay::all()->where('user_id', Auth::user()->id);
         $sponsorPackages = SponsorPackage::all();
-        $sponsorHistory = Purchase
-            ::select('purchases.*','stays.title as stays_title')
-            ->leftjoin('stays','stays.id','=','purchases.stay_id')
-            ->where('user_id', Auth::user()->id)
-            ->get();
-        
         $today = date('Y-m-d h:i:s');
         $purchaseHistory = Purchase
-            ::select('purchases.*','stays.title as stays_title')
+            ::select('purchases.*','stays.title as stay_title','stays.slug as stay_slug','stays.image_path as stay_image_path', 'sponsor_packages.price as tier_price', 'sponsor_packages.name as tier_name')
+            ->leftjoin('sponsor_packages','sponsor_packages.id','=','purchases.sponsor_package_id')
             ->leftjoin('stays','stays.id','=','purchases.stay_id')
             ->where('user_id', Auth::user()->id)
             ->get();

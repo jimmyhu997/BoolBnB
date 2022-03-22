@@ -1,6 +1,9 @@
 <template>
-    <div class="dashboard-content container">
-      <PageHeading :title="'Welcome ' + data.loggedUserName" :button="{ route: 'create-stay', desktop: 'Create a new listing', mobile: '+' }"/>
+    <div class="dashboard-content">
+      <div class="container">
+        <PageHeading :title="'Welcome ' + data.loggedUserName"/>
+
+      </div>
     </div>
 </template>
 
@@ -22,6 +25,16 @@ export default {
 <style lang="scss" scoped>
 @import '../../../../sass/_variables.scss';
     .dashboard-content {
-
+      background-color: tomato;
+      height: 50vw;
+      @media screen and (min-width: $medium) {
+        height: 400px;
+      }
+      .page__heading {
+        margin-top: 0;
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+        color: white;
+      }
     }
 </style>

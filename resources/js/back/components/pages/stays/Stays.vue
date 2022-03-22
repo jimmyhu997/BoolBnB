@@ -5,9 +5,9 @@
       <ul class="apartments__list">
         <li class="apartment" v-for="stay in stays" :key="stay.id">
           <a class="apartment__link" :href="'/apartment/' + stay.slug" :title="stay.title">
-          <div class="apartment__preview">
-            <img class="img" :src="'/storage/' + stay.image_path" :alt="stay.title + ' preview'">
-          </div>
+            <div class="apartment__preview">
+              <img class="img" :src="'/storage/' + stay.image_path" :alt="stay.title + ' preview'">
+            </div>
             <h3 class="apartment__title">
               {{stay.title}}
             </h3>
@@ -94,7 +94,7 @@ export default {
       align-items: flex-end;
       justify-content: space-between;
       flex-direction: column;
-        overflow: hidden;
+      overflow: hidden;
       @media screen and (min-width: $small) {
         flex-direction: row;
         align-items: center;
