@@ -41,6 +41,7 @@
                 </li>
             </ul>
         </div>
+
         <form class="purchase-form" @submit.prevent="buy()">
             <h4 v-if="!choosenStay">Select an apartment to sponsor.</h4>
             <div v-else>
@@ -57,12 +58,13 @@
                 <button v-if="choosenPackage">BUY</button>
             </div>
         </form>
+
     </div>
     <div class="history-sponsor section" v-if="currentSection == 'History'">
         old
     </div>
 
-        <div class="table" v-if="stays.length > 0">
+        <!-- <div class="table" v-if="stays.length > 0">
             <form @submit.prevent="buy()">
                 <ul>
                     <li v-for="(stay,i) in stays" :key="i">
@@ -87,13 +89,12 @@
                     <h5>Data Acquisto: {{sponsorH.created_at.split('T')[0]}}</h5>
                     <h5>Data Inizio: {{sponsorH.start_date.split('T')[0]}} </h5>
                     <h5>Data Fine: {{sponsorH.end_date.split('T')[0]}} </h5>
-
                 </div>
             </div>
             <div v-else>
                 <h3>Non ci sono Sponsorizzazioni</h3>
             </div>
-        </div>
+        </div> -->
 
     </div>
 </template>
@@ -111,18 +112,20 @@ export default {
             buyInfo: {
                 stay_id: null,
                 sponsorPackage_id: null,
+                sponsorPackage_duration :null,
                 times: 1
             },
             stays: [],
             sponsorPackages: [],
             sponsorHistory: [],
             sponsorActive: [],
-            result: {
-                stay_id: 1,
-                sponsorPackage_id: 1,
-                start_date: '',
-                end_date: '',
-            }
+            
+            // result: {
+            //     stay_id: 1,
+            //     sponsorPackage_id: 1,
+            //     start_date: '',
+            //     end_date: '',
+            // }
         }
     },
     created() {
@@ -147,6 +150,7 @@ export default {
         },
         choosePackage(sponsor) {
             this.buyInfo.sponsorPackage_id = sponsor.id
+            this.buyInfo.sponsorPackage_duration = sponsor.duration
             this.choosenPackage = sponsor.name
         },
         increment() {
@@ -155,33 +159,9 @@ export default {
         decrement() {
             if (this.buyInfo.times > 1) this.buyInfo.times--
         },
-        setData(n_Hours,stayId) {
-            this.result.stay_id = stayId
-            axios.get('/user/sponsor-packages-stay/' + stayId).then((response) => {
-                let sponsoredList = response.data
-                let result_start = ''
-                let result_end = ''
-                if (sponsoredList.length > 0 ) {    
-                    let lastDate = dayJs(sponsoredList[0].end_date)
-                    for(let i=0; i < sponsoredList.length; i++) {
-                        if (dayJs(sponsoredList[i].end_date) > lastDate) {
-                            lastDate = dayJs(sponsoredList[i].end_date)
-                        }
-                        result_start = lastDate.format('YYYY-MM-DDTHH:mm')
-                        result_end = lastDate.add(n_Hours, 'hour').format('YYYY-MM-DDTHH:mm')  
-                    }
-                }
-                else {
-                    result_start = dayJs().format('YYYY-MM-DDTHH:mm')
-                    result_end = dayJs().add(n_Hours, 'hour').format('YYYY-MM-DDTHH:mm')  
-                }            
-                this.result.start_date = result_start
-                this.result.end_date = result_end
-            })
-
-        },
+        
         buy() {
-            axios.post('/user/add-sponsor',this.result).then((response) => {
+            axios.post('/user/add-sponsor',this.buyInfo).then((response) => {
                 axios.get('/user/sponsor-packages').then((response) => {
                     this.stays = []
                     for (const key in response.data[0]) {
@@ -200,8 +180,6 @@ export default {
             });
         
         }
-
-
     }
 }
 </script>
