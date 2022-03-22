@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\User;
-
+// require_once './vendor/braintree/braintree_php/lib/Braintree.php';
+use Braintree;
 use App\Http\Controllers\Controller;
 use App\SponsorPackage;
 use App\Purchase;
@@ -48,15 +49,50 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {   
+        date_default_timezone_set('Europe/Rome');
         $data = $request->all();
+        $today = date('Y-m-d h:i:s');
+        // for ($i = 0; $i < $data['times']; $i++) {
+        $hours = $data['sponsorPackage_duration'] * $data['times'];
+        // dd($hours);
         $newPurchase = new Purchase();
         $newPurchase->stay_id = $data['stay_id'];
         $newPurchase->sponsor_package_id = $data['sponsorPackage_id'];
-        $newPurchase->start_date = $data['start_date'];
-        $newPurchase->end_date = $data['end_date'];
-        
+
+        $resultList = Purchase
+            ::where('stay_id',$data['stay_id'])
+            ->where('end_date', '>=', $today)
+            ->get();
+
+        $resultStartDate = '';
+        $resultEndDate = '';
+        if(count($resultList) > 0) {
+            $lastDate = date($resultList[0]->end_date);
+
+            for ($index = 0; $index < count($resultList); $index++) {
+
+                if(date($resultList[$index]->end_date) > $lastDate) {
+                    $lastDate = date($resultList[$index]->end_date);
+                }
+                $resultStartDate =  $lastDate;
+                $datAp = date_add(date_create($lastDate),date_interval_create_from_date_string(strval($hours).'hours'));
+                $resultEndDate = date_format($datAp,'Y-m-d h:i:s');
+            }
+        }
+        else {
+            $resultStartDate = $today;
+            $datAp = date_add(date_create($today),date_interval_create_from_date_string(strval($hours).'hours'));
+            $resultEndDate = date_format($datAp,'Y-m-d h:i:s');
+        }
+        $newPurchase->start_date = $resultStartDate;
+        $newPurchase->end_date = $resultEndDate;
         $newPurchase->save();
+
         return response()->json('forza roma');
     }
 
+    public function getToken() {
+        $gateway = new Braintree\Gateway();
+        dd($gateway);
+    }
 }

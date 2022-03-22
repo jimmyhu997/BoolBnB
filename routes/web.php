@@ -29,7 +29,7 @@ Route::prefix('user')->middleware('auth')->namespace('User')->group( function ()
     Route::post('add-sponsor' , 'PurchaseController@store')->name('add-sponsor');
     Route::get('sponsor-packages' , 'PurchaseController@index')->name('sponsor-packages');
     Route::get('sponsor-packages-stay/{stay_id}' , 'PurchaseController@getSponsoredList')->name('sponsor-packages-stay');
-
+    Route::get('get-token','PurchaseController@getToken')->name('get-token');
     Route::get('/{any?}', function () {
         return view('registered_user.dashboard');
     })->where('any', '.*');

@@ -90,9 +90,10 @@
 
 <script>
 import PageHeading from '../commons/PageHeading.vue'
+import Payment from '../commons/Payment.vue'
 export default {
     name:'SponsorPackages',
-    components: {PageHeading},
+    components: {PageHeading,Payment},
     data() {
         return {
             currentSection: 'New',
@@ -101,6 +102,7 @@ export default {
             buyInfo: {
                 stay_id: null,
                 sponsorPackage_id: null,
+                sponsorPackage_duration :null,
                 times: 1
             },
             stays: [],
@@ -126,6 +128,7 @@ export default {
         .catch((error) => {
             // console.log(error)
         });
+        
     },
     methods: {
         chooseStay(stay) {
@@ -150,6 +153,31 @@ export default {
         },
         getDate(date) {
             return dayJs(date).format('DD MMMM YYYY')
+        // choosePackage(sponsor) {
+        //     this.buyInfo.sponsorPackage_id = sponsor.id
+        //     this.buyInfo.sponsorPackage_duration = sponsor.duration
+        //     this.choosenPackage = sponsor.name
+        // },
+        // increment() {
+        //     if (this.buyInfo.times < 10) this.buyInfo.times++
+        // },
+        // decrement() {
+        //     if (this.buyInfo.times > 1) this.buyInfo.times--
+        // },
+        },
+        refresh() {
+            axios.get('/user/sponsor-packages').then((response) => {
+                this.stays = []
+                for (const key in response.data[0]) {
+                    this.stays.push(response.data[0][key])
+                }
+                this.sponsorPackages = response.data[1];
+                this.sponsorHistory = response.data[2];
+                this.sponsorActive = response.data[3];
+            })
+            .catch((error) => {
+                // console.log(error)
+            });            
         }
     }
 }

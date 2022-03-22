@@ -10,6 +10,9 @@
     <meta name="userName" content="{{ Auth::user()->name}}">
     <meta name="userEmail" content="{{ Auth::user()->email}}">
 
+    {{-- payments drop-in CDN --}}
+    {{-- <script src="https://js.braintreegateway.com/web/dropin/1.33.0/js/dropin.min.js"></script> --}}
+
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     {{-- <!-- Scripts -->
