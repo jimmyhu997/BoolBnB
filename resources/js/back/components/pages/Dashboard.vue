@@ -1,10 +1,10 @@
 <template>
-    <div class="dashboard-content">
-      <div class="container">
+    <div class="color">
+      <div class="dashboard-content container">
         <PageHeading :title="'Welcome ' + data.loggedUserName"/>
-
       </div>
     </div>
+
 </template>
 
 <script>
@@ -24,17 +24,15 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../sass/_variables.scss';
+  .color {
+    width: 100%;
+    height: 60vh;
+    background-color: purple;
+    background-image: linear-gradient(to right, rgb(70, 0, 128) , rgb(255, 54, 198));
+
     .dashboard-content {
-      background-color: tomato;
-      height: 50vw;
-      @media screen and (min-width: $medium) {
-        height: 400px;
-      }
-      .page__heading {
-        margin-top: 0;
-        padding-top: 1rem;
-        padding-bottom: 2rem;
-        color: white;
-      }
+      padding: 1rem 3rem;
+      color: white;
     }
+  }
 </style>
