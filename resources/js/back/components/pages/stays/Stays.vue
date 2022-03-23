@@ -50,9 +50,7 @@ export default {
 
     created() {
       axios.get("/user/stays").then( (response) => {
-        for (const key in response.data) {
-          this.stays.push(response.data[key])
-        }
+        this.stays = response.data
       });
     },
 
