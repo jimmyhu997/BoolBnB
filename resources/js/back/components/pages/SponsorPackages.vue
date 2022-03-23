@@ -131,20 +131,9 @@ export default {
         },
         getDate(date) {
             return dayJs(date).format('DD MMMM YYYY')
-        // choosePackage(sponsor) {
-        //     this.buyInfo.sponsorPackage_id = sponsor.id
-        //     this.buyInfo.sponsorPackage_duration = sponsor.duration
-        //     this.choosenPackage = sponsor.name
-        // },
-        // increment() {
-        //     if (this.buyInfo.times < 10) this.buyInfo.times++
-        // },
-        // decrement() {
-        //     if (this.buyInfo.times > 1) this.buyInfo.times--
-        // },
         },
         refresh() {
-            axios.get('/user/sponsor-packages').then((response) => {
+            axios.get('/user/sponsor-info').then((response) => {
                 this.stays = []
                 for (const key in response.data[0]) {
                     this.stays.push(response.data[0][key])
