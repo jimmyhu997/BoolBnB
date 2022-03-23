@@ -44,7 +44,10 @@
           <h2>{{stays[currentStay].title}}</h2>
         </div>
       </div>
-       <div class="message">
+       <div class="message" v-if=" stays[currentStay].messages == 0">
+        <p class="no-message">There are no messages for this listing.</p>
+      </div>
+      <div class="message" v-else>
         <div class="messages-box" v-for="message in stays[currentStay].messages.slice().reverse()" :key="message.id">
           <div class="date">
             <span class="day">{{getDay(message.created_at)}}</span> <span class="dot">•</span> <span>{{getHour(message.created_at)}}</span>
@@ -274,6 +277,12 @@ export default {
       }
       
       .message{
+        .no-message{
+          text-align: center;
+          margin-top: 100px;
+          font-size: 18px;
+          font-weight: 500;
+        }
 
         .messages-box{
         width: 75%;

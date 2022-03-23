@@ -86,7 +86,7 @@
                             <div class="apartment-overview">
                                 <div class="info">
                                     <p class="type">Entire apartment in {{apartment.city}}</p>
-                                    <h3 class="title">{{apartment.title}}</h3>
+                                    <h3 class="title" :class="{'sponsored': apartment.sponsor}">{{apartment.title}}</h3>
                                     <div class="separator"></div>
                                     <p class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths</p>
                                     <p class="perks">{{apartment.perks.map(perk => perk.name).join(' • ')}}</p>
@@ -166,49 +166,31 @@ export default {
                 this.filters[input]--
             }
         },
-        getSponsored(stays) {
-            let result = []
-            for(let i=0; i<stays.length; i++) {
-                axios.get('/api/get-sponsors/' + stays[i].id).then((response) => {
-                    let sponsorList = response.data
-                    let result_end = null
-                    if(sponsorList.length > 0) {
-                        let lastDate = dayJs(sponsorList[0].end_date)
-                        for(let i=0; i < sponsorList.length; i++) {
-                            if (dayJs(sponsorList[i].end_date) > lastDate) {
-                                lastDate = dayJs(sponsorList[i].end_date)
-                            }
-                            result_end = lastDate  
-                        }
-                        let today = dayJs()
-                        if (today < result_end) {
-                            result.unshift(stays[i])
-                        }
-                        else {
-                            result.push(stays[i])
-                        }
-                    }
-                })
-            }
-            return result
-        }
+        
     },
     created() {
         axios.get('api/perks').then((response) => {
             this.indexPerks = response.data
-            this.mapKey += 1;
         })
         axios.get("/api/search/basic",{params: this.$route.query}).then( (response) => {
+            let responseStay = response.data[0]
+            let sponsored = response.data[1].map((data) => data = data.stay_id)
             if(Object.keys(this.$route.query).length <= 4) {
-                this.stays = this.getSponsored(response.data);
+                for (let stay in responseStay){
+                    if (sponsored.includes(responseStay[stay].id)){
+                        this.stays.unshift(responseStay[stay])
+                        responseStay[stay].sponsor = true
+                    } else{
+                        this.stays.push(responseStay[stay])
+                    }
+                }
             }
             else{
-                let apartment = []
-                for (let stay in response.data){
+                for (let stay in responseStay){
                     let isIncluded = true
                     for (const [filterKey, filterValue] of Object.entries(this.filters)) {
                         if (Array.isArray(filterValue)){
-                            let stayPerks = response.data[stay][filterKey].map((data) => data = data.name)
+                            let stayPerks = responseStay[stay][filterKey].map((data) => data = data.name)
                             for (let elem of filterValue){
                                 if(!stayPerks.includes(elem)){
                                     isIncluded = false
@@ -216,17 +198,20 @@ export default {
                                 }
                             }
                         } else {
-                            if (!isNaN(filterValue) && parseInt(filterValue) > response.data[stay][filterKey] ){
+                            if (!isNaN(filterValue) && parseInt(filterValue) > responseStay[stay][filterKey] ){
                                 isIncluded = false
                             } 
                         }
                     }
                     if (isIncluded == true){
-                        apartment.push(response.data[stay])
+                        if (sponsored.includes(responseStay[stay].id)){
+                            this.stays.unshift(responseStay[stay])
+                            responseStay[stay].sponsor = true
+                        } else{
+                            this.stays.push(responseStay[stay])
+                        }
                     }
                 }
-                this.stays = this.getSponsored(apartment)
-                console.log(this.stays);
             }
         this.mapKey += 1;
         });
@@ -258,6 +243,10 @@ $top: 230px;
             padding: 1rem;
             flex-wrap: nowrap;
             overflow-x: scroll;
+            scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            }
             .input-group {
                 flex-shrink: 0;
                 display: flex;
@@ -316,6 +305,10 @@ $top: 230px;
                     padding: 1rem;
                     flex-wrap: nowrap;
                     overflow-x: scroll;
+                    scrollbar-width: none;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
                     .item {
                         margin-right: 1rem;
                         flex-shrink: 0;
@@ -389,6 +382,9 @@ $top: 230px;
                     }
                 }
                 .apartment {
+                    .sponsored{
+                        color: red;
+                    }
                     text-decoration: none;
                     color: black;
                     @media screen and (min-width: $medium) {

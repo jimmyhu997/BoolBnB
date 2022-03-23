@@ -22,8 +22,8 @@ class Stay extends Model
         return $this->belongsToMany('App\Perk');
     }
     
-    public function sponsorPackageStays() {
-        return $this->belongsToMany('App\SponsorPackageStay');
+    public function purchases() {
+        return $this->belongsToMany('App\Purchase');
     }
 
 }
