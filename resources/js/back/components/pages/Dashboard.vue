@@ -1,7 +1,10 @@
 <template>
-    <div class="dashboard-content container">
-      <PageHeading :title="'Welcome ' + data.loggedUserName" :button="{ route: 'create-stay', desktop: 'Create a new listing', mobile: '+' }"/>
+    <div class="color">
+      <div class="dashboard-content container">
+        <PageHeading :title="'Welcome ' + data.loggedUserName"/>
+      </div>
     </div>
+
 </template>
 
 <script>
@@ -21,7 +24,15 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../sass/_variables.scss';
-    .dashboard-content {
+  .color {
+    width: 100%;
+    height: 60vh;
+    background-color: purple;
+    background-image: linear-gradient(to right, rgb(70, 0, 128) , rgb(255, 54, 198));
 
+    .dashboard-content {
+      padding: 1rem 3rem;
+      color: white;
     }
+  }
 </style>
