@@ -3,9 +3,9 @@
         <PageHeading :title="'Boost your listings'"/>
         <nav class="section-links">
             <ul class="section-links__list">
-                <li class="section-links__item" :class="{'active' : currentSection == 'Active'}" @click="currentSection = 'Active'">Active</li>
-                <li class="section-links__item" :class="{'active' : currentSection == 'New'}" @click="currentSection = 'New'">New</li>
-                <li class="section-links__item" :class="{'active' : currentSection == 'History'}" @click="currentSection = 'History'">History</li>
+                <li class="section-links__item" :class="{'active' : currentSection == 'Active'}" @click="changeSection('Active')">Active</li>
+                <li class="section-links__item" :class="{'active' : currentSection == 'New'}" @click="changeSection('New')">New</li>
+                <li class="section-links__item" :class="{'active' : currentSection == 'History'}" @click="changeSection('History')">History</li>
             </ul>
         </nav>
         <div class="active-sponsor section" v-if="currentSection == 'Active'">
@@ -41,21 +41,25 @@
                     </li>
                 </ul>
             </div>
-            <Payment :stay="choosenStay" :packages="sponsorPackages" :buyInfo="buyInfo" @update='refresh()'/>
+            <div class="no-select" v-if="!choosenStay">
+                <p class="text">Select your listing.</p>
+            </div>
+            <Payment v-else :stay="choosenStay" :packages="sponsorPackages" @update='refresh()'/>
         </div>
         <div class="history-sponsor section" v-if="currentSection == 'History'">
             <ul class="purchases__list" v-if="sponsorHistory.length > 0">
                 <li class="purchases__item" v-for="purchase in sponsorHistory" :key="purchase.id">
                     <div class="heading">
-                        <span class="date">{{getDate(purchase.created_at)}}, {{getHour(purchase.created_at)}}</span>
-                        <span class="price">€{{purchase.tier_price}}</span>
+                        <span class="date">{{getDatetime(purchase.created_at)}}</span>
+                        <span class="price">€{{purchase.price}}</span>
                         <span class="tier">{{purchase.tier_name}}</span>
+                        <span class="transaction">ID: #{{purchase.transaction}}</span>
                     </div>
                     <div class="body">
                         <h4 class="title">{{purchase.stay_title}}</h4>
                         <div class="info">
-                            <span class="status active" v-if="activeIds.includes(purchase.id)">Active until {{getDate(purchase.end_date)}}, {{getHour(purchase.end_date)}}</span>
-                            <span class="status" v-else>Ended on {{getDate(purchase.end_date)}}, {{getHour(purchase.end_date)}}</span>
+                            <span class="status active" v-if="dayJs(purchase.end_date).isAfter(dayJs())">Active until {{getDatetime(purchase.end_date)}}</span>
+                            <span class="status" v-else>Ended on {{getDatetime(purchase.end_date)}}</span>
                         </div>
                     </div>
                 </li>
@@ -68,40 +72,31 @@
 <script>
 import PageHeading from '../commons/PageHeading.vue'
 import Payment from '../commons/Payment.vue'
+import data from '../../../vue-commons/vueGlobal'
 export default {
     name:'SponsorPackages',
     components: {PageHeading,Payment},
     data() {
         return {
-            currentSection: 'New',
+            data,
+            currentSection: 'Active',
             choosenStay: '',
             choosenPackage: null,
-            buyInfo: {
-                stay_id: null,
-                sponsorPackage_id: null,
-                sponsorPackage_duration :null,
-                sponsorPackage_price: null,
-                times: 1
-            },
             stays: [],
             sponsorPackages: [],
             sponsorHistory: [],
             sponsorActive: [],
-            activeIds: []
+            activeIds: [],
+            dayJs,
         }
     },
     created() {
         axios.get('/user/sponsor-packages')
         .then((response) => {
-            console.log(response.data);
-            for (const key in response.data[0]) {
-                this.stays.push(response.data[0][key])
-            }
-            this.sponsorPackages = response.data[1];
-            this.sponsorHistory = response.data[2];
-            this.sponsorActive = response.data[3];
-            this.sponsorHistory.sort((a, b) => a.end_date < b.end_date ? 1 : a.end_date > b.end_date ? -1 : 0)
-            this.activeIds = this.sponsorActive.map(purchase => purchase.id)
+            this.stays = response.data.stays
+            this.sponsorPackages = response.data.sponsorPackages;
+            this.sponsorHistory = response.data.purchaseHistory;
+            this.sponsorActive = response.data.sponsorActive;
         })
         .catch((error) => {
             // console.log(error)
@@ -109,19 +104,15 @@ export default {
         
     },
     methods: {
+        changeSection(section) {
+            this.currentSection = section
+            this.choosenStay = ''
+        },
         chooseStay(stay) {
-            this.buyInfo.stay_id = stay.id
+            this.choosenStay = ''
+            data.buyInfo.stay_id = stay.id
             this.choosenStay = stay.title
-        },
-        choosePackage(sponsor) {
-            this.buyInfo.sponsorPackage_id = sponsor.id
-            this.choosenPackage = sponsor.name
-        },
-        increment() {
-            if (this.buyInfo.times < 10) this.buyInfo.times++
-        },
-        decrement() {
-            if (this.buyInfo.times > 1) this.buyInfo.times--
+            data.purchaseView = 'tiers'
         },
         getDay(date) {
             return dayJs(date).format('MMMM DD')
@@ -131,27 +122,16 @@ export default {
         },
         getDate(date) {
             return dayJs(date).format('DD MMMM YYYY')
-        // choosePackage(sponsor) {
-        //     this.buyInfo.sponsorPackage_id = sponsor.id
-        //     this.buyInfo.sponsorPackage_duration = sponsor.duration
-        //     this.choosenPackage = sponsor.name
-        // },
-        // increment() {
-        //     if (this.buyInfo.times < 10) this.buyInfo.times++
-        // },
-        // decrement() {
-        //     if (this.buyInfo.times > 1) this.buyInfo.times--
-        // },
+        },
+        getDatetime(date) {
+            return dayJs(date).format('DD MMMM YYYY, HH:mm')
         },
         refresh() {
             axios.get('/user/sponsor-packages').then((response) => {
-                this.stays = []
-                for (const key in response.data[0]) {
-                    this.stays.push(response.data[0][key])
-                }
-                this.sponsorPackages = response.data[1];
-                this.sponsorHistory = response.data[2];
-                this.sponsorActive = response.data[3];
+                this.stays = response.data.stays
+                this.sponsorPackages = response.data.sponsorPackages;
+                this.sponsorHistory = response.data.purchaseHistory;
+                this.sponsorActive = response.data.sponsorActive;
             })
             .catch((error) => {
                 // console.log(error)
@@ -302,6 +282,18 @@ export default {
                     }
                 }
             }
+            .no-select {
+                width: 100%;
+                // height: 100%;
+                padding: 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                .text {
+                    font-size: 1.2rem;
+                    color: grey;
+                }
+            }
         }
         &.history-sponsor {
             .purchases {
@@ -324,6 +316,11 @@ export default {
                             border-right: .5px solid rgba(0, 0, 0, .2);
                         }
                         .tier {
+                            display: inline-block;
+                            padding: .5rem 1rem;
+                            border-right: .5px solid rgba(0, 0, 0, .2);
+                        }
+                        .transaction {
                             display: inline-block;
                             padding: .5rem 1rem;
                         }
