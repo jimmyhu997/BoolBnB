@@ -91,7 +91,7 @@ export default {
         }
     },
     created() {
-        axios.get('/user/sponsor-packages')
+        axios.get('/user/sponsor-info')
         .then((response) => {
             this.stays = response.data.stays
             this.sponsorPackages = response.data.sponsorPackages;
@@ -127,7 +127,7 @@ export default {
             return dayJs(date).format('DD MMMM YYYY, HH:mm')
         },
         refresh() {
-            axios.get('/user/sponsor-packages').then((response) => {
+            axios.get('/user/sponsor-info').then((response) => {
                 this.stays = response.data.stays
                 this.sponsorPackages = response.data.sponsorPackages;
                 this.sponsorHistory = response.data.purchaseHistory;

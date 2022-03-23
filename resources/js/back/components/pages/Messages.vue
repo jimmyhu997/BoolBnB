@@ -2,26 +2,27 @@
   <div class="contenitore">
 
     <div class="colonna" ref="menuHamb">
-      <div class="wrapper" @click="changeMenu()">
+      <div class="wrapper" :class="{'background': showMenu }" @click="changeMenu()">
           <div class="hamburger">
             <div class="menulogo"></div>
             <div class="menulogo"></div>
             <div class="menulogo"></div>
           </div>
 
+          <span class="ads">Listings</span> 
       </div>
 
       
 
-        <div class="menu" ref="menu" :v-if="!showMenu"> 
-          <span class="ads">Annunci</span>     
+        <div class="menu" ref="menu"> 
+              
           <ul class="listato">
             <li class="list" v-for="(stay , index) in stays" :key="index">
 
               <div class="mini-card" @click="changeStay(index)">                
                 <div class="content">
 
-                  <span class="title">{{stay.title}}</span>
+                  <span class="title" :class="{'selected' : currentStay == index }">{{stay.title}}</span>
                   <span class="data"></span>
 
                 </div>
@@ -43,10 +44,13 @@
           <h2>{{stays[currentStay].title}}</h2>
         </div>
       </div>
-       <div class="message">
-        <div class="messages-box" v-for="message in stays[currentStay].messages" :key="message.id">
+       <div class="message" v-if=" stays[currentStay].messages == 0">
+        <p class="no-message">There are no messages for this listing.</p>
+      </div>
+      <div class="message" v-else>
+        <div class="messages-box" v-for="message in stays[currentStay].messages.slice().reverse()" :key="message.id">
           <div class="date">
-            <span class="day">Today</span> <span class="dot">•</span> <span>{{message.date}}</span>
+            <span class="day">{{getDay(message.created_at)}}</span> <span class="dot">•</span> <span>{{getHour(message.created_at)}}</span>
           </div>
           <div class="head-message">
             <div class="name">
@@ -77,6 +81,7 @@ export default {
         visual: true,
         showMenu: false,
         currentStay : 0,
+        strin : "",
         stays : []
       }
     },
@@ -106,10 +111,16 @@ export default {
           this.showMenu = false
         }
       },
-      // stringa: function(){
-      //   let data = this.stays.created_at.substring(0,9);
-      // }
-
+      getDay: function(date){
+        if(dayJs().format('DD/MM/YYYY') == dayJs(date).format('DD/MM/YYYY')){
+          return 'Today'
+        }else{
+          return dayJs(date).format('DD/MM/YYYY')
+        }
+      },
+      getHour: function(date){
+        return dayJs(date).format('HH:mm')
+      }
     },
     mounted() {
       window.addEventListener('resize' , () => {
@@ -137,6 +148,7 @@ export default {
         }
       }
     }
+
 }
 
 
@@ -148,27 +160,33 @@ export default {
   .contenitore { 
     height: 70vh;
     min-width: 380px;
-    // margin:1rem auto;
+    max-width: 1440px;
+    margin: 0 auto;
     border: .2px solid $lightGrey;
     border-radius: .4rem;
-    // background-color: aquamarine;
     display: flex;
 
     .colonna{
       width: 0;
       display: flex;
       flex-direction: column;
-      background-color: $lightGrey;
+      background-color: #fafafa;
     }
 
     .wrapper {
       width: 100%;
       margin: 0 auto;
+      position: fixed;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+    }
+
+    .background {
+      background-color: #fafafa;
     }
 
     .hamburger {
-      position: fixed;
-      z-index: 999;
       height: 1rem;
       width: 30px;
       margin: 1.4rem 1rem;
@@ -187,9 +205,11 @@ export default {
     .menu {
       width: 100%;
       height: 70vh;
-      padding: 5rem 2rem;
+      padding: 3.5rem 1.5rem;
+      overflow-y: auto;
       transform: translateX(-2000px);
       transition: 0s;
+      scrollbar-width: none;
     }
 
     .menu li {
@@ -213,14 +233,15 @@ export default {
     .menu li .mini-card {
       color: rgb(150, 150, 150);
       text-decoration: none;
-      font-size: 20px;
-      transition: font-weight 0.2s;
+      font-size: 1.1rem;
+      transition: font-weight 0.2s , color 0.2s;
       cursor: pointer;
-      padding: 20px 0;
+      padding: 1.4rem 0.5rem;
     }   
     
-    .menu li .mini-card:hover {
-      font-weight: bold;
+    .menu li .mini-card:hover , .selected{
+      font-weight: 500;
+      color: black;
     }   
 
     .content{
@@ -229,8 +250,9 @@ export default {
     }
 
     .ads{
-      font-weight: bold;
-      color: grey;
+      font-weight: 500;
+      font-size: 1.3rem;
+      color: black;
     }
 
 
@@ -246,10 +268,6 @@ export default {
       overflow-y: auto;
       padding: 0 6rem;
 
-      // .activeMessages{
-      //   display: hidden;
-      // }
-
       .title{
         display: flex;
         justify-content: center;
@@ -259,6 +277,12 @@ export default {
       }
       
       .message{
+        .no-message{
+          text-align: center;
+          margin-top: 100px;
+          font-size: 18px;
+          font-weight: 500;
+        }
 
         .messages-box{
         width: 75%;
@@ -267,8 +291,7 @@ export default {
         &:not(:last-of-type){
         border-bottom: 0.5px solid rgba(0,0,0,0.1);
       }
-      }
-      
+      } 
         
         .date{
           display: flex;
@@ -294,7 +317,6 @@ export default {
           }
           .name{
             font-weight: 600;
-            // background-color: beige;
           }
           .mail{
             margin: 10px 0;
@@ -326,16 +348,9 @@ export default {
             display: flex;
             justify-content: space-between;
             flex-direction: row;
-          // background-color: aquamarine;
-
-          // // .name {
-          // //   // width: 80%;
-          // // }
 
           .mail{
-            // width: 20%;
             margin: 0 1rem;
-            // background-color: red;
           }
           }
         }

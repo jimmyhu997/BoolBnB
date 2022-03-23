@@ -24,12 +24,17 @@ Auth::routes();
 
 
 Route::prefix('user')->middleware('auth')->namespace('User')->group( function () {
+
     Route::resource('stays' , 'StayController');
     Route::get('messages' , 'MessageController@index');
     Route::post('add-sponsor' , 'PurchaseController@store')->name('add-sponsor');
-    Route::get('sponsor-packages' , 'PurchaseController@index')->name('sponsor-packages');
-    Route::get('sponsor-packages-stay/{stay_id}' , 'PurchaseController@getSponsoredList')->name('sponsor-packages-stay');
+    Route::get('sponsor-info' , 'PurchaseController@index')->name('sponsor-info');
+    // Route::get('sponsor-packages-stay/{stay_id}' , 'PurchaseController@getSponsoredList')->name('sponsor-packages-stay');
     Route::get('get-token','PurchaseController@getToken')->name('get-token');
+    Route::get('get-info-general','StatsController@getInfoGeneral')->name('get-info-general');
+    Route::get('get-info/{stay_id}','StatsController@getInfo')->name('get-info');
+    
+
     Route::get('/{any?}', function () {
         return view('registered_user.dashboard');
     })->where('any', '.*');

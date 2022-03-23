@@ -21,6 +21,7 @@ class PurchaseController extends Controller
         $stays = Stay::all()->where('user_id', Auth::user()->id);
         $sponsorPackages = SponsorPackage::all();
         $today = date('Y-m-d h:i:s');
+
         $purchaseHistory = Purchase
             ::select('purchases.*','stays.title as stay_title','stays.slug as stay_slug','stays.image_path as stay_image_path', 'sponsor_packages.price as tier_price', 'sponsor_packages.name as tier_name')
             ->leftjoin('sponsor_packages','sponsor_packages.id','=','purchases.sponsor_package_id')
@@ -28,6 +29,7 @@ class PurchaseController extends Controller
             ->where('user_id', Auth::user()->id)
             ->orderBy('created_at', 'desc')
             ->get();
+
         $sponsorActive = Purchase
             ::select('purchases.*','stays.title as stay_title','stays.slug as stay_slug','stays.image_path as stay_image_path')
             ->where('end_date', '>=', $today)
@@ -43,10 +45,10 @@ class PurchaseController extends Controller
         ]);
     }
 
-    public function getSponsoredList($stay_id) {
-        $resultList = Purchase::where('stay_id',$stay_id)->get();
-        return response()->json($resultList);
-    }
+    // public function getSponsoredList($stay_id) {
+    //     $resultList = Purchase::where('stay_id',$stay_id)->get();
+    //     return response()->json($resultList);
+    // }
     /**
      * Store a newly created resource in storage.
      *
