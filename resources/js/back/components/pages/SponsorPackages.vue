@@ -91,7 +91,7 @@ export default {
         }
     },
     created() {
-        axios.get('/user/sponsor-packages')
+        axios.get('/user/sponsor-info')
         .then((response) => {
             console.log(response.data);
             for (const key in response.data[0]) {
