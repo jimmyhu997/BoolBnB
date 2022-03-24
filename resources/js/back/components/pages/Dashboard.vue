@@ -41,11 +41,16 @@ export default {
       color: black;
 
       .jumbo {
-        height: 400px;
         width: 100%;
+        height: 30vh;
         border-radius: .3rem;
         background-image: url('../../../../../public/img/fake-images/GeniusHeroBanner.b4e6e233.jpg');
         background-size: cover;
+        background-position: right;
+        @media screen and (min-width: $medium) {
+          height: 400px;
+          background-position: center;
+        }
       }
     }
   }
