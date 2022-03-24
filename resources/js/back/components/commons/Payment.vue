@@ -1,56 +1,58 @@
 <template>
-    <form class="purchase-form" @submit.prevent="buy()">
-        <div class="heading">
-            <div class="back">
-                <button class="back round-btn" :class="{'disabled' : data.purchaseView == 'tiers'}" @click.prevent="back()">
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 4px; overflow: visible;"><g fill="none"><path d="m20 28-11.29289322-11.2928932c-.39052429-.3905243-.39052429-1.0236893 0-1.4142136l11.29289322-11.2928932"></path></g></svg>
-                </button>
-            </div>
-            <h4 class="title" v-if="stay">{{stay}}</h4>
-            <div class="empty"></div>
-        </div>
-        <!-- Packages -->
-        <div class="packages" v-if="data.purchaseView == 'tiers'">
-            <div class="packages-card" v-for="sponsor in packages" :key="sponsor.id">
-                <div class="name">{{sponsor.name}}</div>
-                <div class="body" @click="choosePackage(sponsor)">
-                    <div class="duration">{{sponsor.duration / 24 == 1 ? sponsor.duration / 24 + ' day' : sponsor.duration / 24 + ' days'}}</div>
-                    <div class="price">{{sponsor.price}}€</div>
-                </div>
-            </div>
-        </div>
-        <!-- Quantity -->
-        <div class="quantity" v-if="data.purchaseView == 'quantity'">
-            <div class="package-card">
-                <div class="name">{{choosenPackage.name}}</div>
-                <div class="body">
-                    <div class="duration">{{choosenPackage.duration / 24 == 1 ? choosenPackage.duration / 24 + ' day' : (choosenPackage.duration / 24) * data.buyInfo.times + ' days'}}</div>
-                    <div class="price">{{(data.buyInfo.sponsorPackage_price * data.buyInfo.times).toFixed(2)}}€</div>
-                </div>
-            </div>
-            <div class="number-buttons">
-                <button class="round-btn" :class="{'disabled' : data.buyInfo.times == 1}" @click.prevent="decrement()">
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
-                </button>
-                <span class="times">{{data.buyInfo.times}}</span>
-                <button class="round-btn" :class="{'disabled' : data.buyInfo.times == 10}" @click.prevent="increment()">
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
-                </button>
-            </div>
-            <div class="checkout-btn">
-                <button class="large-btn" @click="data.purchaseView = 'pay'">Checkout</button>
-            </div>
-        </div>
-        <!-- Payment -->
-        <div class="payment" v-if="data.purchaseView == 'pay'">
+    <div class="purchase-form">
+        <form @submit.prevent="buy()">
             <div class="heading">
-                <span class="purchase-info">{{choosenPackage.name}}: x{{data.buyInfo.times}} - <span class="pink">{{data.buyInfo.sponsorPackage_price * data.buyInfo.times}}€</span></span>
+                <div class="back">
+                    <button class="back round-btn" :class="{'disabled' : data.purchaseView == 'tiers'}" @click.prevent="back()">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 4px; overflow: visible;"><g fill="none"><path d="m20 28-11.29289322-11.2928932c-.39052429-.3905243-.39052429-1.0236893 0-1.4142136l11.29289322-11.2928932"></path></g></svg>
+                    </button>
+                </div>
+                <h4 class="title" v-if="stay">{{stay}}</h4>
+                <div class="empty"></div>
             </div>
-            <div ref="payment"></div>
-            <button class="action-btn" v-if="buyButton">BUY</button>
-        </div>
-        <PaymentSuccessModal :confirmation="confirmation"/>
-    </form>
+            <!-- Packages -->
+            <div class="packages" v-if="data.purchaseView == 'tiers'">
+                <div class="packages-card" v-for="sponsor in packages" :key="sponsor.id">
+                    <div class="name">{{sponsor.name}}</div>
+                    <div class="body" @click="choosePackage(sponsor)">
+                        <div class="duration">{{sponsor.duration / 24 == 1 ? sponsor.duration / 24 + ' day' : sponsor.duration / 24 + ' days'}}</div>
+                        <div class="price">{{sponsor.price}}€</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quantity -->
+            <div class="quantity" v-if="data.purchaseView == 'quantity'">
+                <div class="package-card">
+                    <div class="name">{{choosenPackage.name}}</div>
+                    <div class="body">
+                        <div class="duration">{{choosenPackage.duration / 24 == 1 ? choosenPackage.duration / 24 + ' day' : (choosenPackage.duration / 24) * data.buyInfo.times + ' days'}}</div>
+                        <div class="price">{{(data.buyInfo.sponsorPackage_price * data.buyInfo.times).toFixed(2)}}€</div>
+                    </div>
+                </div>
+                <div class="number-buttons">
+                    <button class="round-btn" :class="{'disabled' : data.buyInfo.times == 1}" @click.prevent="decrement()">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
+                    </button>
+                    <span class="times">{{data.buyInfo.times}}</span>
+                    <button class="round-btn" :class="{'disabled' : data.buyInfo.times == 10}" @click.prevent="increment()">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
+                    </button>
+                </div>
+                <div class="checkout-btn">
+                    <button class="large-btn" @click="data.purchaseView = 'pay'">Checkout</button>
+                </div>
+            </div>
+            <!-- Payment -->
+            <div class="payment" v-if="data.purchaseView == 'pay'">
+                <div class="heading">
+                    <span class="purchase-info">{{choosenPackage.name}}: x{{data.buyInfo.times}} - <span class="pink">{{(data.buyInfo.sponsorPackage_price * data.buyInfo.times).toFixed(2)}}€</span></span>
+                </div>
+                <div ref="payment"></div>
+                <button class="action-btn" v-if="buyButton">BUY</button>
+            </div>
+            <PaymentSuccessModal :confirmation="confirmation"/>
+        </form>
+    </div>
 </template>
 
 <script>
@@ -193,6 +195,7 @@ export default {
         margin-top: 0;
         padding-left: 2rem;
         border: none;
+        border-left: .5px solid rgba(0, 0, 0, .2);
     }
     .heading {
         display: flex;

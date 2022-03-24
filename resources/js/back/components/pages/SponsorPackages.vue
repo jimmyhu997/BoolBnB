@@ -244,7 +244,7 @@ export default {
                 @media screen and (min-width: $medium) {
                     width: 50%;
                     padding-right: 2rem;
-                    border-right: .5px solid rgba(0, 0, 0, .2);
+                    // border-right: .5px solid rgba(0, 0, 0, .2);
                 }
                 .heading-title {
                     font-size: 1.3rem;
