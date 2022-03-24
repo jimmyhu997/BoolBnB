@@ -145,6 +145,7 @@ export default {
 @import '../../../../sass/_variables.scss';
 @import '../../../../sass/mixins.scss';
 .sponsor {
+  margin-bottom: 5rem;
     .section-links {
         &__list {
             display: flex;

@@ -74,6 +74,7 @@ export default {
 <style lang="scss" >
 @import '../../../../../sass/_variables.scss';
 .apartments {
+  margin-bottom: 5rem;
   .no-apartments {
     display: inline-block;
     padding: 1rem;
