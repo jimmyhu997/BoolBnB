@@ -8,6 +8,7 @@
         <option value="">Select A Stay For the Filtered Data</option>
         <option v-for="apartment, index in this.namesData" :key="index+10"  :value="apartment.slug">{{apartment.title}}</option>
       </select>
+      <button @click="doughnutChart(chart)">Change into Chake Graph</button>
     </div>
     <canvas  ref="mychart"  ></canvas>
   </div>
@@ -39,6 +40,35 @@ export default {
     }
   },
   methods:{
+    doughnutChart(chart){
+      chart.config.type = 'doughnut'
+      let doughnutdata = {
+        labels: [],
+        datasets: [],
+        hoverOffset: 4,
+      }
+      let dataset = {
+        label: `Chacke chart of year ${this.selected_year}`,
+        data: [],
+        backgroundColor:[]
+      }
+      for (let title of this.namesData){
+        doughnutdata.labels.push(title.title)
+        dataset.data.push(0)
+        dataset.backgroundColor.push(this.randomRGB())
+      }
+      console.log(dataset)
+      this.visistsData.forEach(data =>{
+        let splittedDate = data.created_at.split('-')
+        let year = splittedDate[0]
+        if (year == this.selected_year){
+          dataset.data[doughnutdata.labels.indexOf(data.title)] += 1
+        }
+      })
+      doughnutdata.datasets.push(dataset)
+      chart.data = doughnutdata
+      chart.update();
+    },
     randomRGB(){
       return `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)})`
     },
