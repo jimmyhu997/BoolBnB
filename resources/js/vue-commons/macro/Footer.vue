@@ -186,15 +186,23 @@ export default {
         min-width: $x-large;
 
         .footer-top{
-          ul{display: flex;
-          margin:0px 30px;
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: row;
+
+          ul {
+          width: calc(25% - 40px);
+          display: flex;
+          margin:0px 20px;
+          border-bottom: rgb(160, 160, 160);
 
             li{
+              width: 100%;
               display: flex;
               flex-direction: column;
+              border: none;
 
               a{
-                display: flex; 
                 width: 100%;
               }
 
