@@ -27,6 +27,7 @@ class PurchaseController extends Controller
             ->leftjoin('sponsor_packages','sponsor_packages.id','=','purchases.sponsor_package_id')
             ->leftjoin('stays','stays.id','=','purchases.stay_id')
             ->where('user_id', Auth::user()->id)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $sponsorActive = Purchase
@@ -34,9 +35,14 @@ class PurchaseController extends Controller
             ->where('end_date', '>=', $today)
             ->leftjoin('stays','stays.id','=','purchases.stay_id')
             ->where('user_id', Auth::user()->id)
+            ->orderBy('end_date', 'desc')
             ->get();
-
-        return response()->json([$stays, $sponsorPackages,$purchaseHistory,$sponsorActive]);
+        return response()->json([
+            "stays" => $stays->values(),
+            "sponsorPackages" => $sponsorPackages->values(),
+            "purchaseHistory" => $purchaseHistory->values(),
+            "sponsorActive" => $sponsorActive->unique('stay_id')->values()
+        ]);
     }
 
     // public function getSponsoredList($stay_id) {

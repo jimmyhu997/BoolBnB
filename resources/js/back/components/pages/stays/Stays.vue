@@ -14,7 +14,8 @@
           </a>
           <div class="informations">
             <div class="options">
-              <!-- <span>Show</span> -->
+              <span v-if="stay.visible" class="option-name listed">Listed</span>
+              <span v-else class="option-name unlisted">Unlisted</span>
             </div>
             <div class="actions">
               <div class="edit">
@@ -50,9 +51,7 @@ export default {
 
     created() {
       axios.get("/user/stays").then( (response) => {
-        for (const key in response.data) {
-          this.stays.push(response.data[key])
-        }
+        this.stays = response.data
       });
     },
 
@@ -76,6 +75,7 @@ export default {
 <style lang="scss" >
 @import '../../../../../sass/_variables.scss';
 .apartments {
+  margin-bottom: 5rem;
   .no-apartments {
     display: inline-block;
     padding: 1rem;
@@ -150,9 +150,28 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        // .options {
-
-        // }
+        .options {
+          .option-name {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            font-weight: 300;
+            &::before {
+              content: '';
+              display: block;
+              width: .7rem;
+              height: .7rem;
+              border-radius: 50%;
+              margin: 0 .5rem 0 1rem;
+            }
+            &.listed::before {
+              background-color: rgb(0, 138, 5);
+            }
+            &.unlisted::before {
+              background-color: rgb(193, 53, 21);
+            }
+          }
+        }
         .actions {
           display: flex;
           align-items: center;

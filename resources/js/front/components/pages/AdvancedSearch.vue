@@ -2,68 +2,82 @@
     <div class="search-page">
 
         <form class="filters" @submit.prevent="advancedSearch()">
-            <div class="basic-filters">
-                <div class="input-group">
-                    <label class="input-group-label" for="guests">Guests</label>
-                    <div class="number-buttons">
-                        <button class="round-btn" :class="{'disabled' : filters.guests == inputs.min || !filters.guests}" @click.prevent="decrement('guests')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
-                        </button>
-                        <div class="choice">{{filters.guests || inputs.default}}</div>
-                        <button class="round-btn" :class="{'disabled' : filters.guests == inputs.max}" @click.prevent="increment('guests')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
-                        </button>
+            <div class="top-filters">
+                <button class="round-btn nav" @click.prevent="scrollLeft('top')">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 4px; overflow: visible;"><g fill="none"><path d="m20 28-11.29289322-11.2928932c-.39052429-.3905243-.39052429-1.0236893 0-1.4142136l11.29289322-11.2928932"></path></g></svg>
+                </button>
+                <div class="basic-filters" ref="top">
+                    <div class="input-group">
+                        <label class="input-group-label" for="guests">Guests</label>
+                        <div class="number-buttons">
+                            <button class="round-btn" :class="{'disabled' : filters.guests == inputs.min || !filters.guests}" @click.prevent="decrement('guests')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
+                            </button>
+                            <div class="choice">{{filters.guests || inputs.default}}</div>
+                            <button class="round-btn" :class="{'disabled' : filters.guests == inputs.max}" @click.prevent="increment('guests')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label" for="guests">Bedrooms</label>
+                        <div class="number-buttons">
+                            <button class="round-btn" :class="{'disabled' : filters.rooms == inputs.min || !filters.rooms}" @click.prevent="decrement('rooms')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
+                            </button>
+                            <div class="choice">{{filters.rooms || inputs.default}}</div>
+                            <button class="round-btn" :class="{'disabled' : filters.rooms == inputs.max}" @click.prevent="increment('rooms')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label" for="beds">Beds</label>
+                        <div class="number-buttons">
+                            <button class="round-btn" :class="{'disabled' : filters.beds == inputs.min || !filters.beds}" @click.prevent="decrement('beds')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
+                            </button>
+                            <div class="choice">{{filters.beds || inputs.default}}</div>
+                            <button class="round-btn" :class="{'disabled' : filters.beds == inputs.max}" @click.prevent="increment('beds')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label" for="guests">Baths</label>
+                        <div class="number-buttons">
+                            <button class="round-btn" :class="{'disabled' : filters.bathrooms == inputs.min || !filters.bathrooms}" @click.prevent="decrement('bathrooms')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
+                            </button>
+                            <div class="choice">{{filters.bathrooms || inputs.default}}</div>
+                            <button class="round-btn" :class="{'disabled' : filters.bathrooms == inputs.max}" @click.prevent="increment('bathrooms')">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-group-label" for="radius">Research Radius</label>
+                        <input type="range" min="10" max="100" step="5" v-model="radius" id="radius">
+                        <span class="km">{{radius}} km</span>
                     </div>
                 </div>
-                <div class="input-group">
-                    <label class="input-group-label" for="guests">Bedrooms</label>
-                    <div class="number-buttons">
-                        <button class="round-btn" :class="{'disabled' : filters.rooms == inputs.min || !filters.rooms}" @click.prevent="decrement('rooms')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
-                        </button>
-                        <div class="choice">{{filters.rooms || inputs.default}}</div>
-                        <button class="round-btn" :class="{'disabled' : filters.rooms == inputs.max}" @click.prevent="increment('rooms')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label class="input-group-label" for="beds">Beds</label>
-                    <div class="number-buttons">
-                        <button class="round-btn" :class="{'disabled' : filters.beds == inputs.min || !filters.beds}" @click.prevent="decrement('beds')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
-                        </button>
-                        <div class="choice">{{filters.beds || inputs.default}}</div>
-                        <button class="round-btn" :class="{'disabled' : filters.beds == inputs.max}" @click.prevent="increment('beds')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label class="input-group-label" for="guests">Baths</label>
-                    <div class="number-buttons">
-                        <button class="round-btn" :class="{'disabled' : filters.bathrooms == inputs.min || !filters.bathrooms}" @click.prevent="decrement('bathrooms')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28"></path></svg>
-                        </button>
-                        <div class="choice">{{filters.bathrooms || inputs.default}}</div>
-                        <button class="round-btn" :class="{'disabled' : filters.bathrooms == inputs.max}" @click.prevent="increment('bathrooms')">
-                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><path d="m2 16h28m-14-14v28"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label class="input-group-label" for="radius">Research Radius</label>
-                    <input type="range" min="10" max="500" step="5" v-model="radius" id="radius">
-                    <span class="km">{{radius}} km</span>
-                </div>
+                <button class="round-btn nav" @click.prevent="scrollRight('top')">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 4px; overflow: visible;"><g fill="none"><path d="m12 4 11.2928932 11.2928932c.3905243.3905243.3905243 1.0236893 0 1.4142136l-11.2928932 11.2928932"></path></g></svg>
+                </button>
             </div>
             <div class="bottom-filters">
                 <div class="option-filters">
-                    <ul class="list">
+                    <button class="round-btn nav" @click.prevent="scrollLeft('bottom')">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 4px; overflow: visible;"><g fill="none"><path d="m20 28-11.29289322-11.2928932c-.39052429-.3905243-.39052429-1.0236893 0-1.4142136l11.29289322-11.2928932"></path></g></svg>
+                    </button>
+                    <ul class="list" ref="bottom">
                         <li class="item" v-for="perk in indexPerks" :key="perk.id">
                             <button class="option-btn" :class="{'unchecked' : !filters.perks.includes(perk.name)}" @click.prevent="togglePerk(perk.name)">{{perk.name}}</button>
                         </li>
                     </ul>
+                    <button class="round-btn nav" @click.prevent="scrollRight('bottom')">
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 4px; overflow: visible;"><g fill="none"><path d="m12 4 11.2928932 11.2928932c.3905243.3905243.3905243 1.0236893 0 1.4142136l-11.2928932 11.2928932"></path></g></svg>
+                    </button>
                 </div>
                 <div class="save">
                     <button type="submit" class="btn">Save</button>
@@ -86,7 +100,7 @@
                             <div class="apartment-overview">
                                 <div class="info">
                                     <p class="type">Entire apartment in {{apartment.city}}</p>
-                                    <h3 class="title" :class="{'sponsored': apartment.sponsor}">{{apartment.title}}</h3>
+                                    <h3 class="title" :class="{'sponsored': apartment.sponsor}">{{apartment.title}}<img class="icon" v-if="apartment.sponsor" src="/img/star.png"/></h3>
                                     <div class="separator"></div>
                                     <p class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths</p>
                                     <p class="perks">{{apartment.perks.map(perk => perk.name).join(' • ')}}</p>
@@ -166,6 +180,12 @@ export default {
                 this.filters[input]--
             }
         },
+        scrollLeft(ref) {
+            this.$refs[ref].scrollLeft -= 200
+        },
+        scrollRight(ref) {
+            this.$refs[ref].scrollLeft += 200
+        },
         
     },
     created() {
@@ -238,12 +258,25 @@ $top: 230px;
         border-bottom: .5px solid rgba(0, 0, 0, 0.3);
         display: block;
         @include round-btn;
+        .top-filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .nav {
+                width: 2.5rem;
+                background-color: white;
+                &.round-btn {
+                    width: 2rem;
+                }
+            }
+        }
         .basic-filters {
             display: flex;
             padding: 1rem;
             flex-wrap: nowrap;
             overflow-x: scroll;
             scrollbar-width: none;
+            scroll-behavior: smooth;
             &::-webkit-scrollbar {
                 display: none;
             }
@@ -299,6 +332,9 @@ $top: 230px;
                 @media screen and (min-width: $large) {
                     width: 90%;
                 }
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 .list {
                     list-style: none;
                     display: flex;
@@ -306,6 +342,7 @@ $top: 230px;
                     flex-wrap: nowrap;
                     overflow-x: scroll;
                     scrollbar-width: none;
+                    scroll-behavior: smooth;
                     &::-webkit-scrollbar {
                         display: none;
                     }
@@ -382,9 +419,6 @@ $top: 230px;
                     }
                 }
                 .apartment {
-                    .sponsored{
-                        color: red;
-                    }
                     text-decoration: none;
                     color: black;
                     @media screen and (min-width: $medium) {
@@ -421,9 +455,17 @@ $top: 230px;
                             font-size: .9rem;
                             color: grey;
                         }
+                        .sponsored{
+                            color: red;
+                        }
+                        .icon {
+                            width: 1.3rem;
+                        }
                         .title {
                             font-weight: 400;
                             margin-bottom: .5rem;
+                            display: flex;
+                            align-items: center;
                         }
                         .basic-options {
                             color: #333;
