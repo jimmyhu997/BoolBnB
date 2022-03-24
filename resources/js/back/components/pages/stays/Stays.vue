@@ -50,9 +50,7 @@ export default {
 
     created() {
       axios.get("/user/stays").then( (response) => {
-        for (const key in response.data) {
-          this.stays.push(response.data[key])
-        }
+        this.stays = response.data
       });
     },
 
@@ -76,6 +74,7 @@ export default {
 <style lang="scss" >
 @import '../../../../../sass/_variables.scss';
 .apartments {
+  margin-bottom: 5rem;
   .no-apartments {
     display: inline-block;
     padding: 1rem;

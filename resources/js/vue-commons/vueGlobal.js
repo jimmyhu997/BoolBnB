@@ -9,5 +9,13 @@ export default Vue.observable({
     deleteOpened: false,
     loggedUserId: null,
     loggedUserName:'',
-    loggedUserEmail:''
+    loggedUserEmail:'',
+    purchaseView: '',
+    buyInfo: {
+        stay_id: null,
+        sponsorPackage_id: null,
+        sponsorPackage_duration :null,
+        sponsorPackage_price: null,
+        times: 1
+    }
 })
