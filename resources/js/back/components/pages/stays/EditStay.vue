@@ -485,6 +485,7 @@ export default {
 @import '../../../../../sass/_variables.scss';
 @import '../../../../../sass/mixins.scss';
 .edit-apartment {
+  margin-bottom: 5rem;
   &__form {
     .input__ {
       &category {

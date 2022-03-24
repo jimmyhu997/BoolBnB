@@ -86,7 +86,7 @@
                             <div class="apartment-overview">
                                 <div class="info">
                                     <p class="type">Entire apartment in {{apartment.city}}</p>
-                                    <h3 class="title" :class="{'sponsored': apartment.sponsor}">{{apartment.title}}</h3>
+                                    <h3 class="title" :class="{'sponsored': apartment.sponsor}">{{apartment.title}}<img class="icon" v-if="apartment.sponsor" src="/img/star.png"/></h3>
                                     <div class="separator"></div>
                                     <p class="basic-options">{{apartment.guests}} guests • {{apartment.rooms}} bedrooms • {{apartment.beds}} beds • {{apartment.bathrooms}} baths</p>
                                     <p class="perks">{{apartment.perks.map(perk => perk.name).join(' • ')}}</p>
@@ -382,9 +382,6 @@ $top: 230px;
                     }
                 }
                 .apartment {
-                    .sponsored{
-                        color: red;
-                    }
                     text-decoration: none;
                     color: black;
                     @media screen and (min-width: $medium) {
@@ -421,9 +418,17 @@ $top: 230px;
                             font-size: .9rem;
                             color: grey;
                         }
+                        .sponsored{
+                            color: red;
+                        }
+                        .icon {
+                            width: 1.3rem;
+                        }
                         .title {
                             font-weight: 400;
                             margin-bottom: .5rem;
+                            display: flex;
+                            align-items: center;
                         }
                         .basic-options {
                             color: #333;

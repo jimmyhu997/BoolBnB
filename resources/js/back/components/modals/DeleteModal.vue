@@ -26,7 +26,7 @@
 import data from '../../../vue-commons/vueGlobal'
 
 export default {
-  name: "Login",
+  name: "DeleteModal",
   props: {
     apartment: Object
   },
