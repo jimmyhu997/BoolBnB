@@ -110,18 +110,21 @@
         <button class="submit-btn" type="submit">Save listing</button>
       </div>
     </form>
+    <CreateStaySuccessModal :confirmation="confirmation"/>
   </div>
 </template>
 
 <script>
 import PageHeading from '../../commons/PageHeading.vue'
+import CreateStaySuccessModal from '../../modals/CreateStaySuccessModal.vue'
 import data from '../../../../vue-commons/vueGlobal'
 export default {
   name: 'CreateStay',
-  components: { PageHeading },
+  components: { PageHeading, CreateStaySuccessModal },
   data() {
     return {
       data,
+      confirmation: false,
       perks: [],
       apartment: {
         title: '',
@@ -401,7 +404,11 @@ export default {
           formData.append(String(element),this.apartment[element])
         }
         axios.post("stays", formData).then((response) => {
-          this.$router.push( {name: 'stays'})
+          this.confirmation = true
+          setTimeout(() => {
+            this.confirmation = false
+            this.$router.push( {name: 'stays'})
+          }, 5000);
           })
           .catch(error => {
             this.errors = error.response.data.errors;
