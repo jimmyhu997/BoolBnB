@@ -212,7 +212,6 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
-        overflow: scroll;
         @media screen and (min-width: $small) {
             flex-direction: row;
         }
