@@ -25,7 +25,7 @@
                 <div class="package-card">
                     <div class="name">{{choosenPackage.name}}</div>
                     <div class="body">
-                        <div class="duration">{{choosenPackage.duration / 24 == 1 ? choosenPackage.duration / 24 + ' day' : (choosenPackage.duration / 24) * data.buyInfo.times + ' days'}}</div>
+                        <div class="duration">{{(choosenPackage.duration / 24) * data.buyInfo.times == 1 ? '1 day' : (choosenPackage.duration / 24) * data.buyInfo.times + ' days'}}</div>
                         <div class="price">{{(data.buyInfo.sponsorPackage_price * data.buyInfo.times).toFixed(2)}}€</div>
                     </div>
                 </div>
