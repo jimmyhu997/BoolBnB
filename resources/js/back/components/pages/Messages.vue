@@ -9,7 +9,7 @@
             <div class="menulogo"></div>
           </div>
 
-          <span class="ads">Listings</span> 
+          <span ref="menuHeading" class="ads">Listings</span> 
       </div>
 
       
@@ -131,6 +131,12 @@ export default {
           this.showMenu = false;
           this.visual = true;
         }
+        if(window.innerWidth < 744) {
+          this.$refs.menuHeading.style.display = "none";
+        }
+        else {
+          this.$refs.menuHeading.style.display = "inline";
+        }
       });
     },
     watch: {
@@ -138,6 +144,7 @@ export default {
         if(menu) {
           this.$refs.menu.classList.add('active');
           this.$refs.menuHamb.classList.add('active');
+          this.$refs.menuHeading.style.display = "inline";
           if(window.innerWidth < 744) {
             this.visual = false;
           }
@@ -145,6 +152,9 @@ export default {
           this.visual = true;
           this.$refs.menu.classList.remove('active');
           this.$refs.menuHamb.classList.remove('active');
+          if(window.innerWidth < 744 ) {
+            this.$refs.menuHeading.style.display = "none";
+          }
         }
       }
     }
