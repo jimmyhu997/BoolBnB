@@ -20,8 +20,6 @@ class StatsController extends Controller
             ->join('users', 'stays.user_id', '=', 'users.id')
             ->where('user_id', Auth::user()->id)
             ->select('user_id', 'stay_id','visits.created_at','stays.title','stays.slug','stays.street_address')
-            ->where('visits.created_at', '>=', '2018')
-            ->take(3500)
             ->get();
         // dd( $resultVisits[200]);
         return response()->json($resultVisits);

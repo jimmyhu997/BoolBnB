@@ -13,12 +13,12 @@ class VisitSeeder extends Seeder
      */
     public function run(Faker $faker)
     {
-        for($i = 0; $i < 5; $i++){
+        for($i = 0; $i < 4500; $i++){
             $newVisit = new Visit();
             $newVisit->visitor_ip = $faker->ipv4();
-            $newVisit->stay_id = $faker->numberBetween(1, 7);;
-            // $newVisit->created_at = $faker->date() ;
-            // $newVisit->updated_at = $faker->date() ;
+            $newVisit->stay_id = $faker->numberBetween(1, 2);;
+            $newVisit->created_at = $faker->dateTimeBetween('-220 week', '-1 week');
+            $newVisit->updated_at = $faker->dateTimeBetween('-220 week', '-1 week');
             $newVisit->save();
         }
     }
