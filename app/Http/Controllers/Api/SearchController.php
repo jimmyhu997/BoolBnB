@@ -53,9 +53,8 @@ class SearchController extends Controller
             ->where('longitude','<=',$max_lon)
             ->where('longitude','>=',$min_lon)
             ->get();
-            // dd($sponsoredResult->unique('stay_id'));
 
-        return response()->json([$result, $sponsoredResult->unique('stay_id')]);
+        return response()->json([$result->values(), $sponsoredResult->unique('stay_id')->values()]);
     }
 
 }
