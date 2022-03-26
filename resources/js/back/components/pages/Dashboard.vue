@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard">
     <div class="hero">
+      <img src="/img/dashboard.jpg" alt="Hero image" class="img">
       <div class="container">
         <h2 class="welcome">Welcome {{data.loggedUserName}}</h2>
       </div>
@@ -34,15 +35,25 @@ export default {
   .hero {
     width: 100%;
     height: 30vh;
-    background-image: url('../../../../../public/images/dashboard.jpg');
-    background-size: cover;
-    background-position: right;
+    position: relative;
     color: white;
     padding-top: 10rem;
+    .img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      object-fit: cover;
+      object-position: right;
+    }
     @media screen and (min-width: $medium) {
       height: 400px;
-      background-position: center;
       padding-top: 3rem;
+      .img {
+        object-position: center;
+      }
     }
     .welcome {
       font-weight: 400;
