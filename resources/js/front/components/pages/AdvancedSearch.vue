@@ -258,21 +258,19 @@ $top: 230px;
         border-bottom: .5px solid rgba(0, 0, 0, 0.3);
         display: block;
         @include round-btn;
+        .nav {
+            margin: 0 .5rem;
+            @media screen and (min-width: $small) {
+                margin: 0 1rem;
+            }
+        }
         .top-filters {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            .nav {
-                width: 2.5rem;
-                background-color: white;
-                &.round-btn {
-                    width: 2rem;
-                }
-            }
         }
         .basic-filters {
             display: flex;
-            padding: 1rem;
+            padding: 1rem 0;
             flex-wrap: nowrap;
             overflow-x: scroll;
             scrollbar-width: none;
@@ -284,9 +282,9 @@ $top: 230px;
                 flex-shrink: 0;
                 display: flex;
                 align-items: center;
-                padding-right: 1rem;
-                margin-right: 1rem;
+                margin: .5rem;
                 &:not(:last-of-type) {
+                    padding-right: 1rem;
                     border-right: .5px solid rgba(0, 0, 0, 0.3);
                 }
                 &-label {
@@ -324,8 +322,9 @@ $top: 230px;
             align-items: center;
             .option-filters {
                 width: 70%;
-                padding-right: 1rem;
-                border-right: .5px solid rgba(0, 0, 0, 0.3);
+                @media screen and (min-width: $small) {
+                    border-right: .5px solid rgba(0, 0, 0, 0.3);
+                }
                 @media screen and (min-width: $medium) {
                     width: 80%;
                 }
@@ -338,7 +337,7 @@ $top: 230px;
                 .list {
                     list-style: none;
                     display: flex;
-                    padding: 1rem;
+                    // padding: 1rem 0;
                     flex-wrap: nowrap;
                     overflow-x: scroll;
                     scrollbar-width: none;
@@ -347,7 +346,7 @@ $top: 230px;
                         display: none;
                     }
                     .item {
-                        margin-right: 1rem;
+                        margin: .5rem;
                         flex-shrink: 0;
                         .option-btn {
                             border-radius: 1rem;
@@ -375,7 +374,10 @@ $top: 230px;
                 }
             }
             .save {
-                margin-left: 1rem;
+                margin-left: .5rem;
+                @media screen and (min-width: $small) {
+                    margin-left: 1rem;
+                }
                 .btn {
                     padding: .7rem .9rem;
                     text-align: center;
@@ -499,18 +501,10 @@ $top: 230px;
                 left: 0;
                 width: 50%;
                 height: calc(100vh - $top);
+                max-height: calc(100vh - $top);
                 display: block;
             }
         }
     }
-}
-.perksul{
-    li {
-        margin: 15px;
-
-    }
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: scroll;
 }
 </style>
