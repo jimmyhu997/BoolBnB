@@ -1,26 +1,14 @@
 <template>
-  <div>
-    <div class="color">
-      <div class="dashboard-content container">
-        <PageHeading :title="'Welcome ' + data.loggedUserName"/>
-
-        <div class="jumbo">
-        </div>
-
-      </div>
-
-
-    </div>
-    <div class="charts_bpx">
-      <div>
-        <h2>Apartment Statistics</h2>
-        <div class="Buttons">
-          
-        </div>
-        <Charts dataSet="visit"/>
+  <div class="dashboard">
+    <div class="hero">
+      <div class="container">
+        <h2 class="welcome">Welcome {{data.loggedUserName}}</h2>
       </div>
     </div>
-      
+    <section class="stats container">
+      <PageHeading :title="'Apartments statistics'"/>
+      <Charts dataSet="visit"/>
+    </section>
   </div>
 
 </template>
@@ -35,7 +23,6 @@ export default {
     data() {
       return {
         data,
-        userInfo: {},
       }
     },   
 }
@@ -43,28 +30,32 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../sass/_variables.scss';
-  .color {
+.dashboard {
+  .hero {
     width: 100%;
-    height: 700px;
-    // background-color: purple;
-    // background-image: linear-gradient(to right, rgb(70, 0, 128) , rgb(255, 54, 198));
-
-    .dashboard-content {
-      padding: 1rem 3rem;
-      color: black;
-
-      .jumbo {
-        width: 100%;
-        height: 30vh;
-        border-radius: .3rem;
-        background-image: url('../../../../../public/img/fake-images/GeniusHeroBanner.b4e6e233.jpg');
-        background-size: cover;
-        background-position: right;
-        @media screen and (min-width: $medium) {
-          height: 400px;
-          background-position: center;
-        }
+    height: 30vh;
+    background-image: url('../../../../../public/img/dashboard.jpg');
+    background-size: cover;
+    background-position: right;
+    color: white;
+    padding-top: 10rem;
+    @media screen and (min-width: $medium) {
+      height: 400px;
+      background-position: center;
+      padding-top: 3rem;
+    }
+    .welcome {
+      font-weight: 400;
+      text-align: right;
+      @media screen and (min-width: $medium) {
+        text-align: left;
+        font-size: 2.5rem;
+        font-weight: 400;
       }
     }
   }
+  .stats {
+    margin-bottom: 2rem;
+  }
+}
 </style>

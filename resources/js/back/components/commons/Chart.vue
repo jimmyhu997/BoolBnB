@@ -1,15 +1,33 @@
 <template>
-  <div>
-    <div  class="filters">
-      <select name="yearSelector" id="years" v-model="selected_year" @change="UpdateData(chart, selected_slug)">
-        <option v-for="year, index in this.uniqueYears" :key="index"  :value="year">{{year}}</option>
-      </select>
-      <select name="yearSelector" id="years" v-model="selected_slug" @change="UpdateData(chart, selected_slug)">
-        <option value="">Select A Stay For the Filtered Data</option>
-        <option v-for="apartment, index in this.namesData" :key="index+10"  :value="apartment.slug">{{apartment.title}}</option>
-      </select>
+  <div class="chart-section">
+    <div class="filters">
+      <div class="year-menu">
+        <button class="option-btn" @click="data.yearsOpened = true; data.listingsOpened = false;">
+          {{selected_year}}
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><g fill="none"><path d="m28 12-11.2928932 11.2928932c-.3905243.3905243-1.0236893.3905243-1.4142136 0l-11.2928932-11.2928932"></path></g></svg>
+        </button>
+        <div class="menu" v-if="data.yearsOpened">
+          <ul class="list">
+            <li class="item" v-for="year, index in this.uniqueYears" :key="index" @click="selected_year = year; data.yearsOpened = false; UpdateData(chart, selected_title)">{{year}}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="apartment-menu">
+        <button class="option-btn" @click="data.listingsOpened = true; data.yearsOpened = false;">
+          <div class="option-title">
+            {{selected_title || 'All apartments'}}
+          </div>
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="display: block; fill: none; height: 12px; width: 12px; stroke: currentcolor; stroke-width: 5.333333333333333px; overflow: visible;"><g fill="none"><path d="m28 12-11.2928932 11.2928932c-.3905243.3905243-1.0236893.3905243-1.4142136 0l-11.2928932-11.2928932"></path></g></svg>
+        </button>
+        <div class="menu listings" v-if="data.listingsOpened">
+          <ul class="list">
+            <li class="item" @click="selected_title = ''; data.listingsOpened = false; UpdateData(chart, selected_title)">All apartments</li>
+            <li class="item" v-for="apartment in this.namesData" :key="apartment.id" @click="selected_title = apartment.title; data.listingsOpened = false; UpdateData(chart, selected_title)">{{apartment.title}}</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <canvas  ref="mychart"  ></canvas>
+    <canvas class="chart" ref="mychart"></canvas>
   </div>
 </template>
 
@@ -24,7 +42,7 @@ export default {
   data(){
     return{
       data,
-      slugData: [],
+      titleData: [],
       namesData : [],
       visistsData: [],
       chart:null,
@@ -35,17 +53,14 @@ export default {
       stays: [],
       uniqueYears: [],
       selected_year: null, //place holder si deve modificare con la data attuale
-      selected_slug: ''
+      selected_title: ''
     }
   },
   methods:{
-    randomRGB(){
-      return `rgb(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)})`
-    },
-    UpdateData(chart, slug){
+    UpdateData(chart, title){
       let newDataset = [
         {
-          label: slug ? `Total visits in ${this.selected_year}` : `Total visits in ${this.selected_year} of `,
+          label: title ? `Visits in ${this.selected_year} of ${this.selected_title}` : `Total visits in ${this.selected_year}`,
           backgroundColor: `transparent`,
           borderColor: `rgb(252, 28, 74)`,
           data: [],
@@ -53,13 +68,12 @@ export default {
       ]
       let setup = [0,0,0,0,0,0,0,0,0,0,0,0]
       // let month = data.months[parseInt(splittedDate[1])-1]
-      this.visistsData.forEach(data =>{
-        let splittedDate = data.created_at.split('-')
-        let year = dayJs(data.created_at).format('YYYY')
-        let month = dayJs(data.created_at).format('MM')
-          // parte di logica di miglliorare in quanto c'è codice ripetuto, questo semplicemente se esiste uno slug allora fa il controllo anche su quello
-          if (slug){
-            if (year == this.selected_year && this.selected_slug == data.slug){
+      this.visistsData.forEach(item =>{
+        let year = dayJs(item.created_at).format('YYYY')
+        let month = dayJs(item.created_at).format('MM')
+          // parte di logica di miglliorare in quanto c'è codice ripetuto, questo semplicemente se esiste uno title allora fa il controllo anche su quello
+          if (title){
+            if (year == this.selected_year && this.selected_title == item.title){
               setup[parseInt(month)-1] += 1
             }
           } else {
@@ -80,8 +94,7 @@ export default {
     }
   },
   created(){
-    let date= new Date()
-    this.selected_year = date.getFullYear()
+    this.selected_year = dayJs().format('YYYY')
     this.baseSet.year = this.selected_year
   },
   mounted(){
@@ -91,29 +104,28 @@ export default {
       this.visistsData = response.data
       response.data.forEach(item => {
         //Per ogni elemento va a dare un nome allanno ed al mese
-        let splittedDate = item.created_at.split('-')
-        let year = splittedDate[0]
+        let year = dayJs(item.created_at).format('YYYY')
         //il mese viene convertito in una string del nome del mese associato, i dati sono nel documento importato per DATA
-        let month = data.months[parseInt(splittedDate[1])-1]
+        let month = data.months[parseInt(dayJs(item.created_at).format('MM'))-1]
         // Se l'anno non è presente nell'elemento creato prima allora va a creare il mese con un valore, oppure va alla key ed aggiunge una visita
-        if (year == this.selected_year){
+        if (year == dayJs().format('YYYY')){
           if(!(month in month_visit)){
             month_visit[month] = 1
           } else{
             month_visit[month] += 1
           }
         }
-        // creazione di un elenco per i select dove saranno presenti slug degli stays
+        // creazione di un elenco per i select dove saranno presenti title degli stays
         if (!this.uniqueYears.includes(year)){
           this.uniqueYears.push(year)
         }
         this.uniqueYears.sort().reverse()
-        if (!this.slugData.includes(item.slug)){
+        if (!this.titleData.includes(item.title)){
           let names = {
-            slug: item.slug,
+            // title: item.title,
             title: item.title,
           }
-          this.slugData.push(item.slug)
+          this.titleData.push(item.title)
           this.namesData.push(names)
         }
       });
@@ -135,7 +147,7 @@ export default {
         labels: labels,
         datasets: [
           {
-          label: `Visit of All Stays in ${this.selected_year}`,
+          label: `Total visits in ${this.selected_year}`,
           backgroundColor: `transparent`,
           borderColor: `rgb(252, 28, 74)`,
           data: barData,
@@ -148,6 +160,8 @@ export default {
         data: datacol,
         options: {
           responsive: true,
+          mantainAspectRatio: true,
+          aspectRatio: 2.5,
           scales: {
             yAxes: [{
               display: true,
@@ -155,8 +169,8 @@ export default {
               beginAtZero: true,
               ticks:{
                 min: 0,
-                max: 250,
-                stepSize: 15
+                max: 240,
+                stepSize: 30
               }
             }]
           }
@@ -174,5 +188,74 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+@import '../../../../sass/_variables.scss';
+@import '../../../../sass/mixins.scss';
+@include round-btn;
+.chart-section {
+  .filters {
+    display: flex;
+    align-items: center;
+    .year-menu, .apartment-menu {
+      position: relative;
+    }
+    .option-btn {
+        border-radius: 1rem;
+        height: 2rem;
+        padding: 0 1rem;
+        border: 1px solid black;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        font-weight: 100;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-right: 1rem;
+        display: flex;
+        max-width: 150px;
+        justify-content: flex-start;
+        @media screen and (min-width: $medium) {
+          max-width: 230px;
+        }
+        &:hover {
+          border: 1px solid black;
+          background-color: rgba(0, 0, 0, .02);
+        }
+        .option-title {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        svg {
+          flex-shrink: 0;
+          margin-left: .5rem;
+        }
+    }
+    .menu {
+      position: absolute;
+      top: 2.5rem;
+      left: 0;
+      background-color: #fff;
+      border-radius: .3rem;
+      box-shadow: 0 0 .2rem rgba(0, 0, 0, 0.2);
+      padding: .6rem 0;
+      @media screen and (min-width: $small) {
+        &.listings {
+          min-width: 230px;
+        }
+      }
+      .list {
+        list-style: none;
+        .item {
+          cursor: pointer;
+          padding: 1rem 1.5rem;
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+          }
+        }
+      }
+    }
+  }
+}
 </style>
