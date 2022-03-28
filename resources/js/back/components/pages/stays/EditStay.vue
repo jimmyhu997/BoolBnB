@@ -110,19 +110,22 @@
         <button class="submit-btn" type="submit">Save listing</button>
       </div>
     </form>
+    <EditStaySuccessModal :confirmation="confirmation"/>
   </div>
 </template>
 
 <script>
 import PageHeading from '../../commons/PageHeading.vue'
+import EditStaySuccessModal from '../../modals/EditStaySuccessModal.vue'
 import data from '../../../../vue-commons/vueGlobal'
 
 export default {
   name:'EditStay',
-  components: { PageHeading },
+  components: { PageHeading, EditStaySuccessModal },
   data() {
     return {
       data,
+      confirmation: false,
       activePerks:[],
       apartment:{},
       errors:{},
@@ -460,7 +463,11 @@ export default {
           formData.append(String(element),this.apartment[element])
         }
         axios.post(`/user/stays/${this.$route.params.stay}?_method=PUT`, formData).then((response) => {
+          this.confirmation = true
+          setTimeout(() => {
+            this.confirmation = false
             this.$router.push( {name: 'stays'})
+          }, 3000);
           })
           .catch((error) => {
             this.errors = error.response.data.errors;
@@ -485,6 +492,7 @@ export default {
 @import '../../../../../sass/_variables.scss';
 @import '../../../../../sass/mixins.scss';
 .edit-apartment {
+  margin-bottom: 5rem;
   &__form {
     .input__ {
       &category {

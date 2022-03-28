@@ -1,7 +1,9 @@
 <template>
-  <div @click="closeAll()">
-    <Header/>
-    <Main/>
+  <div @click="closeAll()" class="page-wrapper">
+    <div class="page-top">
+      <Header/>
+      <Main/>
+    </div>
     <Footer/>
   </div>
 </template>
@@ -36,3 +38,12 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+</style>

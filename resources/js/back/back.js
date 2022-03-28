@@ -10,6 +10,8 @@ window.dayJs = require('dayjs')
 window.externalAxios = axios.create()
 delete externalAxios.defaults.headers.common['X-CSRF-TOKEN']
 delete externalAxios.defaults.headers.common['X-Requested-With']
+
+window.dropin = require('braintree-web-drop-in')
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

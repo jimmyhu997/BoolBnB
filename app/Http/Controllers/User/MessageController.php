@@ -22,7 +22,10 @@ class MessageController extends Controller
         //             ->select('stays.title')
         //             ->where('user_id', Auth::user()->id)
         //             ->get();
-        $stays = Stay::with('messages')->where('user_id', Auth::user()->id)->get();
+        $stays = Stay
+            ::with('messages')
+            ->where('user_id', Auth::user()->id)
+            ->get();
         return response()->json($stays);
     }
 

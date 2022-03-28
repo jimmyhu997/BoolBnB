@@ -13,7 +13,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main {
-  margin-bottom: 5rem;
-}
 </style>

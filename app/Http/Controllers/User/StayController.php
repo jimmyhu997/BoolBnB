@@ -37,7 +37,7 @@ class StayController extends Controller
      public function index()
     {   
         $stays = Stay::all()->where('user_id', Auth::user()->id);
-        return response()->json($stays);
+        return response()->json($stays->values());
     }
 
 
