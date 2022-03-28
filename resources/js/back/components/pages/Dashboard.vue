@@ -14,10 +14,13 @@
     <div class="charts_bpx">
       <div>
         <h2>Apartment Statistics</h2>
-        <div class="Buttons">
-          
+
+        <div>
+          <Charts dataSet="visit"/>
         </div>
-        <Charts dataSet="visit"/>
+        <div>
+          <Charts dataSet="message/"/>
+        </div>
       </div>
     </div>
       

@@ -32,7 +32,7 @@ Route::prefix('user')->middleware('auth')->namespace('User')->group( function ()
     // Route::get('sponsor-packages-stay/{stay_id}' , 'PurchaseController@getSponsoredList')->name('sponsor-packages-stay');
     Route::get('get-token','PurchaseController@getToken')->name('get-token');
     Route::get('get-info-visit','StatsController@getInfoVisit')->name('get-info-visit');
-    Route::get('get-info/{stay_id}','StatsController@getInfo')->name('get-info');
+    Route::get('get-info-message','StatsController@getInfoMessage')->name('get-info-message');
     
 
     Route::get('/{any?}', function () {

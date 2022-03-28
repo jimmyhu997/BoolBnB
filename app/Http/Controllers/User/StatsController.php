@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Visit;
 use App\Stay;
 use App\User;
+use App\Message;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -25,15 +26,14 @@ class StatsController extends Controller
         return response()->json($resultVisits);
     }
 
-    public function getInfo($stay_id) {
+    public function getInfoMessage() {
 
-        $result = Stay
-            ::with('visits')
-            ->with('messages')
-            ->where('id',$stay_id)
+        $result = Message
+            ::join('stays', 'stays.id', '=', 'messages.stay_id')
+            ->join('users', 'stays.user_id', '=', 'users.id')
             ->where('user_id', Auth::user()->id)
+            ->select('user_id', 'stay_id','messages.created_at','stays.title','stays.slug','stays.street_address')
             ->get();
-
         return response()->json($result);
     }
 
