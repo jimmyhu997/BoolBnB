@@ -125,7 +125,7 @@ export default {
                     setTimeout(() => {
                         this.confirmation = false
                         this.$router.go()
-                    }, 5000);
+                    }, 3000);
                 })
                 .catch((error) => {
                     console.log(error)

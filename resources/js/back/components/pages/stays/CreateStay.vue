@@ -408,7 +408,7 @@ export default {
           setTimeout(() => {
             this.confirmation = false
             this.$router.push( {name: 'stays'})
-          }, 5000);
+          }, 3000);
           })
           .catch(error => {
             this.errors = error.response.data.errors;
