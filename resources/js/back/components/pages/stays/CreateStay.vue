@@ -126,6 +126,7 @@ export default {
       data,
       confirmation: false,
       perks: [],
+      createCall: true,
       apartment: {
         title: '',
         description: '',
@@ -398,13 +399,15 @@ export default {
       }
     },
     create() {
-      if (this.validations()) {
+      if (this.validations() && this.createCall) {
+        this.createCall = false
         let formData = new FormData();
         for (let element in this.apartment) {
           formData.append(String(element),this.apartment[element])
         }
         axios.post("stays", formData).then((response) => {
           this.confirmation = true
+          this.createCall = true
           setTimeout(() => {
             this.confirmation = false
             this.$router.push( {name: 'stays'})

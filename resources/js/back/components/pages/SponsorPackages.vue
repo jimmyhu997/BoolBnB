@@ -32,7 +32,7 @@
         <div class="new-sponsor section" v-if="currentSection == 'New'">
             <div class="apartments">
                 <h3 class="heading-title">Choose an apartment to boost</h3>
-                <ul class="apartments__list">
+                <ul class="apartments__list" v-if="stays.length > 0">
                     <li class="apartments__item" v-for="stay in stays" :key="stay.id" @click="chooseStay(stay)">
                         <div class="preview">
                             <img class="img" :src="'/storage/' + stay.image_path" :alt="stay.title + ' preview'">
@@ -40,6 +40,7 @@
                         <h4 class="title">{{stay.title}}</h4>
                     </li>
                 </ul>
+                <p v-else>There are no listings.</p>
             </div>
             <div class="no-select" v-if="!choosenStay">
                 <p class="text">Select your listing.</p>
@@ -50,7 +51,7 @@
             <ul class="purchases__list" v-if="sponsorHistory.length > 0">
                 <li class="purchases__item" v-for="purchase in sponsorHistory" :key="purchase.id">
                     <div class="heading">
-                        <span class="date">{{getDatetime(purchase.created_at)}}</span>
+                        <span class="date">{{getDate(purchase.created_at)}}</span>
                         <span class="price">€{{purchase.price}}</span>
                         <span class="tier">{{purchase.tier_name}}</span>
                         <span class="transaction">ID: #{{purchase.transaction}}</span>

@@ -16,7 +16,7 @@
 
         <div class="menu" ref="menu"> 
               
-          <ul class="listato">
+          <ul class="listato" v-if="stays.length > 0">
             <li class="list" v-for="(stay , index) in stays" :key="index">
 
               <div class="mini-card" @click="changeStay(index)">                
@@ -30,6 +30,7 @@
 
             </li>
           </ul>
+          <p v-else style="margin-top: 2rem">There are no listings.</p>
         </div>
     </div>
 
@@ -68,6 +69,7 @@
         </div>
       </div>
     </div>
+    <p v-else-if="visual" style="display: flex; width: 100%; max-width: calc(100vw - (100% - 100vw)); justify-content: center; align-items: center">There are no messages.</p>
 
   </div>
 
