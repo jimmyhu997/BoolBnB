@@ -169,7 +169,7 @@ export default {
               beginAtZero: true,
               ticks:{
                 min: 0,
-                max: 240,
+                max: 270,
                 stepSize: 30
               }
             }]

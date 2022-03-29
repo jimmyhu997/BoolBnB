@@ -18,7 +18,7 @@
             </a>
           </li>
         </ul>
-        <div v-else class="hints__list">
+        <div v-else-if="searchKeyword.length > 0" class="hints__list">
             <span class="hints__no-results">No results.</span>
         </div>
       </div>
